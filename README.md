@@ -1,73 +1,44 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# La Méthode Claire 👓
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+> "La méthode claire" est une méthode de lecture pour faciliter l'apprentissage de la  lecture auprès des enseignants, notamment en CP. Cette API permet de:
+>
+> - Créer son compte.
+> - Se connecter  à son espace et retrouver les leçons en fonctions d'une progression personnelle.
+>
+> Les administrateurs pourront:
+>
+> - Activer / désactiver les comptes utilisateurs
+> - Ajouter et éditer la bibliothèque
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Fonctionnalités 🎉
 
-## Description
+1. Authentification
+2. Bibliothèque
+3. Paiement et Abonnement (V2)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Get started 💪
 
-## Installation
+> After cloning project locally you can run the followings commands in the root folder in order to launch the app locally
 
-```bash
-$ npm install
+``` bash
+npm i # Install workspace dependency
+npm run serve:apps # Launch API and ng applications (user-board & admin-board)
+npm run serve:public:ui # Launch distinct Nextjs Public application
 ```
 
-## Running the app
+## Sources
 
-```bash
-# development
-$ npm run start
+- [AutoMapper](https://automapperts.netlify.app/docs/nestjs)
 
-# watch mode
-$ npm run start:dev
+### Class Validators
 
-# production mode
-$ npm run start:prod
-```
+- [Usage](https://github.com/typestack/class-validator#usage)
+- [Validation decorators](https://github.com/typestack/class-validator#validation-decorators)
 
-## Test
+## Wiki 🙏
 
-```bash
-# unit tests
-$ npm run test
+> This project have it's own wiki available [here](#). It explains how this project was made and what is next on the development scope.
 
-# e2e tests
-$ npm run test:e2e
+## Contact ✉️
 
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+Feel free to contact `dev@vidmizer.com` if you have any suggestions or wish to learn more about certain aspects of this project.
