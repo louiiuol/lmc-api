@@ -37,7 +37,7 @@ npm run serve:public:ui # Launch distinct Nextjs Public application
 
 ## Wiki 🙏
 
-> This project have it's own wiki available [here](#). It explains how this project was made and what is next on the development scope.
+![UML](./assets/database-model.png)
 
 ## Contact ✉️
 
