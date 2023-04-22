@@ -6,5 +6,5 @@
     "statusBarItem.remoteBackground": "#077f3d",
     "statusBarItem.remoteForeground": "#29e529"
   },
-  "cSpell.words": ["automapper", "typeorm"]
+  "cSpell.words": ["automapper", "brcypt", "typeorm"]
 }
