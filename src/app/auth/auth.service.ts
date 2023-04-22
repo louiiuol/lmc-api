@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
@@ -36,21 +36,6 @@ export class AuthService {
       sub: user.uuid,
     }),
   });
-
-  googleLogin = async (req): Promise<TokenJWT> => {
-    if (!req.user) throw new BadRequestException('USER_NOT_FOUND');
-    const googleUser = req.user._json;
-    const userExist = await this.getCurrentUser(googleUser.email);
-    console.log('logging', { found: userExist, current: googleUser });
-    if (!userExist) {
-      const user = await this.usersService.save(googleUser);
-      console.log(
-        'User registered from Google Provider: ',
-        `(id: ${user.uuid} | email: ${user.email})`,
-      );
-    }
-    return this.login(googleUser);
-  };
 
   /**
    * Validate current credentials:
