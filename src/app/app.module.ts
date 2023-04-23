@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { environment } from './environment';
 import { User } from './users/types';
 import { AuthModule } from './auth/auth.module';
+import { LibraryModule } from './library/library.module';
+import { Course, Phoneme } from './library/types';
 
 @Module({
   imports: [
@@ -15,13 +17,14 @@ import { AuthModule } from './auth/auth.module';
       username: environment.DATABASE_USER,
       password: environment.DATABASE_PASSWORD,
       database: environment.DATABASE_NAME,
-      entities: [User],
+      entities: [User, Phoneme, Course],
       synchronize: environment.PRODUCTION !== 'true', //? should be turned off in production (overrides data)
     }),
     AutomapperModule.forRoot({
       strategyInitializer: classes(),
     }),
     AuthModule,
+    LibraryModule,
   ],
   controllers: [],
   providers: [],

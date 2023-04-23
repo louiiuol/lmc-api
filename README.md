@@ -9,6 +9,19 @@
 >
 > - Activer / désactiver les comptes utilisateurs
 > - Ajouter et éditer la bibliothèque
+ pUblic:
+
+3x 1 heure de video d'introduction
+
+1 guide PDF (la méthode complète)
++
+les leçons (26) (guide):
+
+- script
+- schemas + tableau
+- exercice
+- poster
+- video
 
 ## Fonctionnalités 🎉
 
