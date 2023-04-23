@@ -16,7 +16,6 @@ export class UsersController {
   @Get('profile')
   async getProfile(@Request() req): Promise<UserViewDto> {
     const user = await this.usersService.findOneByEmail(req.user.email);
-    console.log(user);
     return this.classMapper.map(user, User, UserViewDto);
   }
 
