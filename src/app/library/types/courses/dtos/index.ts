@@ -1,1 +1,1 @@
-export * from './course-create.dto';
+export {CourseCreateDto} from './course-create.dto';

@@ -1,49 +1,50 @@
-import { AutoMap } from '@automapper/classes';
+import {AutoMap} from '@automapper/classes';
 import {
-  BaseEntity,
-  Column,
-  Entity,
-  JoinColumn,
-  OneToMany,
-  PrimaryGeneratedColumn,
+	BaseEntity,
+	Column,
+	Entity,
+	JoinColumn,
+	OneToMany,
+	PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Phoneme } from '../phonemes';
+import {Phoneme} from '../phonemes';
 
 /**
  ** Collection of phonemes, posters and exercises meant to be discover in a week.
  */
 @Entity({
-  name: 'courses',
+	name: 'courses',
 })
 export class Course extends BaseEntity {
-  @AutoMap()
-  @PrimaryGeneratedColumn()
-  uuid: string;
+	@AutoMap()
+	@PrimaryGeneratedColumn()
+	uuid: string;
 
-  @Column()
-  name: string;
+	@Column()
+	name: string;
 
-  @Column()
-  summary: string;
+	@AutoMap()
+	@OneToMany(() => Phoneme, p => p.course)
+	@JoinColumn()
+	phonemes: Phoneme[];
 
-  @AutoMap()
-  @OneToMany(() => Phoneme, (p) => p.course)
-  @JoinColumn()
-  phonemes: Phoneme[];
+	@AutoMap()
+	@Column()
+	script: string;
 
-  @AutoMap()
-  @Column()
-  script: string;
+	@AutoMap()
+	@Column()
+	lesson: string;
 
-  @AutoMap()
-  @Column()
-  poster?: string;
+	@AutoMap()
+	@Column()
+	exercice: string;
 
-  @AutoMap()
-  @Column()
-  lesson?: string;
+	@AutoMap()
+	@Column({nullable: true})
+	text?: string;
 
-  @AutoMap()
-  @Column()
-  exercice?: string;
+	@AutoMap()
+	@Column({nullable: true})
+	poster?: string;
 }
