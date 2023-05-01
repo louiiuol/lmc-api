@@ -17,11 +17,14 @@ import {Phoneme} from '../phonemes';
 })
 export class Course extends BaseEntity {
 	@AutoMap()
-	@PrimaryGeneratedColumn()
+	@PrimaryGeneratedColumn('uuid')
 	uuid: string;
 
 	@Column()
 	name: string;
+
+	@Column()
+	order: number;
 
 	@AutoMap()
 	@OneToMany(() => Phoneme, p => p.course)

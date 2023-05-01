@@ -5,7 +5,7 @@ import {LibraryService} from './library.service';
 export class LibraryController {
 	constructor(private libraryService: LibraryService) {}
 
-	@Post('generate-courses')
+	@Post('courses')
 	async generateLibrary() {
 		return await this.libraryService.createLibrary();
 	}
