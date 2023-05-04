@@ -32,8 +32,13 @@ export class User extends BaseEntity {
 	@Column()
 	password!: string;
 
+	@AutoMap()
 	@Column({default: true})
 	isActive!: boolean;
+
+	@AutoMap()
+	@Column({default: 0})
+	currentLessonIndex!: number;
 
 	@AutoMap()
 	@Column({
