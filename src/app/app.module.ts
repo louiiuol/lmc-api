@@ -3,7 +3,7 @@ import {classes} from '@automapper/classes';
 import {AutomapperModule} from '@automapper/nestjs';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {environment} from './environment';
-import {User} from './users/types';
+import {User} from './users/types/user.entity';
 import {AuthModule} from './auth/auth.module';
 import {LibraryModule} from './library/library.module';
 import {Course, Phoneme} from './library/types';
