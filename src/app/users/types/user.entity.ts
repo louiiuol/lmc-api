@@ -17,16 +17,18 @@ export class User extends BaseEntity {
 	@Column({
 		nullable: true,
 	})
-	firstName!: string;
+	firstName?: string;
 
 	@AutoMap()
 	@Column({
 		nullable: true,
 	})
-	lastName!: string;
+	lastName?: string;
 
 	@AutoMap()
-	@Column()
+	@Column({
+		unique: true,
+	})
 	email!: string;
 
 	@Column()
