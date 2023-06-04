@@ -1,37 +1,82 @@
 import {
-  ExceptionFilter,
-  Catch,
-  ArgumentsHost,
-  Injectable,
+	ExceptionFilter,
+	Catch,
+	ArgumentsHost,
+	Injectable,
+	BadRequestException,
+	Logger,
+	HttpException,
+	UnauthorizedException,
+	ForbiddenException,
 } from '@nestjs/common';
-import { Response } from 'express';
-import { IncomingMessage } from 'http';
-import { EntityNotFoundError, QueryFailedError } from 'typeorm';
+import {Response} from 'express';
+import {IncomingMessage} from 'http';
+import {EntityNotFoundError, QueryFailedError} from 'typeorm';
+import {APIResponse} from '../types/api-response';
 
-export const getErrorMessage = (exception: unknown): string =>
-  String(exception);
+type CaughtExceptions =
+	| QueryFailedError
+	| EntityNotFoundError
+	| HttpException
+	| ForbiddenException
+	| UnauthorizedException
+	| BadRequestException;
+
+const HttpCodes: {[key: string]: number} = {
+	UnauthorizedException: 401,
+	ForbiddenException: 403,
+	QueryFailedError: 409,
+	EntityNotFoundError: 404,
+	BadRequestException: 422,
+	undefined: 500,
+};
 
 /**
- ** Custom exception filter to convert EntityNotFoundError from TypeOrm to NestJs responses
+ * Custom exception filter to convert Exceptions thrown by the application and
+ * format the response as ApiResponse object.
  * @see also @https://docs.nestjs.com/exception-filters
  */
 @Injectable()
-@Catch(QueryFailedError, EntityNotFoundError)
+@Catch(
+	QueryFailedError,
+	EntityNotFoundError,
+	BadRequestException,
+	UnauthorizedException,
+	ForbiddenException,
+	HttpException
+)
 export class GlobalExceptionFilter implements ExceptionFilter {
-  catch(exception: unknown, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<IncomingMessage>();
-    console.log(exception);
-    const message = getErrorMessage(exception);
+	catch(exception: CaughtExceptions, host: ArgumentsHost) {
+		const ctx = host.switchToHttp();
+		const code = this.getStatusCode(exception);
+		Logger.log(`Error caught: ${exception.message}`);
+		const output: APIResponse = {
+			code,
+			data: null,
+			message: exception.message,
+			error: {
+				timestamp: new Date().toISOString(),
+				path: ctx.getRequest<IncomingMessage>()?.url,
+				reasons: this.getErrorDetails(exception),
+			},
+		};
 
-    return response.status(0).json({
-      error: {
-        timestamp: new Date().toISOString(),
-        path: request.url,
-        code: 0,
-        message,
-      },
-    });
-  }
+		return ctx.getResponse<Response>().status(code).json(output);
+	}
+
+	getStatusCode = (exception: CaughtExceptions) =>
+		HttpCodes[exception.name] ?? 500;
+
+	getErrorDetails = (exception: CaughtExceptions) => {
+		if (exception instanceof BadRequestException) {
+			return (exception.getResponse() as any).message as string[];
+		}
+		if (exception instanceof QueryFailedError) {
+			return exception.message;
+		}
+		if (exception instanceof EntityNotFoundError) {
+			return exception.message;
+		}
+		return exception.message;
+	};
 }

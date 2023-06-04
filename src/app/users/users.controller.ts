@@ -1,4 +1,4 @@
-import {Request, Controller, Get, UseGuards, Body} from '@nestjs/common';
+import {Request, Controller, Get, UseGuards, Body, Post} from '@nestjs/common';
 import {JwtAuthGuard} from '../auth/guards/jwt/jwt-auth.guard';
 import {InjectMapper} from '@automapper/nestjs';
 import {Mapper} from '@automapper/core';
@@ -7,11 +7,8 @@ import {CurrentUser} from '../auth/decorators/current-user.decorator';
 import {UserCreateDto} from './types/dtos/user-create.dto';
 import {UserViewDto} from './types/dtos/user-view.dto';
 import {User} from './types/user.entity';
-import {ApiTags} from '@nestjs/swagger';
-import {Create} from 'src/app/core/decorators/create.decorator';
 
 @Controller()
-@ApiTags('User Controller')
 export class UsersController {
 	constructor(
 		@InjectMapper() private readonly classMapper: Mapper,
@@ -23,11 +20,7 @@ export class UsersController {
 	 * @param dto
 	 * @returns
 	 */
-	@Create({
-		route: '/register',
-		description: 'Register new user in database',
-		successMessage: 'Successfully created new user',
-	})
+	@Post('/register')
 	async register(@Body() dto: UserCreateDto) {
 		return await this.usersService.save(dto);
 	}
