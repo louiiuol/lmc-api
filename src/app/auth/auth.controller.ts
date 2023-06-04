@@ -1,17 +1,13 @@
-import {Controller, Post, UseGuards, Body} from '@nestjs/common';
-import {User, UserCreateDto, UserLoginDto} from '../users/types';
+import {Controller, UseGuards, Body, Post} from '@nestjs/common';
 import {TokenJWT} from './types';
 import {AuthService} from './auth.service';
 import {LocalAuthGuard} from './guards/local/local-auth.guard';
+import {UserLoginDto} from '../users/types/dtos/user-login.dto';
+import {User} from '../users/types/user.entity';
 
 @Controller('auth')
 export class AuthController {
 	constructor(private authService: AuthService) {}
-
-	@Post('/register')
-	async register(@Body() dto: UserCreateDto): Promise<void> {
-		return await this.authService.register(dto);
-	}
 
 	@UseGuards(LocalAuthGuard)
 	@Post('/login')
