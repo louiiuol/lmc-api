@@ -10,7 +10,12 @@ export class LibraryController {
 	@UseGuards(JwtAuthGuard, AdminGuard)
 	@Post('courses')
 	async generateLibrary() {
-		return await this.libraryService.createLibrary();
+		await this.libraryService.createLibrary();
+		return {
+			code: 201,
+			data: null,
+			message: '🎉 Library successfully generated!',
+		};
 	}
 
 	@UseGuards(JwtAuthGuard)

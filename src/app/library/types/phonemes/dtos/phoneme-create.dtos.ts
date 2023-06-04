@@ -1,10 +1,7 @@
 export class PhonemeCreateDto {
 	name: string;
 
-	poster: string;
-
-	constructor(name: string, path: string) {
+	constructor(name: string) {
 		this.name = name;
-		this.poster = `${path}/affiche${name}.pdf`;
 	}
 }

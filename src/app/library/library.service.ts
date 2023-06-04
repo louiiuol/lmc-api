@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common';
-import {Course, CourseCreateDto, Phoneme} from './types';
+import {Course, CourseCreateDto} from './types';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 import {COURSES} from './courses.constant';
@@ -7,22 +7,15 @@ import {COURSES} from './courses.constant';
 @Injectable()
 export class LibraryService {
 	constructor(
-		@InjectRepository(Course) private courseRepository: Repository<Course>,
-		@InjectRepository(Phoneme) private phonemeRepository: Repository<Phoneme>
+		@InjectRepository(Course) private courseRepository: Repository<Course>
 	) {}
-
-	createPhoneme = async (name: string, poster: string): Promise<string> =>
-		(await this.phonemeRepository.save({name, poster})).uuid;
 
 	getAllCourses = async () => this.courseRepository.find();
 
 	createLibrary = async () => {
-		COURSES.forEach(async (current, i) => {
+		return await COURSES.map(async (current, i) => {
 			const lesson = new CourseCreateDto(current, i);
-			lesson.phonemes.forEach(
-				async entity => await this.phonemeRepository.save(entity)
-			);
-			await this.courseRepository.save(lesson);
+			return await this.courseRepository.save(lesson);
 		});
 	};
 }

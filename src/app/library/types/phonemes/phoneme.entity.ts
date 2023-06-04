@@ -20,10 +20,6 @@ export class Phoneme extends BaseEntity {
 	name: string;
 
 	@AutoMap()
-	@Column()
-	poster: string;
-
-	@AutoMap()
 	@ManyToOne(() => Course, c => c.phonemes)
 	course: Course;
 }

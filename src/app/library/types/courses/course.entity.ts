@@ -21,33 +21,30 @@ export class Course extends BaseEntity {
 	uuid: string;
 
 	@Column()
-	name: string;
-
-	@Column()
 	order: number;
 
 	@AutoMap()
-	@OneToMany(() => Phoneme, p => p.course)
+	@OneToMany(() => Phoneme, p => p.course, {cascade: ['insert', 'update']})
 	@JoinColumn()
 	phonemes: Phoneme[];
 
 	@AutoMap()
 	@Column()
-	script: string;
+	script: boolean;
 
 	@AutoMap()
 	@Column()
-	lesson: string;
+	lesson: boolean;
 
 	@AutoMap()
 	@Column()
-	exercice: string;
+	exercice: boolean;
 
 	@AutoMap()
 	@Column({nullable: true})
-	text?: string;
+	text?: boolean;
 
 	@AutoMap()
 	@Column({nullable: true})
-	poster?: string;
+	poster?: boolean;
 }

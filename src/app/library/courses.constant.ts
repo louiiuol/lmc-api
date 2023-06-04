@@ -1,5 +1,12 @@
-import {CourseGenerator} from './types';
+import {CourseCreateDto, CourseGenerator} from './types';
 
 export const COURSES: CourseGenerator[] = [
-	{phonemes: ['b', 'd'], poster: true, text: true},
+	{
+		phonemes: ['b', 'd'],
+		lesson: true,
+		script: true,
+		exercice: true,
+		poster: true,
+		text: true,
+	},
 ];
