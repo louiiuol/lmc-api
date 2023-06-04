@@ -1,5 +1,11 @@
-import {Controller, UseGuards, Body, Post} from '@nestjs/common';
-import {TokenJWT} from './types';
+import {
+	Controller,
+	UseGuards,
+	Body,
+	Post,
+	HttpStatus,
+	HttpCode,
+} from '@nestjs/common';
 import {AuthService} from './auth.service';
 import {LocalAuthGuard} from './guards/local/local-auth.guard';
 import {UserLoginDto} from '../users/types/dtos/user-login.dto';
@@ -11,8 +17,14 @@ export class AuthController {
 
 	@UseGuards(LocalAuthGuard)
 	@Post('/login')
-	login(@Body() dto: UserLoginDto): TokenJWT {
-		return this.authService.login(dto as User);
+	@HttpCode(200)
+	login(@Body() dto: UserLoginDto) {
+		const token = this.authService.login(dto as User);
+		return {
+			code: 200,
+			data: token,
+			message: '🎉 Successfully Logged in !',
+		};
 	}
 
 	// TODO Add password methods
