@@ -22,7 +22,7 @@
 		"prettier/prettier": "warn",
 		"indent": ["off", "tab"],
 		"linebreak-style": ["error", "unix"],
-		"quotes": ["error", "single"],
+		"quotes": "off",
 		"semi": ["error", "always"],
 		"@typescript-eslint/no-empty-function": "off",
 		"no-empty-function": "off",
