@@ -11,7 +11,7 @@ import {UserRole} from './user.role';
 export class User extends BaseEntity {
 	@AutoMap()
 	@PrimaryGeneratedColumn('uuid')
-	uuid!: number;
+	uuid!: string;
 
 	@AutoMap()
 	@Column({

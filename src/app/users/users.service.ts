@@ -29,7 +29,7 @@ export class UsersService {
 
 	findAll = (): Promise<User[]> => this.usersRepository.find();
 
-	findOneByUuid = (uuid: number): Promise<User> =>
+	findOneByUuid = (uuid: string): Promise<User> =>
 		this.usersRepository.findOneBy({uuid});
 
 	findOneByEmail = (email: string): Promise<User> =>
