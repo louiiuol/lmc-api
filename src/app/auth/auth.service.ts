@@ -5,12 +5,14 @@ import * as bcrypt from 'bcrypt';
 
 import {TokenJWT} from './types';
 import {User} from '../users/types/user.entity';
+import {MailerService} from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
 	constructor(
 		private usersService: UsersService,
-		private jwtService: JwtService
+		private jwtService: JwtService,
+		private mailerService: MailerService
 	) {}
 
 	/**
@@ -45,4 +47,41 @@ export class AuthService {
 
 	getCurrentUser = async (email: string) =>
 		await this.usersService.findOneByEmail(email);
+
+	forgotPassword = async (email: string) => {
+		const user = await this.getCurrentUser(email);
+		if (user) {
+			const secret = process.env.JWT_SECRET_KEY + user.password;
+			const payload = {
+				email,
+				uuid: user.uuid,
+			};
+			const token = this.jwtService.sign(payload, {secret, expiresIn: '15m'});
+			const link = `http://localhost:4200/reset-password/${user.uuid}/${token}`;
+
+			this.mailerService.sendMail({
+				to: email,
+				from: 'La Méthode Claire',
+				subject: 'Réinitialisez votre mot de passe',
+				html: `
+				<h1>Vous avez oublié votre mot de passe ?</h1>
+				<a href='${link}'>Réinitialiser votre mot de passe</a>`,
+			});
+		}
+		return 'email sent (if account exists)';
+	};
+
+	async resetPassword(token: string, uuid: string, password: string) {
+		const user = await this.usersService.findOneByUuid(uuid);
+		if (user) {
+			const secret = process.env.JWT_SECRET_KEY + user.password;
+			try {
+				this.jwtService.verify(token, {secret});
+				user.password = password;
+				this.usersService.save(user);
+			} catch (e) {
+				console.error(e);
+			}
+		}
+	}
 }
