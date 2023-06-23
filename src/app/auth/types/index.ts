@@ -1,2 +1,3 @@
-export * from './token';
-export * from './token-jwt';
+export {Token} from './token';
+export {TokenJWT} from './token-jwt';
+export * from './dtos';
