@@ -15,11 +15,6 @@ export class UsersController {
 		private readonly usersService: UsersService
 	) {}
 
-	/**
-	 * Register new user if email is not taken
-	 * @param dto
-	 * @returns
-	 */
 	@Post('/register')
 	async register(@Body() dto: UserCreateDto) {
 		return await this.usersService.save(dto);

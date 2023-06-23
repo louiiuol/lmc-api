@@ -4,9 +4,9 @@ import {IsUserAlreadyExist} from 'src/app/users/validators/unique-email.validato
 export class UserCreateDto {
 	@IsEmail()
 	@IsUserAlreadyExist()
-	email!: string;
+	email: string;
 
 	@IsString()
 	@IsNotEmpty()
-	password!: string;
+	password: string;
 }
