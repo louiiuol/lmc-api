@@ -1,3 +1,3 @@
 export interface TokenJWT {
-  accessToken: string;
+	accessToken: string;
 }
