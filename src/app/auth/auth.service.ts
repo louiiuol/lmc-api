@@ -61,7 +61,6 @@ export class AuthService {
 
 			this.mailerService.sendMail({
 				to: email,
-				from: 'La Méthode Claire',
 				subject: 'Réinitialisez votre mot de passe',
 				html: `
 				<h1>Vous avez oublié votre mot de passe ?</h1>
