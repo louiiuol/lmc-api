@@ -7,6 +7,7 @@ import {User} from './users/types/user.entity';
 import {AuthModule} from './auth/auth.module';
 import {LibraryModule} from './library/library.module';
 import {Course, Phoneme} from './library/types';
+import {MailerModule} from '@nestjs-modules/mailer';
 
 @Module({
 	imports: [
@@ -22,6 +23,15 @@ import {Course, Phoneme} from './library/types';
 		}),
 		AutomapperModule.forRoot({
 			strategyInitializer: classes(),
+		}),
+		MailerModule.forRoot({
+			transport: {
+				host: environment.SMTP_HOST,
+				auth: {
+					user: environment.SMTP_EMAIL,
+					pass: environment.SMTP_PASS,
+				},
+			},
 		}),
 		AuthModule,
 		LibraryModule,
