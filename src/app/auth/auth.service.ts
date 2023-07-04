@@ -63,8 +63,11 @@ export class AuthService {
 				to: email,
 				subject: 'Réinitialisez votre mot de passe',
 				html: `
-				<h1>Vous avez oublié votre mot de passe ?</h1>
-				<a href='${link}'>Réinitialiser votre mot de passe</a>`,
+				<h3>Vous avez oublié votre mot de passe ?</h3>
+				<p>Vous pouvez réinitialiser votre mot de pass en cliquant sur le lien ci-dessous.</p>
+				<a style="background: #d4804f; padding: 5px 15px; color: white; border-radius: 5px" href='${link}'>Réinitialiser votre mot de passe</a>
+				<p>Si vous n'avez pas demandé la réinitialisation de votre mot de passe, quelqu'un utilise peut-être votre compte. Vérifiez et sécurisez votre compte dès maintenant.</p>
+				`,
 			});
 		}
 		return 'email sent (if account exists)';
