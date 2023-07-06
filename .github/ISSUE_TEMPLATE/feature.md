@@ -4,6 +4,7 @@ about: Nouvelle fonctionnalité
 title: ''
 labels: enhancement
 assignees: louiiuol
+projects: lmc-api
 
 ---
 
