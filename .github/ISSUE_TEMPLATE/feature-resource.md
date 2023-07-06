@@ -11,6 +11,9 @@ projects: lmc-api
 
 ## Contexte 📝
 
+### Current Behavior
+<!-- A concise description of what you're experiencing. -->
+
 > -
 
 ## A faire 💪
