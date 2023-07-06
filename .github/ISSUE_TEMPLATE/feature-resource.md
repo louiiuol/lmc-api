@@ -11,17 +11,29 @@ projects: lmc-api
 
 ## Contexte 📝
 
-### Current Behavior
-<!-- A concise description of what you're experiencing. -->
-
-> -
+> **En tant qu'utilisateur**, je veux
 
 ## A faire 💪
 
--
+Création d'une nouvelle route `GET:api/`
+*Protégée par `JwtGuard`*
 
-| Propriété | requis | type | pattern(s) | contrainte(s) |
-|:------|--------|------|------------|---------------|
-| champ | ✔️ ❌  | `type` | `pattern` | - |
+### Input
+
+| propriété | description | requis | type | défaut | valeur(s) |
+|:----------|--------|--------|------|------------|---------------|
+| `champ` | | ✔️ ❌  | `type` | `pattern` | - |
+
+### Traitement
+
+- [ ]
+
+### Output
+
+```typescript
+interface DTO {
+  uuid: string;
+}
+```
 
 ## Informations complémentaires 🔎
