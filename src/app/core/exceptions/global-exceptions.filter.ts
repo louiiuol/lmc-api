@@ -25,6 +25,7 @@ type CaughtExceptions =
 const HttpCodes: {[key: string]: number} = {
 	UnauthorizedException: 401,
 	ForbiddenException: 403,
+	NotFoundException: 404,
 	QueryFailedError: 409,
 	EntityNotFoundError: 404,
 	BadRequestException: 422,
@@ -49,7 +50,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 	catch(exception: CaughtExceptions, host: ArgumentsHost) {
 		const ctx = host.switchToHttp();
 		const code = this.getStatusCode(exception);
-		Logger.log(`Error caught: ${exception.message}`);
+
+		Logger.error(`[${code}] - ${exception.message}`, 'NestApplication');
 		const output: APIResponse = {
 			code,
 			data: null,
@@ -65,7 +67,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 	}
 
 	getStatusCode = (exception: CaughtExceptions) =>
-		HttpCodes[exception.name] ?? 500;
+		HttpCodes[exception.name] ?? (exception as any)?.code ?? 500;
 
 	getErrorDetails = (exception: CaughtExceptions) => {
 		if (exception instanceof BadRequestException) {
