@@ -20,9 +20,11 @@ import {
 	User,
 	PasswordForgotDto,
 	PasswordResetDto,
+	PasswordCheckDto,
 	UserCreateDto,
 	UserViewDto,
 } from './types';
+import {QueryRequired} from '../core/decorators/required-query';
 
 @Controller()
 export class UsersController {
@@ -38,7 +40,7 @@ export class UsersController {
 
 	@Redirect(environment.WEB_UI_LOGIN_PATH)
 	@Get('users/:uuid/activate')
-	async activateAccount(@Query('token') token, @Param('uuid') uuid) {
+	async activateAccount(@QueryRequired('token') token, @Param('uuid') uuid) {
 		await this.usersService.activateAccount(uuid, token);
 	}
 
@@ -68,7 +70,7 @@ export class UsersController {
 
 	@UseGuards(JwtAuthGuard)
 	@Get('check-password')
-	checkPassword(@Body() dto: {password: string}, @CurrentUser() user) {
+	checkPassword(@Body() dto: PasswordCheckDto, @CurrentUser() user) {
 		return this.usersService.checkPassword(user, dto.password);
 	}
 

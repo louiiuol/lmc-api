@@ -20,7 +20,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 	 * @param email user's identifier
 	 * @param password user's password (must match stored pass)
 	 * @returns User entity from database
-	 * @see authService.validateUser
 	 */
 	async validate(email: string, password: string): Promise<Partial<User>> {
 		const user = await this.authService.validateUser(email, password);

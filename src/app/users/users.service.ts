@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, UnauthorizedException} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {DeleteResult, Repository} from 'typeorm';
 import {environment} from '../environment';
@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import {MailerService} from '@nestjs-modules/mailer';
 import {JwtService} from '@nestjs/jwt';
 import {User, UserCreateDto, PasswordResetDto} from './types';
+import {log} from 'console';
 
 @Injectable()
 export class UsersService {
@@ -50,10 +51,14 @@ export class UsersService {
 	};
 
 	checkToken = async (uuid: string, token: any): Promise<boolean> => {
-		const user = await this.findOneByUuid(uuid);
-		return !!this.jwtService.verify(token, {
-			secret: process.env.JWT_SECRET_KEY + user.password,
-		});
+		try {
+			const user = await this.findOneByUuid(uuid);
+			return !!this.jwtService.verify(token, {
+				secret: process.env.JWT_SECRET_KEY + user.password,
+			});
+		} catch (e) {
+			throw new UnauthorizedException(e.message);
+		}
 	};
 
 	findAll = (): Promise<User[]> => this.usersRepository.find();
@@ -134,8 +139,11 @@ export class UsersService {
 	hashPassword = async (password: string): Promise<string> =>
 		await bcrypt.hash(password, this.salt);
 
-	checkPassword = async (user: User, password: string): Promise<boolean> =>
-		await bcrypt.compare(password, user.password);
+	checkPassword = async (input: User, password: string): Promise<boolean> => {
+		// TODO catch spam
+		const user = await this.findOneByUuid(input.uuid);
+		return await bcrypt.compare(password, user.password);
+	};
 
 	private setUserActive = async (user: User, active: boolean) => {
 		const entity = await this.findOneByUuid(user.uuid);
