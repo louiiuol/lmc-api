@@ -35,7 +35,7 @@ export class User extends BaseEntity {
 	password!: string;
 
 	@AutoMap()
-	@Column({default: true})
+	@Column({default: false})
 	isActive!: boolean;
 
 	@AutoMap()

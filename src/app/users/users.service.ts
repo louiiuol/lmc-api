@@ -1,31 +1,60 @@
 import {Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {DeleteResult, Repository} from 'typeorm';
-import {InjectMapper} from '@automapper/nestjs';
-import {Mapper} from '@automapper/core';
-import {UserCreateDto} from './types/dtos/user-create.dto';
-import {UserViewDto} from './types/dtos/user-view.dto';
-import {User} from './types/user.entity';
 import {environment} from '../environment';
 import * as bcrypt from 'bcrypt';
+import {MailerService} from '@nestjs-modules/mailer';
+import {JwtService} from '@nestjs/jwt';
+import {User, UserCreateDto, PasswordResetDto} from './types';
 
 @Injectable()
 export class UsersService {
 	private readonly salt = Number(environment.SALT);
 	constructor(
 		@InjectRepository(User) private usersRepository: Repository<User>,
-		@InjectMapper() private readonly classMapper: Mapper
+		private readonly mailerService: MailerService,
+		private readonly jwtService: JwtService
 	) {}
 
 	/**
 	 * Store User entity in database.
 	 * @param user entity to be saved
 	 */
-	async save(user: UserCreateDto): Promise<UserViewDto> {
-		user.password = await bcrypt.hash(user.password, this.salt);
-		const entity = await this.usersRepository.save(user);
-		return this.classMapper.mapAsync(entity, User, UserViewDto);
-	}
+	save = async (user: UserCreateDto): Promise<string> => {
+		if (!(await this.findOneByEmail(user.email))) {
+			user.password = await this.hashPassword(user.password);
+			const entity = await this.usersRepository.save(user);
+			if (user) {
+				const token = this.jwtService.sign(
+					{
+						email: entity.email,
+						uuid: entity.uuid,
+					},
+					{secret: process.env.JWT_SECRET_KEY + user.password, expiresIn: '15m'}
+				);
+				const title = 'Bienvenue sur la méthode claire !';
+				this.mailerService.sendMail({
+					to: entity.email,
+					subject: title,
+					template: 'activate-account',
+					context: {
+						title,
+						summary:
+							"Pour compléter l'inscription de votre compte, merci de cliquer sur le lien ci-dessous",
+						link: `http://localhost:3333/api/users/${entity.uuid}/activate/?token=${token}`,
+					},
+				});
+			}
+		}
+		return '🎉 Account created !';
+	};
+
+	checkToken = async (uuid: string, token: any): Promise<boolean> => {
+		const user = await this.findOneByUuid(uuid);
+		return !!this.jwtService.verify(token, {
+			secret: process.env.JWT_SECRET_KEY + user.password,
+		});
+	};
 
 	findAll = (): Promise<User[]> => this.usersRepository.find();
 
@@ -44,5 +73,73 @@ export class UsersService {
 		const entity = await this.findOneByUuid(user.uuid);
 		entity.currentLessonIndex++;
 		return (await this.usersRepository.save(entity)).currentLessonIndex;
+	};
+
+	activateAccount = async (uuid: string, token: string) => {
+		if (await this.checkToken(uuid, token)) {
+			const entity = await this.findOneByUuid(uuid);
+			await this.setUserActive(entity, true);
+			return '🎉 Account activated !';
+		} else return '❌ Invalid token !';
+	};
+
+	closeAccount = async (user: any) => {
+		await this.setUserActive(user, false);
+		return '🎉 Account closed !';
+	};
+
+	forgotPassword = async (email: string) => {
+		const user = await this.findOneByEmail(email);
+		if (user) {
+			const token = this.jwtService.sign(
+				{
+					email,
+					uuid: user.uuid,
+				},
+				{secret: process.env.JWT_SECRET_KEY + user.password, expiresIn: '15m'}
+			);
+			const title = 'Réinitialisez votre mot de passe';
+			this.mailerService.sendMail({
+				to: email,
+				subject: title,
+				template: 'forgot-password',
+				context: {
+					title,
+					summary:
+						'Vous pouvez réinitialiser votre mot de pass en cliquant sur le lien ci-dessous.',
+					link: `http://localhost:4200/reset-password/${user.uuid}/${token}`,
+				},
+			});
+		}
+		return '🎉 Email sent !';
+	};
+
+	async resetPassword(uuid: string, dto: PasswordResetDto) {
+		const user = await this.findOneByUuid(uuid);
+		if (user) {
+			try {
+				this.jwtService.verify(dto.token, {
+					secret: process.env.JWT_SECRET_KEY + user.password,
+				});
+				user.password = await this.hashPassword(dto.password);
+				await this.save(user);
+				return '🎉 Successfully updated !';
+			} catch (e) {
+				console.error(e);
+				return '❌ Invalid token !';
+			}
+		}
+	}
+
+	hashPassword = async (password: string): Promise<string> =>
+		await bcrypt.hash(password, this.salt);
+
+	checkPassword = async (user: User, password: string): Promise<boolean> =>
+		await bcrypt.compare(password, user.password);
+
+	private setUserActive = async (user: User, active: boolean) => {
+		const entity = await this.findOneByUuid(user.uuid);
+		entity.isActive = active;
+		await this.usersRepository.save(entity);
 	};
 }
