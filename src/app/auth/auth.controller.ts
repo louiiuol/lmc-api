@@ -3,11 +3,13 @@ import {AuthService} from './auth.service';
 import {LocalAuthGuard} from './guards/local/local-auth.guard';
 import {UserLoginDto} from '../users/types/dtos/user-login.dto';
 import {User} from '../users/types/user.entity';
-import {PasswordForgotDto, PasswordResetDto} from './types';
 
+/**
+ * Provides controller to handle user authentication
+ */
 @Controller('auth')
 export class AuthController {
-	constructor(private authService: AuthService) {}
+	constructor(private readonly authService: AuthService) {}
 
 	@UseGuards(LocalAuthGuard)
 	@Post('/login')
@@ -20,15 +22,5 @@ export class AuthController {
 		};
 	}
 
-	@Post('forgot-password')
-	@HttpCode(200)
-	forgotPassword(@Body() dto: PasswordForgotDto) {
-		return this.authService.forgotPassword(dto.email);
-	}
-
-	@Post('reset-password')
-	@HttpCode(200)
-	resetPassword(@Body() dto: PasswordResetDto) {
-		return this.authService.resetPassword(dto.token, dto.uuid, dto.password);
-	}
+	// TODO Refresh token
 }

@@ -15,7 +15,7 @@ import {AdminGuard} from './guards/roles/admin.guard';
 		PassportModule,
 		JwtModule.register({
 			secret: environment.JWT_SECRET_KEY,
-			signOptions: {expiresIn: '360s'},
+			signOptions: {expiresIn: '1d'},
 		}),
 	],
 	controllers: [AuthController],
