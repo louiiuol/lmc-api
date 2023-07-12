@@ -23,5 +23,3 @@ export class UserViewDto {
 	@AutoMap()
 	currentLessonIndex: number;
 }
-
-export class UserUpdateDo extends UserViewDto {}

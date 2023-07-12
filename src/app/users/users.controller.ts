@@ -6,9 +6,10 @@ import {
 	Body,
 	Post,
 	Param,
-	Query,
 	Redirect,
 	HttpCode,
+	Patch,
+	ForbiddenException,
 } from '@nestjs/common';
 import {JwtAuthGuard} from '../auth/guards/jwt/jwt-auth.guard';
 import {InjectMapper} from '@automapper/nestjs';
@@ -23,6 +24,7 @@ import {
 	PasswordCheckDto,
 	UserCreateDto,
 	UserViewDto,
+	UserUpdateDto,
 } from './types';
 import {QueryRequired} from '../core/decorators/required-query';
 
@@ -45,16 +47,21 @@ export class UsersController {
 	}
 
 	@UseGuards(JwtAuthGuard)
-	@Get('me')
-	async getProfile(@Request() req): Promise<UserViewDto> {
-		return this.classMapper.map(
-			await this.usersService.findOneByEmail(req.user.email),
-			User,
-			UserViewDto
-		);
+	@Patch('users/:uuid')
+	async updateUser(
+		@Body() dto: UserUpdateDto,
+		@Param('uuid') uuid,
+		@CurrentUser() user
+	) {
+		this.checkIsAllowed(user, uuid);
+		return await this.mapReturn(this.usersService.updateUser(uuid, dto));
 	}
 
-	// TODO Update user
+	@UseGuards(JwtAuthGuard)
+	@Get('me')
+	async getProfile(@CurrentUser() user) {
+		return await this.mapReturn(this.usersService.findOneByEmail(user.email));
+	}
 
 	@Post('forgot-password')
 	@HttpCode(200)
@@ -74,6 +81,8 @@ export class UsersController {
 		return this.usersService.checkPassword(user, dto.password);
 	}
 
+	// TODO Logged update password
+
 	@UseGuards(JwtAuthGuard)
 	@Get('courses/next')
 	async nextLesson(@CurrentUser() user) {
@@ -84,5 +93,13 @@ export class UsersController {
 	@Get('close')
 	async closeAccount(@CurrentUser() user) {
 		return await this.usersService.closeAccount(user);
+	}
+
+	private mapReturn = async (promise: Promise<any>) =>
+		this.classMapper.map(await promise, User, UserViewDto);
+
+	private checkIsAllowed(user: {uuid: string; role: string}, uuid) {
+		if (!(user.role === 'ADMIN' || user.uuid === uuid))
+			throw new ForbiddenException('ACTION_NOT_ALLOWED');
 	}
 }

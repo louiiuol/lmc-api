@@ -5,8 +5,7 @@ import {environment} from '../environment';
 import * as bcrypt from 'bcrypt';
 import {MailerService} from '@nestjs-modules/mailer';
 import {JwtService} from '@nestjs/jwt';
-import {User, UserCreateDto, PasswordResetDto} from './types';
-import {log} from 'console';
+import {User, UserCreateDto, PasswordResetDto, UserUpdateDto} from './types';
 
 @Injectable()
 export class UsersService {
@@ -118,6 +117,14 @@ export class UsersService {
 		}
 		return '🎉 Email sent !';
 	};
+
+	async updateUser(uuid: string, dto: UserUpdateDto) {
+		const entity = await this.findOneByUuid(uuid);
+		// TODO Checks if current user is allowed to update (admin or himself)
+		const updated = Object.assign(entity, dto);
+		await this.usersRepository;
+		return '🎉 Account activated !';
+	}
 
 	async resetPassword(uuid: string, dto: PasswordResetDto) {
 		const user = await this.findOneByUuid(uuid);

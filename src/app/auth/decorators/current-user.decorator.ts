@@ -1,9 +1,10 @@
 import {createParamDecorator, ExecutionContext} from '@nestjs/common';
+import {UserAuth, UserViewDto} from 'src/app/users/types';
 
 export const CurrentUser = createParamDecorator(
 	(data: string, ctx: ExecutionContext) => {
-		const user = ctx.switchToHttp().getRequest().user;
+		const user = ctx.switchToHttp().getRequest().user as UserAuth;
 		if (!user) return null;
-		return data ? user[data] : user; // extract a specific property only if specified or get a user object
+		return (data ? user[data] : user) as UserAuth; // extract a specific property only if specified or get a user object
 	}
 );
