@@ -25,6 +25,7 @@ import {
 	UserCreateDto,
 	UserViewDto,
 	UserUpdateDto,
+	PasswordUpdateDto,
 } from './types';
 import {QueryRequired} from '../core/decorators/required-query';
 
@@ -47,20 +48,15 @@ export class UsersController {
 	}
 
 	@UseGuards(JwtAuthGuard)
-	@Patch('users/:uuid')
-	async updateUser(
-		@Body() dto: UserUpdateDto,
-		@Param('uuid') uuid,
-		@CurrentUser() user
-	) {
-		this.checkIsAllowed(user, uuid);
-		return await this.mapReturn(this.usersService.updateUser(uuid, dto));
-	}
-
-	@UseGuards(JwtAuthGuard)
 	@Get('me')
 	async getProfile(@CurrentUser() user) {
 		return await this.mapReturn(this.usersService.findOneByEmail(user.email));
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Patch('me')
+	async updateUser(@Body() dto: UserUpdateDto, @CurrentUser() user) {
+		return await this.mapReturn(this.usersService.updateUser(user.uuid, dto));
 	}
 
 	@Post('forgot-password')
@@ -81,7 +77,12 @@ export class UsersController {
 		return this.usersService.checkPassword(user, dto.password);
 	}
 
-	// TODO Logged update password
+	@UseGuards(JwtAuthGuard)
+	@Post('update-password')
+	@HttpCode(200)
+	updatePassword(@CurrentUser() user, @Body() dto: PasswordUpdateDto) {
+		return this.usersService.updatePassword(user.uuid, dto.password);
+	}
 
 	@UseGuards(JwtAuthGuard)
 	@Get('courses/next')

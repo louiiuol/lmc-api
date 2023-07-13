@@ -1,4 +1,4 @@
-import {IsJWT, IsNotEmpty, IsString} from '@nestjs/class-validator';
+import {IsJWT, IsNotEmpty, IsString, Matches} from '@nestjs/class-validator';
 
 export class PasswordResetDto {
 	@IsJWT()
@@ -6,5 +6,9 @@ export class PasswordResetDto {
 
 	@IsString()
 	@IsNotEmpty()
+	@Matches(
+		/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>]).{8,}$/,
+		{message: 'STRONG_PASSWORD_REQUIRED'}
+	)
 	password: string;
 }

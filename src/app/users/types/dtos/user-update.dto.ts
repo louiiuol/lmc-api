@@ -1,19 +1,25 @@
 import {
 	IsEmail,
-	IsNotEmpty,
+	IsOptional,
 	IsString,
+	MaxLength,
 	MinLength,
 } from '@nestjs/class-validator';
 
 export class UserUpdateDto {
+	@IsOptional()
 	@IsEmail()
-	email: string;
+	email?: string;
 
+	@IsOptional()
 	@IsString()
-	@IsNotEmpty()
 	@MinLength(1)
-	firstName: string;
+	@MaxLength(20)
+	firstName?: string;
 
+	@IsOptional()
 	@IsString()
+	@MinLength(1)
+	@MaxLength(60)
 	lastName?: string;
 }

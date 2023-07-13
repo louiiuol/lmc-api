@@ -29,18 +29,18 @@ export class User extends BaseEntity {
 	@Column({
 		unique: true,
 	})
-	email!: string;
+	email: string;
 
 	@Column()
-	password!: string;
+	password: string;
 
 	@AutoMap()
 	@Column({default: false})
-	isActive!: boolean;
+	isActive: boolean;
 
 	@AutoMap()
 	@Column({default: 0})
-	currentLessonIndex!: number;
+	currentLessonIndex: number;
 
 	@AutoMap()
 	@Column({
@@ -48,5 +48,11 @@ export class User extends BaseEntity {
 		enum: UserRole,
 		default: UserRole.USER,
 	})
-	role!: UserRole;
+	role: UserRole;
+
+	@Column({default: () => 'NOW()'})
+	createdAt: Date;
+
+	@Column({default: () => 'NOW()'})
+	updatedAt: Date;
 }

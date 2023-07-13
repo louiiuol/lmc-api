@@ -1,4 +1,8 @@
-import {Injectable, UnauthorizedException} from '@nestjs/common';
+import {
+	ForbiddenException,
+	Injectable,
+	UnauthorizedException,
+} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {DeleteResult, Repository} from 'typeorm';
 import {environment} from '../environment';
@@ -119,11 +123,7 @@ export class UsersService {
 	};
 
 	async updateUser(uuid: string, dto: UserUpdateDto) {
-		const entity = await this.findOneByUuid(uuid);
-		// TODO Checks if current user is allowed to update (admin or himself)
-		const updated = Object.assign(entity, dto);
-		await this.usersRepository;
-		return '🎉 Account activated !';
+		return await this.usersRepository.update({uuid}, dto);
 	}
 
 	async resetPassword(uuid: string, dto: PasswordResetDto) {
@@ -134,13 +134,19 @@ export class UsersService {
 					secret: process.env.JWT_SECRET_KEY + user.password,
 				});
 				user.password = await this.hashPassword(dto.password);
-				await this.save(user);
-				return '🎉 Successfully updated !';
+				await this.usersRepository.update({uuid}, user);
+				return '🎉 updated !';
 			} catch (e) {
-				console.error(e);
-				return '❌ Invalid token !';
+				const message = '❌ Invalid token !';
+				console.error(message, e);
+				throw new ForbiddenException(message);
 			}
 		}
+	}
+
+	async updatePassword(uuid: string, password: string) {
+		const dto = {password: await this.hashPassword(password)};
+		return await this.usersRepository.update({uuid}, dto);
 	}
 
 	hashPassword = async (password: string): Promise<string> =>

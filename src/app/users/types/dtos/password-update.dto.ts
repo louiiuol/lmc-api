@@ -1,9 +1,6 @@
 import {Matches, IsEmail, IsNotEmpty, IsString} from '@nestjs/class-validator';
 
-export class UserCreateDto {
-	@IsEmail()
-	email: string;
-
+export class PasswordUpdateDto {
 	@IsString()
 	@IsNotEmpty()
 	@Matches(
