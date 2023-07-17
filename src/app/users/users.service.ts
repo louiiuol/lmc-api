@@ -4,7 +4,7 @@ import {
 	UnauthorizedException,
 } from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
-import {DeleteResult, Repository} from 'typeorm';
+import {Repository} from 'typeorm';
 import {environment} from '../environment';
 import * as bcrypt from 'bcrypt';
 import {MailerService} from '@nestjs-modules/mailer';
@@ -66,16 +66,14 @@ export class UsersService {
 
 	findAll = (): Promise<User[]> => this.usersRepository.find();
 
-	findOneByUuid = (uuid: string): Promise<User> =>
-		this.usersRepository.findOneBy({uuid});
+	findOneByUuid = (uuid: string) => this.usersRepository.findOneBy({uuid});
 
-	findOneByEmail = (email: string): Promise<User> =>
+	findOneByEmail = (email: string) =>
 		this.usersRepository.findOne({
 			where: {email},
 		});
 
-	remove = async (id: string): Promise<DeleteResult> =>
-		await this.usersRepository.delete(id);
+	remove = async (id: string) => await this.usersRepository.delete(id);
 
 	nextLesson = async (user: User): Promise<number> => {
 		const entity = await this.findOneByUuid(user.uuid);
