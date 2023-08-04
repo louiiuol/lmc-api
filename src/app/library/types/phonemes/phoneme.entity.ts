@@ -12,7 +12,7 @@ import {Course} from '../courses/course.entity';
 })
 export class Phoneme extends BaseEntity {
 	@AutoMap()
-	@PrimaryGeneratedColumn()
+	@PrimaryGeneratedColumn('uuid')
 	uuid: string;
 
 	@AutoMap()
@@ -22,4 +22,8 @@ export class Phoneme extends BaseEntity {
 	@AutoMap()
 	@ManyToOne(() => Course, c => c.phonemes)
 	course: Course;
+
+	@AutoMap()
+	@Column({nullable: true})
+	poster?: boolean;
 }

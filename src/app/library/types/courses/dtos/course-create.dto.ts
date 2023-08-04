@@ -1,27 +1,33 @@
-import {PhonemeCreateDto} from '../../phonemes/dtos/phoneme-create.dtos';
+import {PhonemeCreateDto} from '../../phonemes/dtos/phoneme-create.dto';
 import {CourseGenerator} from '../course-generator.type';
 
 export class CourseCreateDto {
-	name: string;
+	order?: number;
 
-	order: number;
+	phonemes?: {name: string}[];
 
-	phonemes: {name: string}[];
+	lesson?: boolean;
 
-	lesson: boolean;
+	script?: boolean;
 
-	script: boolean;
+	exercice?: boolean;
 
-	exercice: boolean;
+	poster?: boolean;
 
-	poster: boolean;
+	text?: boolean;
 
-	text: boolean;
+	words: string[];
 
 	constructor(lesson: CourseGenerator, order: number) {
 		this.order = order;
 		this.phonemes = lesson.phonemes.map(
 			phoneme => new PhonemeCreateDto(phoneme)
 		);
+		this.script = lesson.script;
+		this.lesson = lesson.lesson;
+		this.exercice = lesson.exercice;
+		this.poster = lesson.poster;
+		this.text = lesson.text;
+		this.words = lesson.words ?? [];
 	}
 }

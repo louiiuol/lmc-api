@@ -24,7 +24,10 @@ export class Course extends BaseEntity {
 	order: number;
 
 	@AutoMap()
-	@OneToMany(() => Phoneme, p => p.course, {cascade: ['insert', 'update']})
+	@OneToMany(() => Phoneme, p => p.course, {
+		cascade: ['insert', 'update', 'remove'],
+		eager: true,
+	})
 	@JoinColumn()
 	phonemes: Phoneme[];
 
@@ -33,12 +36,12 @@ export class Course extends BaseEntity {
 	script: boolean;
 
 	@AutoMap()
-	@Column()
-	lesson: boolean;
+	@Column({nullable: true})
+	lesson?: boolean;
 
 	@AutoMap()
-	@Column()
-	exercice: boolean;
+	@Column({nullable: true})
+	exercice?: boolean;
 
 	@AutoMap()
 	@Column({nullable: true})
@@ -47,4 +50,11 @@ export class Course extends BaseEntity {
 	@AutoMap()
 	@Column({nullable: true})
 	poster?: boolean;
+
+	@AutoMap()
+	@Column({
+		type: 'simple-array',
+		nullable: true,
+	})
+	words?: string[];
 }

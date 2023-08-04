@@ -1,8 +1,9 @@
 export type CourseGenerator = {
-	phonemes: string[];
-	lesson: boolean;
-	script: boolean;
-	exercice: boolean;
-	poster: boolean;
-	text: boolean;
+	phonemes?: {name: string; poster?: boolean}[];
+	lesson?: boolean;
+	script?: boolean;
+	exercice?: boolean;
+	poster?: boolean;
+	text?: boolean;
+	words?: string[];
 };
