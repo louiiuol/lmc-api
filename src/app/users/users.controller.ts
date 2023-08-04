@@ -1,5 +1,4 @@
 import {
-	Request,
 	Controller,
 	Get,
 	UseGuards,
@@ -10,6 +9,7 @@ import {
 	HttpCode,
 	Patch,
 	ForbiddenException,
+	Query,
 } from '@nestjs/common';
 import {JwtAuthGuard} from '../auth/guards/jwt/jwt-auth.guard';
 import {InjectMapper} from '@automapper/nestjs';
@@ -78,7 +78,7 @@ export class UsersController {
 	}
 
 	@UseGuards(JwtAuthGuard)
-	@Post('update-password')
+	@Patch('update-password')
 	@HttpCode(200)
 	updatePassword(@CurrentUser() user, @Body() dto: PasswordUpdateDto) {
 		return this.usersService.updatePassword(user.uuid, dto.password);
@@ -86,8 +86,8 @@ export class UsersController {
 
 	@UseGuards(JwtAuthGuard)
 	@Get('courses/next')
-	async nextLesson(@CurrentUser() user) {
-		return await this.usersService.nextLesson(user);
+	async nextLesson(@CurrentUser() user, @Query() index: number) {
+		return await this.usersService.setCurrentLessonIndex(user, index);
 	}
 
 	@UseGuards(JwtAuthGuard)
@@ -99,7 +99,7 @@ export class UsersController {
 	private mapReturn = async (promise: Promise<any>) =>
 		this.classMapper.map(await promise, User, UserViewDto);
 
-	private checkIsAllowed(user: {uuid: string; role: string}, uuid) {
+	private checkIsAllowed(user: {uuid: string; role: string}, uuid: string) {
 		if (!(user.role === 'ADMIN' || user.uuid === uuid))
 			throw new ForbiddenException('ACTION_NOT_ALLOWED');
 	}

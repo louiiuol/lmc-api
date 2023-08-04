@@ -24,7 +24,7 @@ export class UsersService {
 	 * Store User entity in database.
 	 * @param user entity to be saved
 	 */
-	save = async (user: UserCreateDto): Promise<string> => {
+	save = async (user: UserCreateDto) => {
 		if (!(await this.findOneByEmail(user.email))) {
 			user.password = await this.hashPassword(user.password);
 			const entity = await this.usersRepository.save(user);
@@ -50,7 +50,7 @@ export class UsersService {
 				});
 			}
 		}
-		return '🎉 Account created !';
+		return {message: '🎉 Account created !'};
 	};
 
 	checkToken = async (uuid: string, token: any): Promise<boolean> => {
@@ -75,9 +75,12 @@ export class UsersService {
 
 	remove = async (id: string) => await this.usersRepository.delete(id);
 
-	nextLesson = async (user: User): Promise<number> => {
+	setCurrentLessonIndex = async (
+		user: User,
+		index: number
+	): Promise<number> => {
 		const entity = await this.findOneByUuid(user.uuid);
-		entity.currentLessonIndex++;
+		entity.currentLessonIndex = index;
 		return (await this.usersRepository.save(entity)).currentLessonIndex;
 	};
 
