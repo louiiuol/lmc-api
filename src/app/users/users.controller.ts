@@ -8,8 +8,8 @@ import {
 	Redirect,
 	HttpCode,
 	Patch,
-	ForbiddenException,
 	Query,
+	Put,
 } from '@nestjs/common';
 import {JwtAuthGuard} from '../auth/guards/jwt/jwt-auth.guard';
 import {InjectMapper} from '@automapper/nestjs';
@@ -41,7 +41,7 @@ export class UsersController {
 		return await this.usersService.save(dto);
 	}
 
-	@Redirect(environment.WEB_UI_LOGIN_PATH)
+	@Redirect(environment.WEB_UI_URL + 'login')
 	@Get('users/:uuid/activate')
 	async activateAccount(@QueryRequired('token') token, @Param('uuid') uuid) {
 		await this.usersService.activateAccount(uuid, token);
@@ -65,7 +65,7 @@ export class UsersController {
 		return this.usersService.forgotPassword(dto.email);
 	}
 
-	@Post('users/:uuid/reset-password')
+	@Put('users/:uuid/reset-password')
 	@HttpCode(200)
 	resetPassword(@Body() dto: PasswordResetDto, @Param('uuid') uuid: string) {
 		return this.usersService.resetPassword(uuid, dto);
@@ -98,9 +98,4 @@ export class UsersController {
 
 	private mapReturn = async (promise: Promise<any>) =>
 		this.classMapper.map(await promise, User, UserViewDto);
-
-	private checkIsAllowed(user: {uuid: string; role: string}, uuid: string) {
-		if (!(user.role === 'ADMIN' || user.uuid === uuid))
-			throw new ForbiddenException('ACTION_NOT_ALLOWED');
-	}
 }

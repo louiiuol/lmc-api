@@ -50,26 +50,16 @@ export class UsersService {
 				});
 			}
 		}
-		return {message: '🎉 Account created !'};
+		return {message: 'SUCCESS'};
 	};
 
-	checkToken = async (uuid: string, token: any): Promise<boolean> => {
-		try {
-			const user = await this.findOneByUuid(uuid);
-			return !!this.jwtService.verify(token, {
-				secret: process.env.JWT_SECRET_KEY + user.password,
-			});
-		} catch (e) {
-			throw new UnauthorizedException(e.message);
-		}
-	};
+	findAll = async (): Promise<User[]> => await this.usersRepository.find();
 
-	findAll = (): Promise<User[]> => this.usersRepository.find();
+	findOneByUuid = async (uuid: string) =>
+		await this.usersRepository.findOneBy({uuid});
 
-	findOneByUuid = (uuid: string) => this.usersRepository.findOneBy({uuid});
-
-	findOneByEmail = (email: string) =>
-		this.usersRepository.findOne({
+	findOneByEmail = async (email: string) =>
+		await this.usersRepository.findOne({
 			where: {email},
 		});
 
@@ -88,13 +78,13 @@ export class UsersService {
 		if (await this.checkToken(uuid, token)) {
 			const entity = await this.findOneByUuid(uuid);
 			await this.setUserActive(entity, true);
-			return '🎉 Account activated !';
-		} else return '❌ Invalid token !';
+			return 'SUCCESS';
+		} else return 'INVALID_TOKEN';
 	};
 
 	closeAccount = async (user: any) => {
 		await this.setUserActive(user, false);
-		return '🎉 Account closed !';
+		return 'SUCCESS';
 	};
 
 	forgotPassword = async (email: string) => {
@@ -116,18 +106,17 @@ export class UsersService {
 					title,
 					summary:
 						'Vous pouvez réinitialiser votre mot de pass en cliquant sur le lien ci-dessous.',
-					link: `http://localhost:4200/reset-password/${user.uuid}/${token}`,
+					link: `${environment.WEB_UI_URL}reset-password?user=${user.uuid}&token=${token}`,
 				},
 			});
 		}
-		return '🎉 Email sent !';
+		return {message: 'SUCCESS'};
 	};
 
-	async updateUser(uuid: string, dto: UserUpdateDto) {
-		return await this.usersRepository.update({uuid}, dto);
-	}
+	updateUser = async (uuid: string, dto: UserUpdateDto) =>
+		await this.usersRepository.update({uuid}, dto);
 
-	async resetPassword(uuid: string, dto: PasswordResetDto) {
+	resetPassword = async (uuid: string, dto: PasswordResetDto) => {
 		const user = await this.findOneByUuid(uuid);
 		if (user) {
 			try {
@@ -136,27 +125,40 @@ export class UsersService {
 				});
 				user.password = await this.hashPassword(dto.password);
 				await this.usersRepository.update({uuid}, user);
-				return '🎉 updated !';
+				return {message: 'SUCCESS'};
 			} catch (e) {
-				const message = '❌ Invalid token !';
+				const message = 'INVALID_TOKEN';
 				console.error(message, e);
 				throw new ForbiddenException(message);
 			}
 		}
-	}
+	};
 
-	async updatePassword(uuid: string, password: string) {
-		const dto = {password: await this.hashPassword(password)};
-		return await this.usersRepository.update({uuid}, dto);
-	}
-
-	hashPassword = async (password: string): Promise<string> =>
-		await bcrypt.hash(password, this.salt);
+	updatePassword = async (uuid: string, password: string) =>
+		await this.usersRepository.update(
+			{uuid},
+			{password: await this.hashPassword(password)}
+		);
 
 	checkPassword = async (input: User, password: string): Promise<boolean> => {
 		// TODO catch spam
 		const user = await this.findOneByUuid(input.uuid);
 		return await bcrypt.compare(password, user.password);
+	};
+
+	private hashPassword = async (password: string): Promise<string> =>
+		await bcrypt.hash(password, this.salt);
+
+	private checkToken = async (uuid: string, token: any): Promise<boolean> => {
+		try {
+			return !!this.jwtService.verify(token, {
+				secret:
+					process.env.JWT_SECRET_KEY +
+					(await this.findOneByUuid(uuid)).password,
+			});
+		} catch (e) {
+			throw new UnauthorizedException(e.message);
+		}
 	};
 
 	private setUserActive = async (user: User, active: boolean) => {
