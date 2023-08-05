@@ -12,7 +12,9 @@ async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 	app.useGlobalPipes(new ValidationPipe());
 	useContainer(app.select(AppModule), {fallbackOnErrors: true});
-	app.enableCors();
+	app.enableCors({
+		origin: '*',
+	});
 	app.useGlobalFilters(new GlobalExceptionFilter());
 	app.setGlobalPrefix(globalPrefix);
 	await app.listen(port);
