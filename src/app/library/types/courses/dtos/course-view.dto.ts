@@ -6,6 +6,9 @@ export class CourseViewDto {
 	order: number;
 
 	@AutoMap()
+	color: string;
+
+	@AutoMap()
 	phonemes: PhonemeViewDto[];
 
 	@AutoMap()

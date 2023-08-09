@@ -17,15 +17,17 @@ export class LibraryService {
 		);
 
 	createLibrary = async () => {
-		// delete all phonemes first
-		(await this.phonemeRepository.find()).forEach(async p =>
-			this.phonemeRepository.delete({uuid: p.uuid})
-		);
+		const phoneme = await this.phonemeRepository.find();
+		const courses = await this.getAllCourses();
 
-		// Then, delete all courses
-		(await this.getAllCourses()).forEach(
-			async c => await this.courseRepository.delete({uuid: c.uuid})
-		);
+		await Promise.all([
+			phoneme.map(async p => {
+				await this.phonemeRepository.delete({uuid: p.uuid});
+			}),
+			courses.map(async c => {
+				await this.courseRepository.delete({uuid: c.uuid});
+			}),
+		]);
 
 		// Then, generate all phonemes & courses based on local constant
 		return COURSES.map((current, i) => {

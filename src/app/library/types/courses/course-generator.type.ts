@@ -6,4 +6,5 @@ export type CourseGenerator = {
 	poster?: boolean;
 	text?: boolean;
 	words?: string[];
+	color: string;
 };

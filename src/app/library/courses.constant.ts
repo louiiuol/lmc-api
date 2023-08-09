@@ -15,29 +15,34 @@ export const COURSES: CourseGenerator[] = [
 			{name: 'È'},
 			{name: 'Ê'},
 		],
+		color: '#ed6b06',
 	},
 	{
 		script: true,
 		lesson: true,
 		phonemes: [{name: 'L', poster: true}],
+		color: '#5d82b6',
 	},
 	{
 		script: true,
 		lesson: true,
 		phonemes: [{name: 'R', poster: true}],
 		words: ['Allé'],
+		color: '#e54611',
 	},
 	{
 		script: true,
 		lesson: true,
 		phonemes: [{name: 'S', poster: true}],
 		words: ['elle'],
+		color: '#567178',
 	},
 	{
 		script: true,
 		lesson: true,
 		phonemes: [{name: 'M', poster: true}],
 		words: ['Allume', 'Assis', 'Mille'],
+		color: '#f59c00',
 	},
 	{
 		script: true,
@@ -45,6 +50,7 @@ export const COURSES: CourseGenerator[] = [
 		exercice: true,
 		phonemes: [{name: 'CH', poster: true}, {name: 'H'}],
 		words: ['Homme', 'Héros'],
+		color: '#b2ced8',
 	},
 	{
 		script: true,
@@ -52,6 +58,7 @@ export const COURSES: CourseGenerator[] = [
 		exercice: true,
 		phonemes: [{name: 'T', poster: true}],
 		words: ['Très', 'Tête', 'Terre'],
+		color: '#9ebe38',
 	},
 	{
 		script: true,
@@ -59,6 +66,7 @@ export const COURSES: CourseGenerator[] = [
 		exercice: true,
 		phonemes: [{name: 'OU', poster: true}],
 		words: ['Tout', 'Sous'],
+		color: '#235487',
 	},
 	{
 		script: true,
@@ -69,6 +77,7 @@ export const COURSES: CourseGenerator[] = [
 			{name: 'J', poster: true},
 		],
 		words: ['Nuit', 'Toujours', 'Alors'],
+		color: '#e8b319',
 	},
 	{
 		script: true,
@@ -76,6 +85,7 @@ export const COURSES: CourseGenerator[] = [
 		exercice: true,
 		phonemes: [{name: 'AU', poster: true}],
 		words: ['Haut', 'Chaussure', 'Chaud', 'Automne', 'Il y a'],
+		color: '#9f1d4f',
 	},
 	{
 		script: true,
@@ -87,6 +97,7 @@ export const COURSES: CourseGenerator[] = [
 			{name: 'D', poster: true},
 		],
 		words: ["Aujourd'hui", 'Habite', 'Habitude'],
+		color: '#737441',
 	},
 	{
 		script: true,
@@ -95,6 +106,7 @@ export const COURSES: CourseGenerator[] = [
 		text: true,
 		phonemes: [{name: 'C', poster: true}],
 		words: ['Comme'],
+		color: '#9eccd2',
 	},
 	{
 		script: true,
@@ -108,6 +120,7 @@ export const COURSES: CourseGenerator[] = [
 			{name: '-EZ', poster: true},
 		],
 		words: ['Petit', 'Pas'],
+		color: '#c5b69a',
 	},
 	{
 		script: true,
@@ -120,6 +133,7 @@ export const COURSES: CourseGenerator[] = [
 			{name: 'V', poster: true},
 		],
 		words: ['Avec'],
+		color: '#f0ba83',
 	},
 	{
 		script: true,
@@ -133,6 +147,7 @@ export const COURSES: CourseGenerator[] = [
 			{name: 'F', poster: true},
 		],
 		words: ['Forêt', 'blanc', 'dans', 'chant', 'femme'],
+		color: '#438b5d',
 	},
 	{
 		script: true,
@@ -141,6 +156,7 @@ export const COURSES: CourseGenerator[] = [
 		text: true,
 		phonemes: [{name: 'EN', poster: true}, {name: 'EM'}],
 		words: ['Enfant', 'Parent', 'Temps', 'Longtemps', 'Lentement'],
+		color: '#d9b640',
 	},
 	{
 		script: true,
@@ -160,6 +176,7 @@ export const COURSES: CourseGenerator[] = [
 			'Histoire',
 			'Quoi',
 		],
+		color: '#498da2',
 	},
 	{
 		script: true,
@@ -168,6 +185,7 @@ export const COURSES: CourseGenerator[] = [
 		text: true,
 		phonemes: [{name: 'G', poster: true}],
 		words: ['Grandir'],
+		color: '#943e1f',
 	},
 	{
 		script: true,
@@ -183,6 +201,7 @@ export const COURSES: CourseGenerator[] = [
 			{name: 'YM'},
 		],
 		words: ['Sympathique', 'Parfum', 'Lundi', 'Printemps'],
+		color: '#f9dc0a',
 	},
 	{
 		script: true,
@@ -192,6 +211,7 @@ export const COURSES: CourseGenerator[] = [
 		text: true,
 		phonemes: [{name: 'EAU'}, {name: 'S[z]'}],
 		words: ['Maison', 'Beaucoup'],
+		color: '#bd6876',
 	},
 	{
 		script: true,
@@ -211,6 +231,7 @@ export const COURSES: CourseGenerator[] = [
 			'Dangereux',
 			'Mieux',
 		],
+		color: '#008995',
 	},
 	{
 		script: true,
@@ -223,6 +244,7 @@ export const COURSES: CourseGenerator[] = [
 			{name: 'OIN', poster: true},
 		],
 		words: ['Pain', 'Faim', 'Demain', 'Lendemain'],
+		color: '#bc5e22',
 	},
 	{
 		script: true,
@@ -231,6 +253,7 @@ export const COURSES: CourseGenerator[] = [
 		text: true,
 		phonemes: [{name: 'IEN', poster: true}, {name: 'Ç'}],
 		words: ['Œil', 'sœur'],
+		color: '#6981b3',
 	},
 	{
 		script: true,
@@ -244,6 +267,7 @@ export const COURSES: CourseGenerator[] = [
 			{name: 'Euil', poster: true},
 			{name: 'Eil', poster: true},
 		],
+		color: '#57a994',
 	},
 	{
 		script: true,
@@ -252,6 +276,7 @@ export const COURSES: CourseGenerator[] = [
 		text: true,
 		phonemes: [{name: 'TI + VOY', poster: true}],
 		words: ['Patient', 'Attention'],
+		color: '#613a1b',
 	},
 	{
 		script: true,
@@ -264,5 +289,6 @@ export const COURSES: CourseGenerator[] = [
 			{name: 'Y', poster: true},
 		],
 		words: ['Crayon', 'Payer'],
+		color: '#74727c',
 	},
 ];

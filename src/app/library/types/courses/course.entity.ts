@@ -20,8 +20,13 @@ export class Course extends BaseEntity {
 	@PrimaryGeneratedColumn('uuid')
 	uuid: string;
 
+	@AutoMap()
 	@Column()
 	order: number;
+
+	@AutoMap()
+	@Column()
+	color: string;
 
 	@AutoMap()
 	@OneToMany(() => Phoneme, p => p.course, {

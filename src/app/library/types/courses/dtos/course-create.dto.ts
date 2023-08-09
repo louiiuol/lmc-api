@@ -4,6 +4,8 @@ import {CourseGenerator} from '../course-generator.type';
 export class CourseCreateDto {
 	order?: number;
 
+	color: string;
+
 	phonemes?: {name: string}[];
 
 	lesson?: boolean;
@@ -29,5 +31,6 @@ export class CourseCreateDto {
 		this.poster = lesson.poster;
 		this.text = lesson.text;
 		this.words = lesson.words ?? [];
+		this.color = lesson.color;
 	}
 }
