@@ -85,8 +85,8 @@ export class UsersController {
 	}
 
 	@UseGuards(JwtAuthGuard)
-	@Get('courses/next')
-	async nextLesson(@CurrentUser() user, @Query() index: number) {
+	@Patch('courses/currentLesson')
+	async setCurrentLesson(@CurrentUser() user, @Query('index') index: number) {
 		return await this.usersService.setCurrentLessonIndex(user, index);
 	}
 
