@@ -45,7 +45,7 @@ export class UsersService {
 						title,
 						summary:
 							"Pour compléter l'inscription de votre compte, merci de cliquer sur le lien ci-dessous",
-						link: `http://localhost:3333/api/users/${entity.uuid}/activate/?token=${token}`,
+						link: `https://lmc-api-production.up.railway.app/users/${entity.uuid}/activate/?token=${token}`,
 					},
 				});
 			}
