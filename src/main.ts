@@ -6,7 +6,7 @@ import {GlobalExceptionFilter} from './app/core/exceptions/global-exceptions.fil
 import {useContainer} from '@nestjs/class-validator';
 
 const globalPrefix = 'api';
-const port = environment.API_PORT || 3333;
+const port = environment.PORT || 3333;
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
