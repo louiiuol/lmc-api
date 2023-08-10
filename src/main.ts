@@ -17,7 +17,7 @@ async function bootstrap() {
 	});
 	app.useGlobalFilters(new GlobalExceptionFilter());
 	app.setGlobalPrefix(globalPrefix);
-	await app.listen(port);
+	await app.listen(port, environment.API_HOST);
 }
 const successMessage = `🚀 Application is running on: ${environment.API_HOST}:${port}/${globalPrefix}`;
 
