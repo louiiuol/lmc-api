@@ -16,7 +16,7 @@ import {User} from 'src/app/users/types/user.entity';
 			password: environment.DATABASE_PASSWORD,
 			database: environment.DATABASE_NAME,
 			entities: [User, Phoneme, Course],
-			synchronize: environment.PRODUCTION !== 'true', //? should be turned off in production (overrides data)
+			synchronize: true, //environment.PRODUCTION !== 'true', //? should be turned off in production (overrides data)
 		}),
 		AutomapperModule.forRoot({
 			strategyInitializer: classes(),
