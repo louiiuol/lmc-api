@@ -13,6 +13,7 @@
 		"dtos",
 		"originalname",
 		"typeorm",
-		"uuidv"
+		"uuidv",
+		"nestjs"
 	]
 }
