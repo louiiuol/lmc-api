@@ -27,5 +27,8 @@ export class CourseViewDto {
 	poster?: boolean;
 
 	@AutoMap()
-	words: string[];
+	words?: string[];
+
+	@AutoMap()
+	sounds?: string[];
 }

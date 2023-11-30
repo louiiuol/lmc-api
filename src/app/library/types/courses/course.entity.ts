@@ -62,4 +62,11 @@ export class Course extends BaseEntity {
 		nullable: true,
 	})
 	words?: string[];
+
+	@AutoMap()
+	@Column({
+		type: 'simple-array',
+		nullable: true,
+	})
+	sounds?: string[];
 }

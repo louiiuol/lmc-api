@@ -18,7 +18,9 @@ export class CourseCreateDto {
 
 	text?: boolean;
 
-	words: string[];
+	words?: string[];
+
+	sounds?: string[];
 
 	constructor(lesson: CourseGenerator, order: number) {
 		this.order = order;
@@ -32,5 +34,6 @@ export class CourseCreateDto {
 		this.text = lesson.text;
 		this.words = lesson.words ?? [];
 		this.color = lesson.color;
+		this.sounds = lesson.sounds;
 	}
 }
