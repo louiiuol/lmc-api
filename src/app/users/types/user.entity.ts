@@ -39,6 +39,10 @@ export class User extends BaseEntity {
 	isActive: boolean;
 
 	@AutoMap()
+	@Column({default: false})
+	subscribed: boolean;
+
+	@AutoMap()
 	@Column({default: 0})
 	currentLessonIndex: number;
 

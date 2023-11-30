@@ -37,17 +37,17 @@ export class UsersService {
 					{secret: process.env.JWT_SECRET_KEY + user.password, expiresIn: '15m'}
 				);
 				const title = 'Bienvenue sur la méthode claire !';
-				this.mailerService.sendMail({
-					to: entity.email,
-					subject: title,
-					template: 'activate-account',
-					context: {
-						title,
-						summary:
-							"Pour compléter l'inscription de votre compte, merci de cliquer sur le lien ci-dessous",
-						link: `https://lmc-api-production.up.railway.app/users/${entity.uuid}/activate/?token=${token}`,
-					},
-				});
+				// this.mailerService.sendMail({
+				// 	to: entity.email,
+				// 	subject: title,
+				// 	template: 'activate-account',
+				// 	context: {
+				// 		title,
+				// 		summary:
+				// 			"Pour compléter l'inscription de votre compte, merci de cliquer sur le lien ci-dessous",
+				// 		link: `https://lmc-api-production.up.railway.app/users/${entity.uuid}/activate/?token=${token}`,
+				// 	},
+				// });
 			}
 		}
 		return {message: 'SUCCESS'};
