@@ -16,8 +16,6 @@ export class CourseCreateDto {
 
 	poster?: boolean;
 
-	text?: boolean;
-
 	words?: string[];
 
 	sounds?: string[];
@@ -31,7 +29,6 @@ export class CourseCreateDto {
 		this.lesson = lesson.lesson;
 		this.exercice = lesson.exercice;
 		this.poster = lesson.poster;
-		this.text = lesson.text;
 		this.words = lesson.words ?? [];
 		this.color = lesson.color;
 		this.sounds = lesson.sounds;
