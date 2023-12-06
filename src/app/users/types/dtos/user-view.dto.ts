@@ -22,4 +22,7 @@ export class UserViewDto {
 
 	@AutoMap()
 	currentLessonIndex: number;
+
+	@AutoMap()
+	subscribed: boolean;
 }
