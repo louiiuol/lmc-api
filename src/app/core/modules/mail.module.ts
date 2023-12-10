@@ -9,13 +9,14 @@ import {environment} from 'src/app/environment';
 		MailerModule.forRoot({
 			transport: {
 				host: environment.SMTP_HOST,
+				port: Number(environment.SMTP_PORT),
 				auth: {
 					user: environment.SMTP_EMAIL,
 					pass: environment.SMTP_PASS,
 				},
 			},
 			defaults: {
-				from: '"La Méthode Claire" <contact@la-methode-claire.fr>',
+				from: `"La Méthode Claire" <${environment.SMTP_EMAIL}>`,
 			},
 			template: {
 				dir: join(__dirname, '../../../templates'),
