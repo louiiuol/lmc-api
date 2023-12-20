@@ -45,7 +45,7 @@ export class UsersService {
 						title,
 						summary:
 							"Pour compléter l'inscription de votre compte, merci de cliquer sur le lien ci-dessous. Ce lien expirera dans 15 minutes.",
-						link: `${environment.API_HOST}/api/users/${entity.uuid}/activate/?token=${token}`,
+						link: `${environment.API_HOST_FULL}/api/users/${entity.uuid}/activate?token=${token}`,
 					},
 				});
 			}
@@ -88,11 +88,11 @@ export class UsersService {
 		return 'SUCCESS';
 	};
 
-	async activateSubscription(uuid: string) {
+	async activateSubscription(uuid: string, valid: boolean) {
 		const user = await this.findOneByUuid(uuid);
-		user.subscribed = true;
+		user.subscribed = valid;
 		this.save(user);
-		return 'SUBSCRIPTION_GIVEN';
+		return 'SUBSCRIPTION_UPDATED';
 	}
 
 	forgotPassword = async (email: string) => {
@@ -149,7 +149,7 @@ export class UsersService {
 		);
 
 	checkPassword = async (input: User, password: string): Promise<boolean> => {
-		// TODO catch spam
+		// TODO catch spam (only current user can check his own password)
 		const user = await this.findOneByUuid(input.uuid);
 		return await bcrypt.compare(password, user.password);
 	};

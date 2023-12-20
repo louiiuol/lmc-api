@@ -29,7 +29,6 @@ export class LibraryService {
 			}),
 		]);
 
-		// Then, generate all phonemes & courses based on local constant
 		return COURSES.map((current, i) => {
 			const course = new CourseCreateDto(current, i);
 			return this.courseRepository.save(course);

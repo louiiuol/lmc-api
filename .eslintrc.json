@@ -21,7 +21,7 @@
 	"rules": {
 		"prettier/prettier": "warn",
 		"indent": ["off", "tab"],
-		"linebreak-style": ["error", "unix"],
+		"linebreak-style": "off",
 		"quotes": "off",
 		"semi": ["error", "always"],
 		"@typescript-eslint/no-empty-function": "off",

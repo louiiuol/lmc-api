@@ -23,4 +23,4 @@ const successMessage = `🚀 Application is running on: ${environment.API_HOST}:
 
 bootstrap()
 	.then(() => Logger.log(successMessage, 'NestApplication'))
-	.catch(err => Logger.error('Failed to launch the API: ', err));
+	.catch(err => Logger.error(err, 'NestApplication'));

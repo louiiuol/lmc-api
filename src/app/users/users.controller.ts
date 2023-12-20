@@ -104,9 +104,12 @@ export class UsersController {
 	}
 
 	@UseGuards(JwtAuthGuard, AdminGuard)
-	@Put('users/:uuid/subscribe')
-	async activateSubscription(@Query('uuid') uuid: string) {
-		return await this.usersService.activateSubscription(uuid);
+	@Put('users/:uuid/subscribe/:valid')
+	async activateSubscription(
+		@Query('uuid') uuid: string,
+		@Query('valid') valid: boolean
+	) {
+		return await this.usersService.activateSubscription(uuid, valid);
 	}
 
 	private mapReturn = async (promise: Promise<any>) =>
