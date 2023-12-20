@@ -28,6 +28,7 @@ import {
 	PasswordUpdateDto,
 } from './types';
 import {QueryRequired} from '../core/decorators/required-query';
+import {AdminGuard} from '../auth/guards/roles/admin.guard';
 
 @Controller()
 export class UsersController {
@@ -94,6 +95,18 @@ export class UsersController {
 	@Get('close')
 	async closeAccount(@CurrentUser() user) {
 		return await this.usersService.closeAccount(user);
+	}
+
+	@UseGuards(JwtAuthGuard, AdminGuard)
+	@Get('users')
+	async findAll() {
+		return await this.usersService.findAll();
+	}
+
+	@UseGuards(JwtAuthGuard, AdminGuard)
+	@Put('users/:uuid/subscribe')
+	async activateSubscription(@Query('uuid') uuid: string) {
+		return await this.usersService.activateSubscription(uuid);
 	}
 
 	private mapReturn = async (promise: Promise<any>) =>

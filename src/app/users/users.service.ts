@@ -82,10 +82,18 @@ export class UsersService {
 		} else return 'INVALID_TOKEN';
 	};
 
+	// TODO Fix input
 	closeAccount = async (user: any) => {
 		await this.setUserActive(user, false);
 		return 'SUCCESS';
 	};
+
+	async activateSubscription(uuid: string) {
+		const user = await this.findOneByUuid(uuid);
+		user.subscribed = true;
+		this.save(user);
+		return 'SUBSCRIPTION_GIVEN';
+	}
 
 	forgotPassword = async (email: string) => {
 		const user = await this.findOneByEmail(email);
