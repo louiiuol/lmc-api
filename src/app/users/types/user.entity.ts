@@ -54,9 +54,12 @@ export class User extends BaseEntity {
 	})
 	role: UserRole;
 
+	@AutoMap()
 	@Column({default: () => 'NOW()'})
 	createdAt: Date;
 
+	// TODO: update this prop when entity updates
+	@AutoMap()
 	@Column({default: () => 'NOW()'})
 	updatedAt: Date;
 }

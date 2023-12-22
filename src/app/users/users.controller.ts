@@ -100,12 +100,16 @@ export class UsersController {
 	@UseGuards(JwtAuthGuard, AdminGuard)
 	@Get('users')
 	async findAll() {
-		return await this.usersService.findAll();
+		return await this.classMapper.mapArray(
+			await this.usersService.findAll(),
+			User,
+			UserViewDto
+		);
 	}
 
 	@UseGuards(JwtAuthGuard, AdminGuard)
 	@Put('users/:uuid/subscribe/:valid')
-	async activateSubscription(
+	async toggleSubscription(
 		@Query('uuid') uuid: string,
 		@Query('valid') valid: boolean
 	) {

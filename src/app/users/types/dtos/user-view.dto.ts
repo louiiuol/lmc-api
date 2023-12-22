@@ -25,4 +25,10 @@ export class UserViewDto {
 
 	@AutoMap()
 	subscribed: boolean;
+
+	@AutoMap()
+	createdAt: Date;
+
+	@AutoMap()
+	updatedAt: Date;
 }
