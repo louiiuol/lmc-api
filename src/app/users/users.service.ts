@@ -1,6 +1,7 @@
 import {
 	ForbiddenException,
 	Injectable,
+	Logger,
 	UnauthorizedException,
 } from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
@@ -9,13 +10,28 @@ import {environment} from '../environment';
 import * as bcrypt from 'bcrypt';
 import {MailerService} from '@nestjs-modules/mailer';
 import {JwtService} from '@nestjs/jwt';
-import {User, UserCreateDto, PasswordResetDto, UserUpdateDto} from './types';
+import {
+	User,
+	UserCreateDto,
+	PasswordResetDto,
+	UserUpdateDto,
+	UserViewDto,
+} from './types';
+import {UserUpdateAdminDto} from './types/dtos/user-update-admin.dto';
+import {Filtering} from '../core/decorators/filtering-params';
+import {Pagination} from '../core/decorators/pagination-params';
+import {Sorting} from '../core/decorators/sorting-params';
+import {getWhere, getOrder} from '../core/helpers/type-orm-helpers.fn';
+import {PaginatedResource} from '../core/types/paginated-resource';
+import {Mapper} from '@automapper/core';
+import {InjectMapper} from '@automapper/nestjs';
 
 @Injectable()
 export class UsersService {
 	private readonly salt = Number(environment.SALT);
 	constructor(
 		@InjectRepository(User) private usersRepository: Repository<User>,
+		@InjectMapper() private readonly classMapper: Mapper,
 		private readonly mailerService: MailerService,
 		private readonly jwtService: JwtService
 	) {}
@@ -53,7 +69,28 @@ export class UsersService {
 		return {message: 'SUCCESS'};
 	};
 
-	findAll = async (): Promise<User[]> => await this.usersRepository.find();
+	findAll = async (
+		{page, limit, size, offset}: Pagination,
+		sort?: Sorting,
+		filter?: Filtering
+	): Promise<PaginatedResource<UserViewDto>> => {
+		const where = getWhere(filter);
+		const order = getOrder(sort);
+
+		const [users, total] = await this.usersRepository.findAndCount({
+			where,
+			order,
+			take: limit,
+			skip: offset,
+		});
+
+		return {
+			totalItems: total,
+			items: this.classMapper.mapArray(users, User, UserViewDto),
+			page,
+			size,
+		};
+	};
 
 	findOneByUuid = async (uuid: string) =>
 		await this.usersRepository.findOneBy({uuid});
@@ -121,8 +158,11 @@ export class UsersService {
 		return {message: 'SUCCESS'};
 	};
 
-	updateUser = async (uuid: string, dto: UserUpdateDto) =>
-		await this.usersRepository.update({uuid}, dto);
+	updateUser = async (uuid: string, dto: UserUpdateDto | UserUpdateAdminDto) =>
+		await this.usersRepository.save({
+			...(await this.findOneByUuid(uuid)),
+			...dto,
+		});
 
 	resetPassword = async (uuid: string, dto: PasswordResetDto) => {
 		const user = await this.findOneByUuid(uuid);

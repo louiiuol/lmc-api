@@ -10,6 +10,7 @@ import {
 	Patch,
 	Query,
 	Put,
+	Logger,
 } from '@nestjs/common';
 import {JwtAuthGuard} from '../auth/guards/jwt/jwt-auth.guard';
 import {InjectMapper} from '@automapper/nestjs';
@@ -29,6 +30,13 @@ import {
 } from './types';
 import {QueryRequired} from '../core/decorators/required-query';
 import {AdminGuard} from '../auth/guards/roles/admin.guard';
+import {UserUpdateAdminDto} from './types/dtos/user-update-admin.dto';
+import {FilteringParams, Filtering} from '../core/decorators/filtering-params';
+import {
+	PaginationParams,
+	Pagination,
+} from '../core/decorators/pagination-params';
+import {SortingParams, Sorting} from '../core/decorators/sorting-params';
 
 @Controller()
 export class UsersController {
@@ -99,21 +107,30 @@ export class UsersController {
 
 	@UseGuards(JwtAuthGuard, AdminGuard)
 	@Get('users')
-	async findAll() {
-		return await this.classMapper.mapArray(
-			await this.usersService.findAll(),
-			User,
-			UserViewDto
-		);
+	async findAll(
+		@PaginationParams() paginationParams: Pagination,
+		@SortingParams([
+			'email',
+			'isActive',
+			'subscribed',
+			'role',
+			'createdAt',
+			'currentLessonIndex',
+		])
+		sort?: Sorting,
+		@FilteringParams(['isActive', 'subscribed', 'email']) filter?: Filtering
+	) {
+		Logger.log(filter);
+		return this.usersService.findAll(paginationParams, sort, filter);
 	}
 
 	@UseGuards(JwtAuthGuard, AdminGuard)
-	@Put('users/:uuid/subscribe/:valid')
-	async toggleSubscription(
+	@Patch('users/:uuid')
+	async updateUserAsAdmin(
 		@Query('uuid') uuid: string,
-		@Query('valid') valid: boolean
+		@Body() dto: UserUpdateAdminDto
 	) {
-		return await this.usersService.activateSubscription(uuid, valid);
+		return await this.mapReturn(this.usersService.updateUser(uuid, dto));
 	}
 
 	private mapReturn = async (promise: Promise<any>) =>
