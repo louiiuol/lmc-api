@@ -16,7 +16,7 @@ import {environment} from 'src/app/environment';
 				},
 			},
 			defaults: {
-				from: `"La Méthode Claire" <${environment.SMTP_EMAIL}>`,
+				from: `"La méthode claire" <${environment.SMTP_EMAIL}>`,
 			},
 			template: {
 				dir: join(__dirname, '../../../templates'),
