@@ -133,6 +133,12 @@ export class UsersController {
 		return await this.mapReturn(this.usersService.updateUser(uuid, dto));
 	}
 
+	@UseGuards(JwtAuthGuard, AdminGuard)
+	@Get('reset-subscription')
+	async resetSubscription() {
+		return await this.usersService.resetSubscription();
+	}
+
 	private mapReturn = async (promise: Promise<any>) =>
 		this.classMapper.map(await promise, User, UserViewDto);
 }

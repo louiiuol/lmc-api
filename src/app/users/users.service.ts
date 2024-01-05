@@ -194,6 +194,16 @@ export class UsersService {
 		return await bcrypt.compare(password, user.password);
 	};
 
+	async resetSubscription() {
+		(await this.usersRepository.find())
+			.map(user => {
+				user.subscribed = false;
+				return user;
+			})
+			.forEach(async user => await this.usersRepository.save(user));
+		return {message: 'SUBSCRIPTION_RESEATED'};
+	}
+
 	private hashPassword = async (password: string): Promise<string> =>
 		await bcrypt.hash(password, this.salt);
 
