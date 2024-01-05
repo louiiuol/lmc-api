@@ -5,6 +5,7 @@ import {
 	MaxLength,
 	MinLength,
 } from '@nestjs/class-validator';
+import {IsBoolean} from 'class-validator';
 
 export class UserUpdateDto {
 	@IsOptional()
@@ -22,4 +23,8 @@ export class UserUpdateDto {
 	@MinLength(1)
 	@MaxLength(60)
 	lastName?: string;
+
+	@IsOptional()
+	@IsBoolean()
+	newsletter: boolean;
 }

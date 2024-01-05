@@ -27,6 +27,9 @@ export class UserViewDto {
 	subscribed: boolean;
 
 	@AutoMap()
+	newsletter: boolean;
+
+	@AutoMap()
 	createdAt: Date;
 
 	@AutoMap()

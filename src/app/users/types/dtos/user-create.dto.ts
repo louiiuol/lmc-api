@@ -1,4 +1,11 @@
-import {Matches, IsEmail, IsNotEmpty, IsString} from '@nestjs/class-validator';
+import {
+	Matches,
+	IsEmail,
+	IsNotEmpty,
+	IsString,
+	IsOptional,
+} from '@nestjs/class-validator';
+import {IsBoolean} from 'class-validator';
 
 export class UserCreateDto {
 	@IsEmail()
@@ -11,4 +18,7 @@ export class UserCreateDto {
 		{message: 'STRONG_PASSWORD_REQUIRED'}
 	)
 	password: string;
+
+	@IsBoolean()
+	newsletter: boolean;
 }
