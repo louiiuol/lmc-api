@@ -111,23 +111,33 @@ export class UsersController {
 		@PaginationParams() paginationParams: Pagination,
 		@SortingParams([
 			'email',
+			'firstName',
+			'lastName',
 			'isActive',
 			'subscribed',
 			'role',
 			'createdAt',
 			'currentLessonIndex',
+			'newsletter',
 		])
 		sort?: Sorting,
-		@FilteringParams(['isActive', 'subscribed', 'email']) filter?: Filtering
+		@FilteringParams([
+			'isActive',
+			'subscribed',
+			'firstName',
+			'lastName',
+			'email',
+		])
+		filter?: Filtering
 	) {
 		Logger.log(filter);
-		return this.usersService.findAll(paginationParams, sort, filter);
+		return this.usersService.findAllPaginated(paginationParams, sort, filter);
 	}
 
 	@UseGuards(JwtAuthGuard, AdminGuard)
 	@Patch('users/:uuid')
 	async updateUserAsAdmin(
-		@Query('uuid') uuid: string,
+		@Param('uuid') uuid: string,
 		@Body() dto: UserUpdateAdminDto
 	) {
 		return await this.mapReturn(this.usersService.updateUser(uuid, dto));
@@ -137,6 +147,12 @@ export class UsersController {
 	@Get('reset-subscription')
 	async resetSubscription() {
 		return await this.usersService.resetSubscription();
+	}
+
+	@UseGuards(JwtAuthGuard, AdminGuard)
+	@Get('export-emails')
+	async exportEmails() {
+		return await this.usersService.exportEmails();
 	}
 
 	private mapReturn = async (promise: Promise<any>) =>

@@ -39,10 +39,10 @@ export const FilteringParams = createParamDecorator(
 
 		// validate the format of the filter, if the rule is 'isnull' or 'isnotnull' it don't need to have a value
 		if (
-			!filter.match(
-				/^[a-zA-Z0-9_]+:(eq|neq|gt|gte|lt|lte|like|nlike|in|nin):[a-zA-Z0-9_,]+$/
-			) &&
-			!filter.match(/^[a-zA-Z0-9_]+:(isnull|isnotnull)$/)
+			!RegExp(
+				/^\w+:(eq|neq|gt|gte|lt|lte|like|nlike|in|nin):[a-zA-Z0-9_,]+$/
+			).exec(filter) &&
+			!RegExp(/^\w+:(isnull|isnotnull)$/).exec(filter)
 		) {
 			throw new BadRequestException('Invalid filter parameter');
 		}

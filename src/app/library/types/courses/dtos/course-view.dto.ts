@@ -18,9 +18,6 @@ export class CourseViewDto {
 	lesson?: boolean;
 
 	@AutoMap()
-	text?: boolean;
-
-	@AutoMap()
 	exercice?: boolean;
 
 	@AutoMap()

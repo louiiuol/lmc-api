@@ -69,7 +69,14 @@ export class UsersService {
 		return {message: 'SUCCESS'};
 	};
 
-	findAll = async (
+	findAll = async () =>
+		this.classMapper.mapArray(
+			await this.usersRepository.find(),
+			User,
+			UserViewDto
+		);
+
+	findAllPaginated = async (
 		{page, limit, size, offset}: Pagination,
 		sort?: Sorting,
 		filter?: Filtering
@@ -92,8 +99,11 @@ export class UsersService {
 		};
 	};
 
-	findOneByUuid = async (uuid: string) =>
-		await this.usersRepository.findOneBy({uuid});
+	findOneByUuid = async (uuid: string) => {
+		const user = await this.usersRepository.findOne({where: {uuid}});
+		Logger.log(uuid, user);
+		return user;
+	};
 
 	findOneByEmail = async (email: string) =>
 		await this.usersRepository.findOne({
@@ -158,11 +168,17 @@ export class UsersService {
 		return {message: 'SUCCESS'};
 	};
 
-	updateUser = async (uuid: string, dto: UserUpdateDto | UserUpdateAdminDto) =>
-		await this.usersRepository.save({
-			...(await this.findOneByUuid(uuid)),
-			...dto,
-		});
+	updateUser = async (
+		uuid: string,
+		dto: UserUpdateDto | UserUpdateAdminDto
+	) => {
+		const user = await this.findOneByUuid(uuid);
+		return this.classMapper.map(
+			await this.usersRepository.save({...user, ...dto}),
+			User,
+			UserViewDto
+		);
+	};
 
 	resetPassword = async (uuid: string, dto: PasswordResetDto) => {
 		const user = await this.findOneByUuid(uuid);
@@ -202,6 +218,14 @@ export class UsersService {
 			})
 			.forEach(async user => await this.usersRepository.save(user));
 		return {message: 'SUBSCRIPTION_RESEATED'};
+	}
+
+	async exportEmails() {
+		return {
+			emails: (await this.usersRepository.find())
+				.map(user => user.email)
+				.join(', '),
+		};
 	}
 
 	private hashPassword = async (password: string): Promise<string> =>
