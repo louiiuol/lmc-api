@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, Logger} from '@nestjs/common';
 import {UsersService} from '../users/users.service';
 import {MailerService} from '@nestjs-modules/mailer';
 import {NewsletterSendDto} from './dtos/newsletter-send.dto';
@@ -20,7 +20,7 @@ export class NewsletterService {
 	sendMail(dto: NewsletterSendDto, subscribed: boolean, email: string) {
 		const title = dto.subject;
 		const content = subscribed
-			? dto.content
+			? dto.content.replaceAll('\n', '<br />')
 			: 'Pour lire la suite de cette newsletter, abonnez-vous !';
 		this.mailer.sendMail({
 			to: email,
