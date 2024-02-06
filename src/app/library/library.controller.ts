@@ -39,7 +39,6 @@ export class LibraryController {
 		};
 	}
 
-	@UseGuards(JwtAuthGuard)
 	@Get('courses')
 	async getAllCourses() {
 		return await this.libraryService.getAllCourses();
