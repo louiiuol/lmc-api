@@ -7,6 +7,7 @@ import {
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 import {Course} from '../courses/course.entity';
+
 @Entity({
 	name: 'phonemes',
 })
@@ -26,4 +27,19 @@ export class Phoneme extends BaseEntity {
 	@AutoMap()
 	@Column({nullable: true})
 	poster?: boolean;
+
+	@AutoMap()
+	@Column({nullable: true})
+	endOfWord?: boolean;
+
+	@AutoMap()
+	@Column({
+		type: 'simple-array',
+		nullable: true,
+	})
+	sounds?: string[];
+
+	@AutoMap()
+	@Column({nullable: true})
+	info?: string;
 }

@@ -22,9 +22,7 @@ export class CourseCreateDto {
 
 	constructor(lesson: CourseGenerator, order: number) {
 		this.order = order;
-		this.phonemes = lesson.phonemes.map(
-			phoneme => new PhonemeCreateDto(phoneme)
-		);
+		this.phonemes = lesson.phonemes;
 		this.script = lesson.script;
 		this.lesson = lesson.lesson;
 		this.exercice = lesson.exercice;

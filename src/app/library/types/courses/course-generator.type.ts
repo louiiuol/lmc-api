@@ -1,5 +1,7 @@
+import {PhonemeCreateDto} from '../phonemes';
+
 export type CourseGenerator = {
-	phonemes?: {name: string; poster?: boolean}[];
+	phonemes?: PhonemeCreateDto[];
 	sounds?: string[];
 	lesson?: boolean;
 	script?: boolean;

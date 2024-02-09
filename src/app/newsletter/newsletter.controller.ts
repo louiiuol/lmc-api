@@ -1,17 +1,23 @@
-import {Body, Controller, HttpCode, Post, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, HttpCode, Post, UseGuards} from '@nestjs/common';
 import {AdminGuard} from '../auth/guards/roles/admin.guard';
 import {JwtAuthGuard} from '../auth/guards/jwt/jwt-auth.guard';
 import {NewsletterService} from './newsletter.service';
-import {NewsletterSendDto} from './dtos/newsletter-send.dto';
+import {NewsletterSendDto} from './types/dtos/newsletter-send.dto';
 
 @Controller('newsletter')
 export class NewsletterController {
 	constructor(private readonly news: NewsletterService) {}
 
 	@UseGuards(JwtAuthGuard, AdminGuard)
+	@Get('')
+	getNewsletters() {
+		return this.news.getNews();
+	}
+
+	@UseGuards(JwtAuthGuard, AdminGuard)
 	@Post('')
 	@HttpCode(200)
-	updatePassword(@Body() dto: NewsletterSendDto) {
-		return this.news.sendNews(dto);
+	postNewsletter(@Body() dto: NewsletterSendDto) {
+		return this.news.createNewsletter(dto);
 	}
 }

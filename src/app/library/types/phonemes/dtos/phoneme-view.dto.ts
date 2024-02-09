@@ -6,4 +6,13 @@ export class PhonemeViewDto {
 
 	@AutoMap()
 	poster: boolean;
+
+	@AutoMap()
+	endOfWord?: boolean;
+
+	@AutoMap()
+	sounds?: string[];
+
+	@AutoMap()
+	info: string;
 }

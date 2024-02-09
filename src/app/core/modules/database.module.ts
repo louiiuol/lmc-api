@@ -4,6 +4,7 @@ import {Module} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {environment} from 'src/app/environment';
 import {Phoneme, Course} from 'src/app/library/types';
+import {Newsletter} from 'src/app/newsletter/types/newsletter.entity';
 import {User} from 'src/app/users/types/user.entity';
 
 @Module({
@@ -15,7 +16,7 @@ import {User} from 'src/app/users/types/user.entity';
 			username: environment.DATABASE_USER,
 			password: environment.DATABASE_PASSWORD,
 			database: environment.DATABASE_NAME,
-			entities: [User, Phoneme, Course],
+			entities: [User, Phoneme, Course, Newsletter],
 			synchronize: environment.DATABASE_SYNC === 'true', // should be turned off in production (overrides data)
 		}),
 		AutomapperModule.forRoot({
