@@ -175,7 +175,7 @@ export class UsersService {
 		const user = await this.findOneByUuid(uuid);
 		if (user && 'subscribed' in dto && dto.subscribed && !user.subscribed) {
 			Logger.log('sending mail');
-			const title = 'Vous êtes désormais abonné à La Méthode claire.';
+			const title = 'Confirmation de votre abonnement à La Méthode claire.';
 			this.mailerService.sendMail({
 				to: user.email,
 				subject: title,
