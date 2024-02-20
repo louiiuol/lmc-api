@@ -15,7 +15,7 @@ import {LibraryService} from './library.service';
 import {JwtAuthGuard} from '../auth/guards/jwt/jwt-auth.guard';
 import {AdminGuard} from '../auth/guards/roles/admin.guard';
 import {createReadStream} from 'fs';
-import path, {join} from 'path';
+import {join} from 'path';
 import {UsersService} from '../users/users.service';
 
 import {Response} from 'express';
@@ -45,7 +45,7 @@ export class LibraryController {
 	}
 
 	@UseGuards(JwtAuthGuard)
-	@Get('courses/:index/:fileName')
+	@Get('courses/:index/files/:fileName')
 	@Header('Content-type', 'application/pdf')
 	async getFile(
 		@Param() p: {index: number; fileName: string},
@@ -63,7 +63,7 @@ export class LibraryController {
 	}
 
 	@UseGuards(JwtAuthGuard)
-	@Get('courses/:index/:fileName/download')
+	@Get('courses/:index/files/:fileName/download')
 	async downloadPdf(
 		@Param() p: {index: number; fileName: string},
 		@Res() res: Response
@@ -88,5 +88,20 @@ export class LibraryController {
 			// If the file does not exist, send a 404 response
 			res.status(404).send('File not found');
 		}
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Get('courses/:index/download')
+	async downloadLesson(@Param() p: {index: number}, @Res() res: Response) {
+		const lessonPath = `library/${p.index}/${p.index}.zip`;
+		res.setHeader('Content-Type', 'application/zip');
+		res.setHeader(
+			'Content-Disposition',
+			`attachment; filename=${p.index + 1}.zip`
+		);
+
+		// Pipe the zip file to the HTTP response
+		const fileStream = fs.createReadStream(lessonPath);
+		fileStream.pipe(res);
 	}
 }
