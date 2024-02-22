@@ -10,8 +10,6 @@ import {
 	Patch,
 	Query,
 	Put,
-	Logger,
-	Delete,
 } from '@nestjs/common';
 import {JwtAuthGuard} from '../auth/guards/jwt/jwt-auth.guard';
 import {InjectMapper} from '@automapper/nestjs';
@@ -131,7 +129,6 @@ export class UsersController {
 		])
 		filter?: Filtering
 	) {
-		Logger.log(filter);
 		return this.usersService.findAllPaginated(paginationParams, sort, filter);
 	}
 

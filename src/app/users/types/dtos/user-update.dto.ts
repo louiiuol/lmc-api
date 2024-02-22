@@ -31,4 +31,7 @@ export class UserUpdateDto {
 
 	@IsDate()
 	updatedAt: Date;
+
+	@IsDate()
+	lastConnection: Date;
 }

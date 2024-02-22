@@ -103,7 +103,6 @@ export class UsersService {
 
 	findOneByUuid = async (uuid: string) => {
 		const user = await this.usersRepository.findOne({where: {uuid}});
-		Logger.log(uuid, user);
 		return user;
 	};
 
@@ -212,7 +211,6 @@ export class UsersService {
 	) => {
 		const user = await this.findOneByUuid(uuid);
 		if (user && 'subscribed' in dto && dto.subscribed && !user.subscribed) {
-			Logger.log('sending mail');
 			const title = 'Confirmation de votre abonnement à La Méthode claire.';
 			this.mailerService.sendMail({
 				to: user.email,

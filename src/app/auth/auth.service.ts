@@ -20,13 +20,14 @@ export class AuthService {
 	 * @returns JWT access token
 	 */
 	login = async (user: User): Promise<TokenJWT> => {
-		const entity = await this.usersService.findOneByUuid(user.uuid);
+		const entity = await this.usersService.findOneByEmail(user.email);
 		if (entity.closed) {
 			entity.closed = false;
 			entity.closedAt = null;
 		}
 		entity.lastConnection = new Date();
-		await this.usersService.save(entity);
+		await this.usersService.updateUser(user.uuid, entity);
+
 		return {
 			accessToken: this.jwtService.sign({
 				username: user.email,

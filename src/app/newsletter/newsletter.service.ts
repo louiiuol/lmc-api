@@ -1,4 +1,4 @@
-import {Injectable, Logger} from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {UsersService} from '../users/users.service';
 import {MailerService} from '@nestjs-modules/mailer';
 import {NewsletterSendDto} from './types/dtos/newsletter-send.dto';
@@ -38,9 +38,5 @@ export class NewsletterService {
 				content,
 			},
 		});
-	}
-
-	getNews() {
-		throw new Error('Method not implemented.');
 	}
 }
