@@ -118,6 +118,7 @@ export class UsersController {
 			'createdAt',
 			'currentLessonIndex',
 			'newsletter',
+			'lastConnection',
 		])
 		sort?: Sorting,
 		@FilteringParams([
