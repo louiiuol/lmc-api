@@ -44,6 +44,10 @@ export class User extends BaseEntity {
 
 	@AutoMap()
 	@Column({default: false})
+	closed: boolean;
+
+	@AutoMap()
+	@Column({default: false})
 	newsletter: boolean;
 
 	@AutoMap()
@@ -66,4 +70,12 @@ export class User extends BaseEntity {
 	@AutoMap()
 	@Column({default: () => 'NOW()'})
 	updatedAt: Date;
+
+	@AutoMap()
+	@Column({nullable: true})
+	lastConnection: Date;
+
+	@AutoMap()
+	@Column({nullable: true})
+	closedAt: Date;
 }

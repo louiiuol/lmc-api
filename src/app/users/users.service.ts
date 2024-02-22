@@ -25,6 +25,8 @@ import {getWhere, getOrder} from '../core/helpers/type-orm-helpers.fn';
 import {PaginatedResource} from '../core/types/paginated-resource';
 import {Mapper} from '@automapper/core';
 import {InjectMapper} from '@automapper/nestjs';
+import {Cron} from '@nestjs/schedule';
+import {isXMonthEarlier} from '../core/helpers';
 
 @Injectable()
 export class UsersService {
@@ -129,11 +131,47 @@ export class UsersService {
 		} else return 'INVALID_TOKEN';
 	};
 
-	// TODO Fix input
-	closeAccount = async (user: any) => {
-		await this.setUserActive(user, false);
-		return 'SUCCESS';
+	closeAccount = async (uuid: string) => {
+		const entity = await this.findOneByUuid(uuid);
+		entity.closed = true;
+		entity.closedAt = new Date();
+		await this.usersRepository.save(entity);
+		const title = 'Fermeture de votre compte.';
+		this.mailerService.sendMail({
+			to: entity.email,
+			subject: title,
+			template: 'closing-account',
+			context: {
+				title,
+				summary:
+					"Vous venez de demander la fermeture de votre compte. Celui-ci sera supprimé dans 2 mois. Si vous souhaitez rouvrir votre compte, il vous suffit de vous reconnecter à l'application",
+			},
+		});
+		return {message: 'account-closed'};
 	};
+
+	@Cron('0 1 * * *')
+	async handleClosedAccounts() {
+		(await this.usersRepository.find())
+			.filter(u => u.closed && u.role === 'USER')
+			.forEach(async user => {
+				if (isXMonthEarlier(user.closedAt)) {
+					const title = 'Fermeture de votre compte.';
+					this.mailerService.sendMail({
+						to: user.email,
+						subject: title,
+						template: 'closing-account',
+						context: {
+							title,
+							summary:
+								"Vous avez récemment demandé(e) la fermeture de votre compte. Celui-ci sera supprimé dans 1 mois. Si vous souhaitez rouvrir votre compte, il vous suffit de vous reconnecter à l'application",
+						},
+					});
+				} else if (isXMonthEarlier(user.closedAt, 2)) {
+					await this.usersRepository.delete({uuid: user.uuid});
+				}
+			});
+	}
 
 	async activateSubscription(uuid: string, valid: boolean) {
 		const user = await this.findOneByUuid(uuid);
@@ -260,4 +298,8 @@ export class UsersService {
 		entity.isActive = active;
 		await this.usersRepository.save(entity);
 	};
+
+	private isOlderThan = (date: Date, days: number) =>
+		new Date(date).getTime() - new Date().getTime() <
+		days * 60 * 60 * 24 * 1000;
 }

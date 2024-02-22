@@ -11,6 +11,7 @@ import {
 	Query,
 	Put,
 	Logger,
+	Delete,
 } from '@nestjs/common';
 import {JwtAuthGuard} from '../auth/guards/jwt/jwt-auth.guard';
 import {InjectMapper} from '@automapper/nestjs';
@@ -100,9 +101,9 @@ export class UsersController {
 	}
 
 	@UseGuards(JwtAuthGuard)
-	@Get('close')
+	@Get('close-account')
 	async closeAccount(@CurrentUser() user) {
-		return await this.usersService.closeAccount(user);
+		return await this.usersService.closeAccount(user.uuid);
 	}
 
 	@UseGuards(JwtAuthGuard, AdminGuard)

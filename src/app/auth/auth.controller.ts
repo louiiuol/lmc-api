@@ -14,10 +14,10 @@ export class AuthController {
 	@UseGuards(LocalAuthGuard)
 	@Post('/login')
 	@HttpCode(200)
-	login(@Body() dto: UserLoginDto) {
+	async login(@Body() dto: UserLoginDto) {
 		return {
 			code: 200,
-			data: this.authService.login(dto as User),
+			data: await this.authService.login(dto as User),
 			message: '🎉 Successfully Logged in !',
 		};
 	}

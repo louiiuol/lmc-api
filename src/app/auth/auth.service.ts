@@ -15,15 +15,25 @@ export class AuthService {
 
 	/**
 	 * Log given user w/ JWT service and returns connexion token.
+	 * * Also checks if account was closed, if so reopen it.
 	 * @param user payload to log user in
 	 * @returns JWT access token
 	 */
-	login = (user: User): TokenJWT => ({
-		accessToken: this.jwtService.sign({
-			username: user.email,
-			sub: user.uuid,
-		}),
-	});
+	login = async (user: User): Promise<TokenJWT> => {
+		const entity = await this.usersService.findOneByUuid(user.uuid);
+		if (entity.closed) {
+			entity.closed = false;
+			entity.closedAt = null;
+		}
+		entity.lastConnection = new Date();
+		await this.usersService.save(entity);
+		return {
+			accessToken: this.jwtService.sign({
+				username: user.email,
+				sub: user.uuid,
+			}),
+		};
+	};
 
 	/**
 	 * Validate current credentials:
