@@ -8,4 +8,7 @@ export class UserUpdateAdminDto {
 	@IsOptional()
 	@IsBoolean()
 	subscribed?: boolean;
+
+	@IsOptional()
+	refreshToken?: string | null;
 }

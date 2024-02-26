@@ -39,5 +39,8 @@ export class UserViewDto {
 	lastConnection: Date;
 
 	@AutoMap()
+	closed: boolean;
+
+	@AutoMap()
 	closedAt: Date;
 }

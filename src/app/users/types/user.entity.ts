@@ -66,7 +66,6 @@ export class User extends BaseEntity {
 	@Column({default: () => 'NOW()'})
 	createdAt: Date;
 
-	// TODO: update this prop when entity updates
 	@AutoMap()
 	@Column({default: () => 'NOW()'})
 	updatedAt: Date;
@@ -78,4 +77,8 @@ export class User extends BaseEntity {
 	@AutoMap()
 	@Column({nullable: true})
 	closedAt: Date;
+
+	@AutoMap()
+	@Column({nullable: true})
+	refreshToken: string;
 }

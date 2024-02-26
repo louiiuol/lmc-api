@@ -27,7 +27,7 @@ export class IsUserAlreadyExistConstraint
 	defaultMessage = () => 'UNIQUE_EMAIL';
 }
 
-export function IsUserAlreadyExist(validationOptions?: ValidationOptions) {
+export function IsUniqueEmail(validationOptions?: ValidationOptions) {
 	return function (object: any, propertyName: string) {
 		registerDecorator({
 			target: object.constructor,

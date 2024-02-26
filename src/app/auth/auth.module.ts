@@ -8,6 +8,7 @@ import {JwtModule} from '@nestjs/jwt';
 import {AuthController} from './auth.controller';
 import {environment} from '../environment';
 import {AdminGuard} from './guards/roles/admin.guard';
+import {RefreshTokenStrategy} from './guards/jwt/jwt-refresh.strategy';
 
 @Module({
 	imports: [
@@ -19,6 +20,12 @@ import {AdminGuard} from './guards/roles/admin.guard';
 		}),
 	],
 	controllers: [AuthController],
-	providers: [AuthService, LocalStrategy, JwtStrategy, AdminGuard],
+	providers: [
+		AuthService,
+		LocalStrategy,
+		JwtStrategy,
+		RefreshTokenStrategy,
+		AdminGuard,
+	],
 })
 export class AuthModule {}

@@ -1,5 +1,4 @@
 import {
-	IsDate,
 	IsEmail,
 	IsOptional,
 	IsString,
@@ -28,10 +27,4 @@ export class UserUpdateDto {
 	@IsOptional()
 	@IsBoolean()
 	newsletter: boolean;
-
-	@IsDate()
-	updatedAt: Date;
-
-	@IsDate()
-	lastConnection: Date;
 }

@@ -6,6 +6,7 @@ import {
 	IsOptional,
 } from '@nestjs/class-validator';
 import {IsBoolean} from 'class-validator';
+import {IsUniqueEmail} from '../../validators/unique-email.validator';
 
 export class UserCreateDto {
 	@IsEmail()

@@ -3,7 +3,8 @@ import {
 	Get,
 	Header,
 	Param,
-	Post,
+	Patch,
+	Query,
 	Req,
 	Res,
 	StreamableFile,
@@ -13,39 +14,28 @@ import {
 
 import {LibraryService} from './library.service';
 import {JwtAuthGuard} from '../auth/guards/jwt/jwt-auth.guard';
-import {AdminGuard} from '../auth/guards/roles/admin.guard';
 import {createReadStream} from 'fs';
 import {join} from 'path';
 import {UsersService} from '../users/users.service';
 
 import {Response} from 'express';
 import * as fs from 'fs';
+import {CurrentUser} from '../auth/decorators/current-user.decorator';
 
-@Controller()
+@Controller('courses')
+@UseGuards(JwtAuthGuard)
 export class LibraryController {
 	constructor(
 		private libraryService: LibraryService,
 		private usersService: UsersService
 	) {}
 
-	@UseGuards(JwtAuthGuard, AdminGuard)
-	@Post('courses')
-	async generateLibrary() {
-		await this.libraryService.createLibrary();
-		return {
-			code: 201,
-			data: null,
-			message: '🎉 Library successfully generated!',
-		};
-	}
-
-	@Get('courses')
+	@Get()
 	async getAllCourses() {
 		return await this.libraryService.getAllCourses();
 	}
 
-	@UseGuards(JwtAuthGuard)
-	@Get('courses/:index/files/:fileName')
+	@Get(':index/files/:fileName')
 	@Header('Content-type', 'application/pdf')
 	async getFile(
 		@Param() p: {index: number; fileName: string},
@@ -62,8 +52,7 @@ export class LibraryController {
 		} else throw new UnauthorizedException('FOR_SUB_ONLY');
 	}
 
-	@UseGuards(JwtAuthGuard)
-	@Get('courses/:index/files/:fileName/download')
+	@Get(':index/files/:fileName/download')
 	async downloadPdf(
 		@Param() p: {index: number; fileName: string},
 		@Res() res: Response
@@ -90,8 +79,7 @@ export class LibraryController {
 		}
 	}
 
-	@UseGuards(JwtAuthGuard)
-	@Get('courses/:index/download')
+	@Get(':index/download')
 	async downloadLesson(@Param() p: {index: number}, @Res() res: Response) {
 		const lessonPath = `library/${p.index}/${p.index}.zip`;
 		res.setHeader('Content-Type', 'application/zip');
@@ -103,5 +91,12 @@ export class LibraryController {
 		// Pipe the zip file to the HTTP response
 		const fileStream = fs.createReadStream(lessonPath);
 		fileStream.pipe(res);
+	}
+
+	@Patch('currentLesson')
+	async setCurrentLesson(@CurrentUser() user, @Query('index') index: number) {
+		const entity = await this.usersService.findOneByUuid(user.uuid);
+		entity.currentLessonIndex = index;
+		return (await this.usersService.save(entity)).currentLessonIndex;
 	}
 }

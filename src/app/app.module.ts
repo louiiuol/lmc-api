@@ -5,6 +5,7 @@ import {DatabaseModule} from './core/modules/database.module';
 import {MailModule} from './core/modules/mail.module';
 import {NewsletterModule} from './newsletter/newsletter.module';
 import {ScheduleModule} from '@nestjs/schedule';
+import {AdminModule} from './admin/admin.module';
 
 @Module({
 	imports: [
@@ -13,6 +14,7 @@ import {ScheduleModule} from '@nestjs/schedule';
 		AuthModule,
 		LibraryModule,
 		NewsletterModule,
+		AdminModule,
 		ScheduleModule.forRoot(),
 	],
 })
