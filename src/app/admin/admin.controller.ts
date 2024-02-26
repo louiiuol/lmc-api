@@ -25,7 +25,7 @@ import {AdminUsersService} from './admin-users.service';
 import {MailerService} from '@nestjs-modules/mailer';
 
 @UseGuards(JwtAuthGuard, AdminGuard)
-@Controller()
+@Controller('admin')
 export class AdminController {
 	constructor(
 		private readonly libraryService: LibraryService,
