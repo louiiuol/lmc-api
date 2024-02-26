@@ -23,7 +23,6 @@ import * as fs from 'fs';
 import {CurrentUser} from '../auth/decorators/current-user.decorator';
 
 @Controller('courses')
-@UseGuards(JwtAuthGuard)
 export class LibraryController {
 	constructor(
 		private libraryService: LibraryService,
@@ -35,6 +34,7 @@ export class LibraryController {
 		return await this.libraryService.getAllCourses();
 	}
 
+	@UseGuards(JwtAuthGuard)
 	@Get(':index/files/:fileName')
 	@Header('Content-type', 'application/pdf')
 	async getFile(
@@ -52,6 +52,7 @@ export class LibraryController {
 		} else throw new UnauthorizedException('FOR_SUB_ONLY');
 	}
 
+	@UseGuards(JwtAuthGuard)
 	@Get(':index/files/:fileName/download')
 	async downloadPdf(
 		@Param() p: {index: number; fileName: string},
@@ -79,6 +80,7 @@ export class LibraryController {
 		}
 	}
 
+	@UseGuards(JwtAuthGuard)
 	@Get(':index/download')
 	async downloadLesson(@Param() p: {index: number}, @Res() res: Response) {
 		const lessonPath = `library/${p.index}/${p.index}.zip`;
@@ -93,6 +95,7 @@ export class LibraryController {
 		fileStream.pipe(res);
 	}
 
+	@UseGuards(JwtAuthGuard)
 	@Patch('currentLesson')
 	async setCurrentLesson(@CurrentUser() user, @Query('index') index: number) {
 		const entity = await this.usersService.findOneByUuid(user.uuid);
