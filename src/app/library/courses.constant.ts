@@ -178,7 +178,9 @@ export const COURSES: CourseGenerator[] = [
 		script: true,
 		lesson: true,
 		exercice: true,
-		phonemes: [{name: 'G', poster: true, sounds: ['j', 'g']}],
+		phonemes: [
+			{name: 'G', poster: true, sounds: ['j', 'g'], posterNames: ['GU', 'GI']},
+		],
 		sounds: ['G'],
 		words: ['Grandir'],
 		color: '#943e1f',
@@ -267,6 +269,7 @@ export const COURSES: CourseGenerator[] = [
 			{
 				name: 'TI',
 				poster: true,
+				posterNames: ['TION'],
 				endOfWord: true,
 				info: "suivi d'une voyelle",
 				sounds: ['s'],

@@ -14,5 +14,8 @@ export class PhonemeViewDto {
 	sounds?: string[];
 
 	@AutoMap()
+	posterNames?: string[];
+
+	@AutoMap()
 	info: string;
 }

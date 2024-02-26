@@ -29,6 +29,13 @@ export class Phoneme extends BaseEntity {
 	poster?: boolean;
 
 	@AutoMap()
+	@Column({
+		type: 'simple-array',
+		nullable: true,
+	})
+	posterNames?: string[];
+
+	@AutoMap()
 	@Column({nullable: true})
 	endOfWord?: boolean;
 
