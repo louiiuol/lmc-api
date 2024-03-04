@@ -11,12 +11,12 @@
 		<style>
 
 			img { border: none; -ms-interpolation-mode: bicubic; max-width: 100%; }
-			body { background-color: #f5f7ee; font-family: "Poppins", sans-serif;
+			body { background-color: #f5f7ee; font-family: 'Poppins', sans-serif;
 			-webkit-font-smoothing: antialiased; font-size: 14px; line-height: 1.4;
 			margin: 0; padding: 0; -ms-text-size-adjust: 100%;
 			-webkit-text-size-adjust: 100%; } table { border-collapse: separate;
 			mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; } table td {
-			font-family: "Poppins", sans-serif; font-size: 14px; vertical-align: top;
+			font-family: 'Poppins', sans-serif; font-size: 14px; vertical-align: top;
 			} .body { background-color: #f5f7ee; width: 100%; } .container { display:
 			block; margin: 0 auto !important; max-width: 580px; padding: 10px; width:
 			580px; } .content { box-sizing: border-box; display: block; margin: 0
@@ -26,10 +26,10 @@
 			} .footer { clear: both; margin-top: 10px; text-align: center; width:
 			100%; } .footer td, .footer p, .footer span, .footer a { color: #999999;
 			font-size: 12px; text-align: center; } h1, h2, h3, h4 { color: #000000;
-			font-family: "Poppins", sans-serif; font-weight: 400; line-height: 1.4;
+			font-family: 'Poppins', sans-serif; font-weight: 400; line-height: 1.4;
 			margin: 0; margin-bottom: 30px; } h1 { font-size: 35px; font-weight: 300;
 			text-align: center; text-transform: capitalize; } p, ul, ol { font-family:
-			"Poppins", sans-serif; font-size: 14px; font-weight: normal; margin: 0;
+			'Poppins', sans-serif; font-size: 14px; font-weight: normal; margin: 0;
 			margin-bottom: 15px; } p li, ul li, ol li { list-style-position: inside;
 			margin-left: 5px; } a { color: #423f65; text-decoration: underline; } .btn
 			{ box-sizing: border-box; width: 100%; } .btn > tbody > tr > td {
@@ -61,19 +61,17 @@
 			width: auto !important; } } @media all { .ExternalClass { width: 100%; }
 			.ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass
 			font, .ExternalClass td, .ExternalClass div { line-height: 100%; }
-			.company-link a { color: #b1ced8 !important; font-family: "Poppins",
+			.company-link a { color: #b1ced8 !important; font-family: 'Poppins',
 			inherit !important; font-size: inherit !important; font-weight: inherit
 			!important; line-height: inherit !important; text-decoration: none
-			!important; } #MessageViewBody a { color: inherit; text-decoration: none;
-			font-size: inherit; font-family: "Poppins", inherit; font-weight: inherit;
-			line-height: inherit; } .btn-primary table td:hover { background-color:
-			#423f65 !important; } .btn-primary a:hover { background-color: #423f65
-			!important; border-color: #423f65 !important; } } p {color: #423f65; }
+			!important; } .btn-primary table td:hover { background-color: #423f65
+			!important; } .btn-primary a:hover { background-color: #423f65 !important;
+			border-color: #423f65 !important; } } p {color: #423f65; }
 
 		</style>
 	</head>
 	<body>
-		<span class='preheader'>{{summary}}</span>
+		<span class='preheader'>CRON Job running</span>
 		<table
 			role='presentation'
 			border='0'
@@ -99,58 +97,22 @@
 										cellspacing='0'
 									>
 										<tr>
+
 											<td>
 												<header style='text-align: center;margin-bottom: 24px'>
 													<img
 														style='width: 80%'
-														src='https://raw.githubusercontent.com/louiiuol/la-methode-claire/main/src/assets/img/banner-color.png'
+														src='https://raw.githubusercontent.com/louiiuol/la-methode-claire/main/src/assets/img/banner.png'
 														alt="Bannière 'La Méthode claire'"
 													/>
 												</header>
 
-												<h2 style='color: #423f65;'>
-													Bienvenue sur
-													<em>La méthode claire</em>
-												</h2>
+												<h2 style='color: #423f65;'>{{title}}</h2>
 
-												<p>
-													{{summary}}
+												<p>La vérification des comptes fermés vient d'être
+													effectuée!
 												</p>
-												<table
-													role='presentation'
-													border='0'
-													cellpadding='0'
-													cellspacing='0'
-													class='btn btn-primary'
-												>
-													<tbody>
-														<tr>
-															<td align='center'>
-																<table
-																	role='presentation'
-																	border='0'
-																	cellpadding='0'
-																	cellspacing='0'
-																>
-																	<tbody>
-																		<tr>
-																			<td>
-																				<a target='_blank' href='{{link}}'>
-																					Activer votre compte
-																				</a>
-																			</td>
-																		</tr>
-																	</tbody>
-																</table>
-															</td>
-														</tr>
-													</tbody>
-												</table>
-												<p>
-													Vous venez de vous inscrire sur le site
-													<em>La Méthode Claire</em>. Pour compléter votre
-													inscription, merci de cliquer sur le lien ci-dessus.
-												</p>
+
 											</td>
 										</tr>
 									</table>
