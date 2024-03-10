@@ -16,7 +16,6 @@ import {RefreshTokenStrategy} from './guards/jwt/jwt-refresh.strategy';
 		PassportModule,
 		JwtModule.register({
 			secret: environment.JWT_SECRET_KEY,
-			signOptions: {expiresIn: '1d'},
 		}),
 	],
 	controllers: [AuthController],

@@ -2,6 +2,7 @@ import {
 	ConflictException,
 	ForbiddenException,
 	Injectable,
+	Logger,
 	UnauthorizedException,
 } from '@nestjs/common';
 import {JwtService} from '@nestjs/jwt';
@@ -78,16 +79,21 @@ export class AuthService {
 
 	refreshTokens = async (email: string, refreshToken: string) => {
 		const user = await this.usersService.findOneByEmail(email);
+
 		if (!user?.refreshToken)
 			throw new ForbiddenException(
 				'Access Denied: No refresh token available !'
 			);
 		if (!(await bcrypt.compare(refreshToken, user.refreshToken)))
 			throw new ForbiddenException('Access Denied: Invalid token!');
+
 		const tokens = await this.getTokens(user.uuid, user.email);
-		await this.updateRefreshToken(user.uuid, tokens.refreshToken);
-		user.lastConnection = new Date();
-		this.usersService.update(user.uuid, user);
+		const updated = await this.updateRefreshToken(
+			user.uuid,
+			tokens.refreshToken
+		);
+		updated.lastConnection = new Date();
+		this.usersService.update(user.uuid, updated);
 		return tokens;
 	};
 
@@ -114,16 +120,16 @@ export class AuthService {
 		return user;
 	};
 
-	activateAccount = async (uuid: string, token: string) => {
-		if (await this.checkToken(uuid, token)) {
-			const entity = await this.usersService.findOneByUuid(uuid);
+	activateAccount = async (userId: string, token: string) => {
+		if (await this.checkToken(userId, token)) {
+			const entity = await this.usersService.findOneByUuid(userId);
 			await this.setUserActive(entity, true);
 			return {message: 'SUCCESS'};
 		} else return {message: 'INVALID_TOKEN'};
 	};
 
-	closeAccount = async (uuid: string) => {
-		const entity = await this.usersService.findOneByUuid(uuid);
+	closeAccount = async (userId: string) => {
+		const entity = await this.usersService.findOneByUuid(userId);
 		entity.closed = true;
 		entity.closedAt = new Date();
 		await this.usersService.update(entity.uuid, entity);
@@ -141,12 +147,10 @@ export class AuthService {
 		return {message: 'account-closed'};
 	};
 
-	private updateRefreshToken = async (userId: string, refreshToken: string) => {
-		const hashedRefreshToken = await this.hashData(refreshToken);
+	private updateRefreshToken = async (userId: string, refreshToken: string) =>
 		await this.usersService.update(userId, {
-			refreshToken: hashedRefreshToken,
+			refreshToken: this.hashData(refreshToken),
 		});
-	};
 
 	private hashData = (data: string): string => bcrypt.hash(data, this.salt);
 
@@ -169,7 +173,7 @@ export class AuthService {
 				},
 				{
 					secret: environment.JWT_REFRESH_SECRET,
-					expiresIn: '7d',
+					expiresIn: '15d',
 				}
 			),
 		]);
@@ -180,12 +184,12 @@ export class AuthService {
 		};
 	};
 
-	private checkToken = async (uuid: string, token: any): Promise<boolean> => {
+	private checkToken = async (userId: string, token: any): Promise<boolean> => {
 		try {
 			return !!this.jwtService.verify(token, {
 				secret:
 					process.env.JWT_SECRET_KEY +
-					(await this.usersService.findOneByUuid(uuid)).password,
+					(await this.usersService.findOneByUuid(userId)).password,
 			});
 		} catch (e) {
 			throw new UnauthorizedException(e.message);

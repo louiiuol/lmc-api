@@ -78,7 +78,6 @@ export class User extends BaseEntity {
 	@Column({nullable: true})
 	closedAt: Date;
 
-	@AutoMap()
 	@Column({nullable: true})
 	refreshToken: string;
 }
