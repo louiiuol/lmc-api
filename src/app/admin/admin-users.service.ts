@@ -30,10 +30,16 @@ export class AdminUsersService {
 
 	@Cron('0 1 * * *')
 	async handleClosedAccounts() {
+		const members = {
+			closed: [],
+			removed: [],
+		};
+
 		(await this.users.findAll())
 			.filter(u => u.closed && u.role === 'USER')
 			.forEach(async user => {
 				if (isXMonthEarlier(user.closedAt)) {
+					members.closed.push(user);
 					const title = 'Fermeture de votre compte.';
 					this.mailerService.sendMail({
 						to: user.email,
@@ -46,16 +52,21 @@ export class AdminUsersService {
 						},
 					});
 				} else if (isXMonthEarlier(user.closedAt, 2)) {
+					members.removed.push(user);
 					await this.users.remove(user.uuid);
 				}
 			});
 		const title = 'Cron Job running: Verifying closed account';
+		const closed = members.closed.map(u => u.email).join(' - ');
+		const removed = members.removed.map(u => u.email).join(' - ');
 		this.mailerService.sendMail({
 			to: 'louis.godlewski@gmail.com',
 			subject: title,
 			template: 'running-job',
 			context: {
 				title,
+				closed,
+				removed,
 			},
 		});
 	}
