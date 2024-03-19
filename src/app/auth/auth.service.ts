@@ -31,25 +31,7 @@ export class AuthService {
 			password: this.hashData(dto.password),
 		});
 		if (user) {
-			const token = this.jwtService.sign(
-				{
-					email: user.email,
-					uuid: user.uuid,
-				},
-				{secret: process.env.JWT_SECRET_KEY + user.password, expiresIn: '15m'}
-			);
-			const title = 'Bienvenue sur la méthode claire !';
-			this.mailerService.sendMail({
-				to: user.email,
-				subject: title,
-				template: 'activate-account',
-				context: {
-					title,
-					summary:
-						"Pour compléter l'inscription de votre compte, merci de cliquer sur le lien ci-dessous. Ce lien expirera dans 15 minutes.",
-					link: `${environment.API_HOST_FULL}/api/auth/users/${user.uuid}/activate?token=${token}`,
-				},
-			});
+			this.sendEmailConfirmation(user);
 		}
 		const tokens = await this.getTokens(user.uuid, user.email);
 		await this.updateRefreshToken(user.uuid, tokens.refreshToken);
@@ -113,8 +95,8 @@ export class AuthService {
 		pass: string
 	): Promise<Partial<User>> => {
 		const user = await this.usersService.findOneByEmail(email);
-		if (!(user?.isActive && (await bcrypt.compare(pass, user.password))))
-			return null;
+		if (!(await bcrypt.compare(pass, user.password))) return null;
+		if (!user.isActive) throw new ForbiddenException('Inactive account');
 		delete user.password;
 		return user;
 	};
@@ -144,6 +126,11 @@ export class AuthService {
 			},
 		});
 		return {message: 'account-closed'};
+	};
+
+	accountConfirmation = async (email: string) => {
+		const user = await this.usersService.findOneByEmail(email);
+		this.sendEmailConfirmation(user);
 	};
 
 	private updateRefreshToken = async (userId: string, refreshToken: string) =>
@@ -199,5 +186,27 @@ export class AuthService {
 		const entity = await this.usersService.findOneByUuid(user.uuid);
 		entity.isActive = active;
 		await this.usersService.update(entity.uuid, entity);
+	};
+
+	private sendEmailConfirmation = (user: User) => {
+		const token = this.jwtService.sign(
+			{
+				email: user.email,
+				uuid: user.uuid,
+			},
+			{secret: process.env.JWT_SECRET_KEY + user.password, expiresIn: '15m'}
+		);
+		const title = 'Bienvenue sur la méthode claire !';
+		this.mailerService.sendMail({
+			to: user.email,
+			subject: title,
+			template: 'activate-account',
+			context: {
+				title,
+				summary:
+					"Pour compléter l'inscription de votre compte, merci de cliquer sur le lien ci-dessous. Ce lien expirera dans 15 minutes.",
+				link: `${environment.API_HOST_FULL}/api/auth/users/${user.uuid}/activate?token=${token}`,
+			},
+		});
 	};
 }

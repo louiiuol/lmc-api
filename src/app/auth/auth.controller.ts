@@ -69,4 +69,10 @@ export class AuthController {
 		this.authService.logOut(user['sub']);
 		return await this.authService.closeAccount(user.uuid);
 	}
+
+	@Get('account-reconfirmation/:email')
+	async reconfirmAccount(@Param('email') email: string) {
+		await this.authService.accountConfirmation(email);
+		return {message: 'Email sent!'};
+	}
 }
