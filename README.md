@@ -1,43 +1,70 @@
 # La Méthode Claire 👓
 
-> "La méthode claire" est une méthode de lecture pour faciliter l'apprentissage de la  lecture auprès des enseignants, notamment en CP. Cette API permet de:
->
-> - Créer son compte.
-> - Se connecter  à son espace et retrouver les leçons en fonctions d'une progression personnelle.
->
-> Les administrateurs pourront:
->
-> - Activer / désactiver les comptes utilisateurs
-> - Ajouter et éditer la bibliothèque
- pUblic:
-
-3x 1 heure de video d'introduction
-
-1 guide PDF (la méthode complète)
-+
-les leçons (26) (guide):
-
-- script
-- schemas + tableau
-- exercice
-- poster
-- video
-
-## Fonctionnalités 🎉
-
-1. Authentification
-2. Bibliothèque
-3. Paiement et Abonnement (V2)
+> "La méthode claire" est une méthode d'apprentissage de la lecture destinée aux professeurs des écoles, notamment en CP. Cet espace contient l'ensemble du code nécessaire au fonctionnement de l'API.
 
 ## Get started 💪
 
-> After cloning project locally you can run the followings commands in the root folder in order to launch the app locally
-
 ``` bash
 npm i # Install workspace dependency
-npm run serve:apps # Launch API and ng applications (user-board & admin-board)
-npm run serve:public:ui # Launch distinct Nextjs Public application
+npm run start # Launch API (with watcher for file changes)
+npm run build # Build distributable folder
+npm run test # Launch jest testing suite
 ```
+
+## Fonctionnalités 🎉
+
+### 1. Authentification
+
+> Gestion de l'authentification des utilisateurs, de leurs permissions, et de leurs informations stockées.
+
+- [x] Création d'un compte (unique par l'email)
+  - [x] Validation du compte par l'envoi d'un lien à l'adresse email renseignée (valide pendant 15 minutes).
+  - [x] Demander le renvoi d'un code de validation de compte si celui-ci à expiré.
+
+- [x] Authentification des utilisateurs, signée par des tokens JWT
+  - [x] Mécanisme de token de rafraîchissement
+
+- [x] Gestion des informations de l'utilisateur
+  - [x] éditer ses propres informations (nom, adresse email etc.)
+  - [x] Vérifier et éditer son mot de passe
+
+- [x] "Mot de passe oublié" envoi d'un email contenant lien et un token pour éditer le mot de passe du compte associé (valide pendant 10 minutes)
+
+
+### 2. Bibliothèque
+
+> La bibliothèque représente l'ensemble des leçons d'une année scolaire, découpé en semaines. Chacune d'entre elle est unique: certaines semaines comporte plusieurs affiches, d'autres non..Une automatisation est nécessaire, car la méthode évolue !
+
+- [x] Récupération de l'ensemble des lessons disponible (en base de donnée)
+- [x] Routes dynamiques permettant l'affichage (octet-stream) ou le téléchargement (.pdf) des différentes leçons
+- [x] Système de progression (stockage de l'index de la leçon courante dans l'entité User)
+
+### 3. Back office
+
+> Ressources dédiées au administrateur de l'application. Chaque fonctionnalités qui suit est donc protégé par un token d'admin (l'utilisateur doit avoir un rôle égal à 'ADMIN').
+
+- [x] Administration des utilisateurs
+  - [x] Affichages des utilisateurs de la page, avec pagination, tri, et filtres avancés (email:like:email@example.fr)
+  - [x] Activation et désactivation manuel des utilisateurs et de leurs abonnement.
+
+- [ ] Administration de la bibliothèque
+  - [x] Génération et rafraîchissement de la bibliothèque à partir d'un fichier json décrivant les propriétés de chaque leçons.
+  - [ ] Resource dynamique permettant de remplacer des leçons avec un nouveau fichier donné en input.
+
+- [x] Réinitialiser les abonnements
+
+- [x] Newsletter: envoi d'un email à l'ensemble des utilisateurs abonnés à la newsletter. Les utilisateurs qui sont également abonnés à la méthode verront du contenu supplémentaire.
+
+### 4. Paiement & Paiement (In progress)
+
+> Chaque utilisateur peut s'abonner pour accéder à l'ensemble du contenu. Un abonnement est valable pour une année scolaire.
+
+- [ ] Intégration d'un système de paiement via Stripe
+- [ ] Lorsque le paiement est validé:
+  - [ ] Activation de l'abonnement de l'utilisateur
+  - [ ] Génération et stockage d'une facture
+- [ ] Ressource permettant de "récupérer ma facture"
+- [ ] En début d'année scolaire, chaque abonnement doit être réinitialisé
 
 ## Sources
 
@@ -54,4 +81,4 @@ npm run serve:public:ui # Launch distinct Nextjs Public application
 
 ## Contact ✉️
 
-Feel free to contact `dev@vidmizer.com` if you have any suggestions or wish to learn more about certain aspects of this project.
+Feel free to create an issue if you have any suggestions or wish to learn more about certain aspects of this project.

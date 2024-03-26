@@ -58,7 +58,7 @@ export class AdminController {
 			'lastName',
 			'email',
 		])
-		filter?: Filtering
+		filter?: Filtering[]
 	) {
 		return this.usersService.findAllPaginated(paginationParams, sort, filter);
 	}
