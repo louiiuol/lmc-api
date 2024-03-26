@@ -68,17 +68,16 @@ npm run test # Launch jest testing suite
 
 ## Sources
 
+- [NestJS](https://docs.nestjs.com/v5/)
 - [AutoMapper](https://automapperts.netlify.app/docs/nestjs)
+- [TypeORM](https://orkhan.gitbook.io/typeorm/docs)
+- [NodeMailer](https://www.nodemailer.com/about/#example)
 
 ### Class Validators
 
 - [Usage](https://github.com/typestack/class-validator#usage)
 - [Validation decorators](https://github.com/typestack/class-validator#validation-decorators)
 
-## Wiki 🙏
+## Base de donnée
 
 ![UML](./assets/database-model.png)
-
-## Contact ✉️
-
-Feel free to create an issue if you have any suggestions or wish to learn more about certain aspects of this project.
