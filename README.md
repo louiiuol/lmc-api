@@ -30,6 +30,10 @@ npm run test # Launch jest testing suite
 
 - [x] "Mot de passe oublié" envoi d'un email contenant lien et un token pour éditer le mot de passe du compte associé (valide pendant 10 minutes)
 
+- [x] Fermeture de compte 
+- [x] CRON permettant de vérifier les comptes fermés depuis: 
+    - 1 mois (envoi d'un email avertissement) 
+    - 2 mois (supression du compte)
 
 ### 2. Bibliothèque
 
