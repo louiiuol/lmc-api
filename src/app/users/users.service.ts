@@ -9,6 +9,7 @@ import {getWhere, getOrder} from '../core/helpers/type-orm-helpers.fn';
 import {PaginatedResource} from '../core/types/paginated-resource';
 import {Mapper} from '@automapper/core';
 import {InjectMapper} from '@automapper/nestjs';
+import {filter} from 'rxjs';
 
 @Injectable()
 export class UsersService {
@@ -44,8 +45,9 @@ export class UsersService {
 	findAllPaginated = async (
 		{page, limit, size, offset}: Pagination,
 		sort?: Sorting,
-		filters?: Filtering[]
+		filters?: Filtering | Filtering[]
 	): Promise<PaginatedResource<UserViewDto>> => {
+		if (!Array.isArray(filters)) filters = [filters];
 		const wheres = filters
 			.map(f => getWhere(f))
 			.reduce((prev, curr) => ({...prev, ...curr}), {});

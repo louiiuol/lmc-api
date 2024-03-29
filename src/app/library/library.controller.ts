@@ -21,7 +21,9 @@ import {UsersService} from '../users/users.service';
 import {Response} from 'express';
 import * as fs from 'fs';
 import {CurrentUser} from '../auth/decorators/current-user.decorator';
+import {ApiTags} from '@nestjs/swagger';
 
+@ApiTags('Librairie')
 @Controller('courses')
 export class LibraryController {
 	constructor(

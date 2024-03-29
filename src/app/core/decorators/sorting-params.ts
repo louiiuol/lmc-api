@@ -22,7 +22,7 @@ export const SortingParams = createParamDecorator(
 
 		// check the format of the sort query param
 		const sortPattern = /^([a-zA-Z0-9]+):(asc|desc)$/;
-		if (!sort.match(sortPattern))
+		if (!RegExp(sortPattern).exec(sort))
 			throw new BadRequestException('Invalid sort parameter');
 
 		// extract the property name and direction and check if they are valid
