@@ -19,13 +19,13 @@ import {JwtAuthGuard} from './guards/jwt/jwt-auth.guard';
 import {QueryRequired} from '../core/decorators/required-query';
 import {environment} from '../environment';
 import {CurrentUser} from './decorators/current-user.decorator';
-import {ApiTags} from '@nestjs/swagger';
+//import {ApiTags} from '@nestjs/swagger';
 
 /**
  * Provides controller to handle user authentication
  */
 @Controller('auth')
-@ApiTags('Authentification')
+//@ApiTags('Authentification')
 export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 

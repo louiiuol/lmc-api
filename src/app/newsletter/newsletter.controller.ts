@@ -3,9 +3,9 @@ import {AdminGuard} from '../auth/guards/roles/admin.guard';
 import {JwtAuthGuard} from '../auth/guards/jwt/jwt-auth.guard';
 import {NewsletterService} from './newsletter.service';
 import {NewsletterSendDto} from './types/dtos/newsletter-send.dto';
-import {ApiTags} from '@nestjs/swagger';
+// import {ApiTags} from '@nestjs/swagger';
 
-@ApiTags('Newsletter')
+// @ApiTags('Newsletter')
 @Controller('newsletter')
 export class NewsletterController {
 	constructor(private readonly news: NewsletterService) {}
