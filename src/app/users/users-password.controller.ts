@@ -18,9 +18,9 @@ import {
 	PasswordUpdateDto,
 } from './types';
 import {UsersPasswordService} from './users-password-service';
-import {ApiTags} from '@nestjs/swagger';
+// import {ApiTags} from '@nestjs/swagger';
 
-@ApiTags('Mot de passe')
+// @ApiTags('Mot de passe')
 @Controller()
 export class UsersPasswordController {
 	constructor(private readonly passwordService: UsersPasswordService) {}

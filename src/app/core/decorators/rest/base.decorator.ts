@@ -1,4 +1,4 @@
-import {
+/* import {
 	ApiOkResponse,
 	ApiAcceptedResponse,
 	ApiNotFoundResponse,
@@ -15,3 +15,4 @@ export const BaseDecorators = (opt: DocParameters) => [
 	ApiBadRequestResponse(SwaggerResponse.badRequestError()),
 	ApiNoContentResponse(SwaggerResponse.noContent()),
 ];
+*/
