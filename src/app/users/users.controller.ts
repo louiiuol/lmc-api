@@ -5,18 +5,18 @@ import {Mapper} from '@automapper/core';
 import {UsersService} from './users.service';
 import {CurrentUser} from '../auth/decorators/current-user.decorator';
 import {User, UserViewDto, UserUpdateDto} from './types';
-/* import {
+import {
 	ApiBearerAuth,
 	ApiBody,
 	ApiOperation,
 	ApiResponse,
 	ApiTags,
 } from '@nestjs/swagger';
-import {Fetch} from '../core/decorators/rest/fetch.decorator'; */
+import {Fetch} from '../core/decorators/rest/fetch.decorator';
 
 @UseGuards(JwtAuthGuard)
-// @ApiBearerAuth('User level access')
-// @ApiTags('Utilisateur connecté')
+@ApiBearerAuth('User level access')
+@ApiTags('Utilisateur connecté')
 @Controller()
 export class UsersController {
 	constructor(
@@ -38,20 +38,19 @@ export class UsersController {
 	// 	type: UserViewDto,
 	// })
 
-	/* @Fetch({
+	@Fetch({
 		path: 'me',
 		description: "Récupération des informations de l'utilisateur courant.",
 		success:
 			"Récupération des informations de l'utilisateur effectué avec succès",
 		returnType: UserViewDto,
 		level: 'user',
-	}) */
-	@Get('me')
+	})
 	async getProfile(@CurrentUser() user) {
 		return await this.mapReturn(this.usersService.findOneByEmail(user.email));
 	}
 
-	// @ApiBody({type: UserUpdateDto})
+	@ApiBody({type: UserUpdateDto})
 	@Patch('me')
 	async updateUser(@Body() dto: UserUpdateDto, @CurrentUser() user) {
 		return await this.mapReturn(this.usersService.update(user.uuid, dto));

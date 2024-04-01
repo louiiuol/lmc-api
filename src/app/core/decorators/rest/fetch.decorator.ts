@@ -1,4 +1,4 @@
-/* mport {applyDecorators, Get, UseGuards} from '@nestjs/common';
+import {applyDecorators, Get, UseGuards} from '@nestjs/common';
 import {
 	ApiBearerAuth,
 	ApiForbiddenResponse,
@@ -33,4 +33,3 @@ export const Fetch = (opt: DocParameters) => {
 		...BaseDecorators(opt)
 	);
 };
-*/

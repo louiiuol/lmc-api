@@ -23,11 +23,11 @@ import {Mapper} from '@automapper/core';
 import {InjectMapper} from '@automapper/nestjs';
 import {AdminUsersService} from './admin-users.service';
 import {MailerService} from '@nestjs-modules/mailer';
-// import {ApiBearerAuth, ApiTags} from '@nestjs/swagger';
+import {ApiBearerAuth, ApiTags} from '@nestjs/swagger';
 
 @UseGuards(JwtAuthGuard, AdminGuard)
-// @ApiBearerAuth()
-// @ApiTags('Admin')
+@ApiBearerAuth()
+@ApiTags('Admin')
 @Controller('admin')
 export class AdminController {
 	constructor(

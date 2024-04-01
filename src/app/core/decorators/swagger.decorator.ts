@@ -1,4 +1,4 @@
-/* import {Get, Type, applyDecorators} from '@nestjs/common';
+import {Get, Type, applyDecorators} from '@nestjs/common';
 import {ApiOperation} from '@nestjs/swagger';
 import {DocParameters} from '../types/swagger-decorator-opt';
 
@@ -8,7 +8,6 @@ import {DocParameters} from '../types/swagger-decorator-opt';
  * @returns Decorators to apply to following function
  */
 
-/*
 export const Resource = (opt?: DocParameters) =>
 	applyDecorators(ApiOperation({summary: opt?.description}), Get());
 
@@ -43,4 +42,3 @@ export const SwaggerResponse = {
 		description: description || 'Unauthorized',
 	}),
 };
-*/

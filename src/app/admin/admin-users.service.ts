@@ -56,18 +56,8 @@ export class AdminUsersService {
 					await this.users.remove(user.uuid);
 				}
 			});
-		const title = 'Cron Job running: Verifying closed account';
+		/* const title = 'Cron Job running: Verifying closed account';
 		const closed = members.closed.map(u => u.email).join(' - ');
-		const removed = members.removed.map(u => u.email).join(' - ');
-		this.mailerService.sendMail({
-			to: 'louis.godlewski@gmail.com',
-			subject: title,
-			template: 'running-job',
-			context: {
-				title,
-				closed,
-				removed,
-			},
-		});
+		const removed = members.removed.map(u => u.email).join(' - '); */
 	}
 }
