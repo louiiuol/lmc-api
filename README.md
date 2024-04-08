@@ -13,6 +13,8 @@ npm run test # Launch jest testing suite
 
 ## Fonctionnalités 🎉
 
+Retrouvez l'ensemble des resources disponibles sur la [documentation Swagger](https://lmc.louiiuol.dev/api#/).
+
 ### 1. Authentification
 
 > Gestion de l'authentification des utilisateurs, de leurs permissions, et de leurs informations stockées.
@@ -30,10 +32,10 @@ npm run test # Launch jest testing suite
 
 - [x] "Mot de passe oublié" envoi d'un email contenant lien et un token pour éditer le mot de passe du compte associé (valide pendant 10 minutes)
 
-- [x] Fermeture de compte 
-- [x] CRON permettant de vérifier les comptes fermés depuis: 
-    - 1 mois (envoi d'un email avertissement) 
-    - 2 mois (supression du compte)
+- [x] Fermeture de compte
+- [x] CRON permettant de vérifier les comptes fermés depuis:
+    - 1 mois (envoi d'un email avertissement)
+    - 2 mois (suppression du compte)
 
 ### 2. Bibliothèque
 

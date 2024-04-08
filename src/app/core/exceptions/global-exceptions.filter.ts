@@ -12,7 +12,7 @@ import {
 import {Response} from 'express';
 import {IncomingMessage} from 'http';
 import {EntityNotFoundError, QueryFailedError} from 'typeorm';
-import {APIResponse} from '../types/api-response';
+import {APIErrorResponse} from '@shared/types/api-response';
 
 type CaughtExceptions =
 	| QueryFailedError
@@ -34,7 +34,7 @@ const HttpCodes: {[key: string]: number} = {
 
 /**
  * Custom exception filter to convert Exceptions thrown by the application and
- * format the response as ApiResponse object.
+ * format the response as ApiErrorResponse object.
  * @see also @https://docs.nestjs.com/exception-filters
  */
 @Injectable()
@@ -52,7 +52,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 		const code = this.getStatusCode(exception);
 
 		Logger.error(`[${code}] - ${exception.message}`, 'NestApplication');
-		const output: APIResponse = {
+		const output: APIErrorResponse = {
 			code,
 			data: null,
 			message: exception.message,
@@ -66,10 +66,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 		return ctx.getResponse<Response>().status(code).json(output);
 	}
 
-	getStatusCode = (exception: CaughtExceptions) =>
+	private getStatusCode = (exception: CaughtExceptions) =>
 		HttpCodes[exception.name] ?? (exception as any)?.code ?? 500;
 
-	getErrorDetails = (exception: CaughtExceptions) => {
+	private getErrorDetails = (exception: CaughtExceptions) => {
 		if (exception instanceof BadRequestException) {
 			return (exception.getResponse() as any).message as string[];
 		}

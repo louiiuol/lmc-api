@@ -1,10 +1,11 @@
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app/app.module';
 import {ValidationPipe, Logger} from '@nestjs/common';
-import {environment} from './app/environment';
+import {environment} from 'src/app/environment';
 import {GlobalExceptionFilter} from './app/core/exceptions/global-exceptions.filter';
 import {useContainer} from '@nestjs/class-validator';
 import {SwaggerModule, DocumentBuilder} from '@nestjs/swagger';
+import {TransformInterceptor} from '@core/interceptors/response.interceptor';
 
 const globalPrefix = 'api';
 const port = environment.PORT || 3333;
@@ -30,10 +31,11 @@ async function bootstrap() {
 			'contact@louiiuol.dev'
 		)
 		.addBearerAuth()
-		.setBasePath('api')
 		.build();
 	const document = SwaggerModule.createDocument(app, config);
-	SwaggerModule.setup('api', app, document);
+	SwaggerModule.setup('api', app, document, {
+		customSiteTitle: 'La méthode claire - API doc',
+	});
 
 	await app.listen(port, environment.API_HOST);
 }

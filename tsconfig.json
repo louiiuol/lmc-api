@@ -16,6 +16,12 @@
 		"noImplicitAny": false,
 		"strictBindCallApply": false,
 		"forceConsistentCasingInFileNames": false,
-		"noFallthroughCasesInSwitch": false
+		"noFallthroughCasesInSwitch": false,
+		"paths": {
+			"@core": ["src/app/core/index.ts"],
+			"@core/*": ["src/app/core/*"],
+			"@shared/*": ["src/app/shared/*"],
+			"@feat/*": ["src/app/feat/*"]
+		}
 	}
 }

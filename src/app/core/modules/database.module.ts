@@ -3,9 +3,9 @@ import {AutomapperModule} from '@automapper/nestjs';
 import {Module} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {environment} from 'src/app/environment';
-import {Phoneme, Course} from 'src/app/library/types';
-import {Newsletter} from 'src/app/newsletter/types/newsletter.entity';
-import {User} from 'src/app/users/types/user.entity';
+import {Phoneme, Course} from '@feat/library/types';
+import {Newsletter} from '@feat/newsletter/types/newsletter.entity';
+import {User} from '@feat/users/types/user.entity';
 
 @Module({
 	imports: [

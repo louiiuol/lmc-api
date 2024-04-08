@@ -1,4 +1,4 @@
-//? Get `.env` local file to configure app
+// Get local `.env` file to configure app
 import * as dotenv from 'dotenv';
 dotenv.config();
 

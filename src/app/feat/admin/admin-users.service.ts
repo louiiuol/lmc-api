@@ -1,0 +1,63 @@
+import {Injectable} from '@nestjs/common';
+import {Cron} from '@nestjs/schedule';
+import {MailerService} from '@nestjs-modules/mailer';
+import {isXMonthEarlier} from 'src/app/shared/helpers';
+import {UsersService} from '@feat/users/users.service';
+
+@Injectable()
+export class AdminUsersService {
+	constructor(
+		private readonly users: UsersService,
+		private readonly mailerService: MailerService
+	) {}
+
+	resetSubscriptions = async () => {
+		(await this.users.findAll())
+			.map(user => {
+				user.subscribed = false;
+				return user;
+			})
+			.forEach(
+				async user =>
+					await this.users.update(user.uuid, {subscribed: user.subscribed})
+			);
+		return {message: 'SUBSCRIPTION_RESEATED'};
+	};
+
+	exportEmails = async () => ({
+		emails: (await this.users.findAll()).map(user => user.email).join(', '),
+	});
+
+	@Cron('0 1 * * *')
+	async handleClosedAccounts() {
+		const members = {
+			closed: [],
+			removed: [],
+		};
+
+		(await this.users.findAll())
+			.filter(u => u.closed && u.role === 'USER')
+			.forEach(async user => {
+				if (isXMonthEarlier(user.closedAt)) {
+					members.closed.push(user);
+					const title = 'Fermeture de votre compte.';
+					this.mailerService.sendMail({
+						to: user.email,
+						subject: title,
+						template: 'closing-account',
+						context: {
+							title,
+							summary:
+								"Vous avez récemment demandé(e) la fermeture de votre compte. Celui-ci sera supprimé dans 1 mois. Si vous souhaitez rouvrir votre compte, il vous suffit de vous reconnecter à l'application",
+						},
+					});
+				} else if (isXMonthEarlier(user.closedAt, 2)) {
+					members.removed.push(user);
+					await this.users.remove(user.uuid);
+				}
+			});
+		/* const title = 'Cron Job running: Verifying closed account';
+		const closed = members.closed.map(u => u.email).join(' - ');
+		const removed = members.removed.map(u => u.email).join(' - '); */
+	}
+}
