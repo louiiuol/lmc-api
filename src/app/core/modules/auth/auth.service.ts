@@ -1,7 +1,6 @@
 import {
 	ForbiddenException,
 	Injectable,
-	Logger,
 	UnauthorizedException,
 } from '@nestjs/common';
 import {JwtService} from '@nestjs/jwt';
@@ -97,7 +96,6 @@ export class AuthService {
 	): Promise<Partial<User>> => {
 		const user = await this.usersService.findOneByEmail(email);
 		if (!(await bcrypt.compare(pass, user.password))) return null;
-		Logger.log(user.email);
 		if (!user.isActive) throw new ForbiddenException('Inactive account');
 		delete user.password;
 		return user;

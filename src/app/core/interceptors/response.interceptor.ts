@@ -3,7 +3,6 @@ import {
 	NestInterceptor,
 	ExecutionContext,
 	CallHandler,
-	Logger,
 } from '@nestjs/common';
 import {Reflector} from '@nestjs/core';
 import {Observable} from 'rxjs';

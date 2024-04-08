@@ -1,10 +1,10 @@
-import {ForbiddenException, Injectable, Logger} from '@nestjs/common';
+import {ForbiddenException, Injectable} from '@nestjs/common';
 import {MailerService} from '@nestjs-modules/mailer';
 import {JwtService} from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import {environment} from 'src/app/environment';
 import {UsersService} from './users.service';
-import {PasswordResetDto, User} from './types';
+import {PasswordResetDto} from './types';
 
 @Injectable()
 export class UsersPasswordService {

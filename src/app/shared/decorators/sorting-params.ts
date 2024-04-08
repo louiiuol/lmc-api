@@ -2,7 +2,6 @@ import {
 	BadRequestException,
 	createParamDecorator,
 	ExecutionContext,
-	Logger,
 } from '@nestjs/common';
 import {ApiProperty} from '@nestjs/swagger';
 import {Request} from 'express';
