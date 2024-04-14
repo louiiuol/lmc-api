@@ -4,7 +4,6 @@ import {
 	UnauthorizedException,
 } from '@nestjs/common';
 import {JwtService} from '@nestjs/jwt';
-import {MailerService} from '@nestjs-modules/mailer';
 import * as bcrypt from 'bcrypt';
 
 import {environment} from 'src/app/environment';
@@ -13,6 +12,7 @@ import {UsersService} from '@feat/users/users.service';
 import {UserCreateDto, User} from '@feat/users/types';
 
 import {TokenJWT} from './types';
+import {MailerService} from '@shared/modules/mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -114,13 +114,11 @@ export class AuthService {
 		entity.closed = true;
 		entity.closedAt = new Date();
 		await this.usersService.update(entity.uuid, entity);
-		const title = 'Fermeture de votre compte.';
-		this.mailerService.sendMail({
-			to: entity.email,
-			subject: title,
+		await this.mailerService.sendMail({
+			recipient: entity.email,
+			title: 'Fermeture de votre compte.',
 			template: 'closing-account',
-			context: {
-				title,
+			data: {
 				summary:
 					"Vous venez de demander la fermeture de votre compte. Celui-ci sera supprimé dans 2 mois. Si vous souhaitez rouvrir votre compte, il vous suffit de vous reconnecter à l'application",
 			},
@@ -189,7 +187,7 @@ export class AuthService {
 		await this.usersService.update(entity.uuid, entity);
 	};
 
-	private sendEmailConfirmation = (user: User) => {
+	private sendEmailConfirmation = async (user: User) => {
 		const token = this.jwtService.sign(
 			{
 				username: user.email,
@@ -197,13 +195,12 @@ export class AuthService {
 			},
 			{secret: process.env.JWT_SECRET_KEY + user.password, expiresIn: '1d'}
 		);
-		const title = 'Bienvenue sur la méthode claire !';
-		this.mailerService.sendMail({
-			to: user.email,
-			subject: title,
+
+		await this.mailerService.sendMail({
+			recipient: user.email,
+			title: 'Bienvenue sur la méthode claire !',
 			template: 'activate-account',
-			context: {
-				title,
+			data: {
 				summary:
 					"Pour compléter l'inscription de votre compte, merci de cliquer sur le lien ci-dessous. Ce lien est valide pour 1 journée.",
 				link: `${environment.API_HOST_FULL}/api/auth/users/${user.uuid}/activate?token=${token}`,

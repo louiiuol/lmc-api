@@ -8,9 +8,14 @@ import {IsUserAlreadyExistConstraint} from './validators/unique-email.validator'
 import {JwtModule} from '@nestjs/jwt';
 import {UsersPasswordService} from './users-password-service';
 import {UsersPasswordController} from './users-password.controller';
+import {MailModule} from '@shared/modules/mail/mail.module';
 
 @Module({
-	imports: [forwardRef(() => TypeOrmModule.forFeature([User])), JwtModule],
+	imports: [
+		forwardRef(() => TypeOrmModule.forFeature([User])),
+		JwtModule,
+		MailModule,
+	],
 	providers: [
 		UsersService,
 		UserProfile,

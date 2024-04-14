@@ -8,10 +8,14 @@ import {
 } from '@nestjs/swagger';
 import {UseGuards} from '@nestjs/common';
 import {DocParameters} from '@shared/types/swagger-decorator-opt';
-import {AdminGuard, JwtAuthGuard, RefreshTokenGuard} from '@shared/guards';
-import {ResponseMessage} from '../response-message.decorator';
+import {ResponseMessage} from '../responses/response-message.decorator';
 import {APIFormErrorDetails} from '@shared/types/api-response';
-import {LocalAuthGuard} from '@shared/guards/local.guard';
+import {LocalAuthGuard} from '@core/modules/auth/guards/local/local.guard';
+import {
+	AdminGuard,
+	JwtAuthGuard,
+	RefreshTokenGuard,
+} from '@core/modules/auth/guards';
 
 const appGuards = {
 	refresh: [RefreshTokenGuard],

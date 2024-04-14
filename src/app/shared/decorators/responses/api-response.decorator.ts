@@ -23,20 +23,6 @@ export const ApiOkResponseFormatted = <DataDto extends Type<unknown>>(
 			],
 		},
 	};
-	const arrayScheme = {
-		schema: {
-			allOf: [
-				{$ref: getSchemaPath(APISuccessResponse)},
-				{
-					properties: {
-						data: dataDto
-							? {data: {$ref: getSchemaPath(dataDto), type: 'array'}}
-							: null,
-					},
-				},
-			],
-		},
-	};
 	const decorators = [];
 	if (dataDto) decorators.push(ApiExtraModels(APISuccessResponse, dataDto));
 	return applyDecorators(

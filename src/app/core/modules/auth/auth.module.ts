@@ -7,8 +7,9 @@ import {LocalStrategy} from './guards/local/local.strategy';
 import {JwtStrategy} from './guards/jwt/jwt.strategy';
 import {AuthController} from './auth.controller';
 import {environment} from 'src/app/environment';
-import {AdminGuard} from '../../../shared/guards/admin.guard';
+import {AdminGuard} from './guards/admin.guard';
 import {RefreshTokenStrategy} from './guards/jwt/jwt-refresh.strategy';
+import {MailModule} from '@shared/modules/mail/mail.module';
 
 @Module({
 	imports: [
@@ -17,6 +18,7 @@ import {RefreshTokenStrategy} from './guards/jwt/jwt-refresh.strategy';
 		JwtModule.register({
 			secret: environment.JWT_SECRET_KEY,
 		}),
+		MailModule,
 	],
 	controllers: [AuthController],
 	providers: [

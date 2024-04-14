@@ -1,13 +1,14 @@
 import {Body, Param} from '@nestjs/common';
-import {MailerService} from '@nestjs-modules/mailer';
 import {Mapper} from '@automapper/core';
 import {InjectMapper} from '@automapper/nestjs';
-import {FilteringParams, Filtering} from '@shared/decorators/filtering-params';
 import {
 	PaginationParams,
 	Pagination,
-} from '@shared/decorators/pagination-params';
-import {SortingParams, Sorting} from '@shared/decorators/sorting-params';
+	FilteringParams,
+	Filtering,
+	SortingParams,
+	Sorting,
+} from '@shared/decorators/params';
 import {UsersService} from '@feat/users/users.service';
 import {User, UserViewDto, UserUpdateAdminDto} from '@feat/users/types';
 import {Controller, Get, PartialUpdate} from '@shared/decorators/rest';
@@ -18,8 +19,7 @@ export class AdminController {
 	constructor(
 		@InjectMapper() private readonly classMapper: Mapper,
 		private readonly usersService: UsersService,
-		private readonly adminUserService: AdminUsersService,
-		private readonly mailerService: MailerService
+		private readonly adminUserService: AdminUsersService
 	) {}
 
 	// TODO Add swagger for filters etc ..
@@ -55,7 +55,11 @@ export class AdminController {
 		])
 		filter?: Filtering[]
 	) {
-		return this.usersService.findAllPaginated(paginationParams, sort, filter);
+		return this.adminUserService.findAllPaginated(
+			paginationParams,
+			sort,
+			filter
+		);
 	}
 
 	@Get({
@@ -86,15 +90,7 @@ export class AdminController {
 	) {
 		const user = await this.mapReturn(this.usersService.update(uuid, dto));
 		if ('subscribed' in dto && dto.subscribed) {
-			const title = 'Confirmation de votre abonnement à La Méthode claire.';
-			this.mailerService.sendMail({
-				to: user.email,
-				subject: title,
-				template: 'sub-activated',
-				context: {
-					title,
-				},
-			});
+			await this.adminUserService.sendSubscriptionMail(user.email);
 		}
 	}
 

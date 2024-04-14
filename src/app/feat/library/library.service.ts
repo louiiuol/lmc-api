@@ -1,14 +1,19 @@
-import {Injectable} from '@nestjs/common';
+import {ForbiddenException, Injectable, StreamableFile} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
-import {Course, CourseCreateDto, Phoneme} from './types';
-import {COURSES} from './courses.constant';
+import {Course} from './types';
+
+import {UsersService} from '@feat/users/users.service';
+
+import {createReadStream, existsSync} from 'fs';
+import {join} from 'path';
+import {Response} from 'express';
 
 @Injectable()
 export class LibraryService {
 	constructor(
 		@InjectRepository(Course) private courseRepository: Repository<Course>,
-		@InjectRepository(Phoneme) private phonemeRepository: Repository<Phoneme>
+		private readonly usersService: UsersService
 	) {}
 
 	getAllCourses = async () =>
@@ -16,22 +21,67 @@ export class LibraryService {
 			(a, b) => a.order - b.order
 		);
 
-	createLibrary = async () => {
-		const phoneme = await this.phonemeRepository.find();
-		const courses = await this.getAllCourses();
+	updateProgression = async (uuid: any, currentLessonIndex: number) =>
+		await this.usersService.update(uuid, {currentLessonIndex});
 
-		await Promise.all([
-			phoneme.map(async p => {
-				await this.phonemeRepository.delete({uuid: p.uuid});
-			}),
-			courses.map(async c => {
-				await this.courseRepository.delete({uuid: c.uuid});
-			}),
-		]);
+	async getStreamableFile(email: any, p: {index: number; fileName: string}) {
+		await this.checkSubscription(email, p.index);
+		const filePath = `library/${p.index}/${p.fileName}.pdf`;
+		return new StreamableFile(createReadStream(join(process.cwd(), filePath)));
+	}
 
-		return COURSES.map((current, i) => {
-			const course = new CourseCreateDto(current, i);
-			return this.courseRepository.save(course);
-		});
+	async downloadPdf(
+		email: string,
+		p: {index: number; fileName: string},
+		res: Response<any, Record<string, any>>
+	) {
+		await this.checkSubscription(email, p.index);
+		const filePath = `library/${p.index}/${p.fileName}.pdf`;
+
+		// Check if the file exists
+		if (existsSync(filePath)) {
+			// Set response headers for PDF download
+			res.setHeader('Content-Type', 'application/pdf');
+			res.setHeader(
+				'Content-Disposition',
+				`attachment; filename=${p.fileName}.pdf`
+			);
+
+			// Create a read stream from the file path
+			const fileStream = createReadStream(filePath);
+
+			// Pipe the file stream to the response
+			fileStream.pipe(res);
+		} else {
+			// If the file does not exist, send a 404 response
+			res.status(404).send('File not found');
+		}
+	}
+
+	async downloadCourse(
+		email: any,
+		p: {index: number},
+		res: Response<any, Record<string, any>>
+	) {
+		await this.checkSubscription(email, p.index);
+		const lessonPath = `library/${p.index}/${p.index}.zip`;
+		res.setHeader('Content-Type', 'application/zip');
+		res.setHeader(
+			'Content-Disposition',
+			`attachment; filename=${p.index + 1}.zip`
+		);
+
+		// Pipe the zip file to the HTTP response
+		const fileStream = createReadStream(lessonPath);
+		fileStream.pipe(res);
+	}
+
+	private checkSubscription = async (email: string, index: number) => {
+		if (
+			!(
+				index <= 3 || (await this.usersService.findOneByEmail(email)).subscribed
+			)
+		)
+			throw new ForbiddenException('Ce contenu est réservé aux abonnés.');
 	};
 }

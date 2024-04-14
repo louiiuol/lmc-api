@@ -1,10 +1,10 @@
 import {ForbiddenException, Injectable} from '@nestjs/common';
-import {MailerService} from '@nestjs-modules/mailer';
 import {JwtService} from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import {environment} from 'src/app/environment';
 import {UsersService} from './users.service';
 import {PasswordResetDto} from './types';
+import {MailerService} from '@shared/modules/mail/mail.service';
 
 @Injectable()
 export class UsersPasswordService {
@@ -67,13 +67,12 @@ export class UsersPasswordService {
 			},
 			{secret: process.env.JWT_SECRET_KEY + user.password, expiresIn: '15m'}
 		);
-		const title = 'Réinitialisez votre mot de passe';
-		this.mailerService.sendMail({
-			to: email,
-			subject: title,
+
+		await this.mailerService.sendMail({
+			recipient: email,
+			title: 'Réinitialisez votre mot de passe',
 			template: 'forgot-password',
-			context: {
-				title,
+			data: {
 				summary:
 					'Vous pouvez réinitialiser votre mot de pass en cliquant sur le lien ci-dessous.',
 				link: `${environment.WEB_UI_URL}reset-password?user=${user.uuid}&token=${token}`,

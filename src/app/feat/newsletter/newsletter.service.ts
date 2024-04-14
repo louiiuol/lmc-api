@@ -1,9 +1,9 @@
 import {Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
-import {MailerService} from '@nestjs-modules/mailer';
 import {Repository} from 'typeorm';
 import {UsersService} from '@feat/users/users.service';
 import {Newsletter, NewsletterSendDto} from './types';
+import {MailerService} from '@shared/modules/mail/mail.service';
 
 @Injectable()
 export class NewsletterService {
@@ -22,17 +22,15 @@ export class NewsletterService {
 		return news;
 	}
 
-	sendMail(dto: NewsletterSendDto, subscribed: boolean, email: string) {
-		const title = dto.subject;
+	async sendMail(dto: NewsletterSendDto, subscribed: boolean, email: string) {
 		const content = subscribed
 			? dto.content.replaceAll('\n', '<br />')
 			: 'Pour lire la suite de cette newsletter, abonnez-vous !';
-		this.mailer.sendMail({
-			to: email,
-			subject: title,
+		await this.mailer.sendMail({
+			recipient: email,
+			title: dto.subject,
 			template: 'newsletter',
-			context: {
-				title,
+			data: {
 				intro: dto.intro,
 				content,
 			},

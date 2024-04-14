@@ -7,13 +7,12 @@ import {
 	Patch,
 	HttpCode,
 } from '@nestjs/common';
-import {ApiBody} from '@nestjs/swagger';
 
 import {DocParameters} from '../../types/swagger-decorator-opt';
 import {Resource} from './resource.decorator';
-import {ApiOkResponsePaginated} from '../paginated-response.decorator';
-import {ApiOkResponseFormatted} from '../api-response.decorator';
-import {ApiOkResponseAsArray} from '../array-response.decorator';
+import {ApiOkResponsePaginated} from '../responses/paginated-response.decorator';
+import {ApiOkResponseFormatted} from '../responses/api-response.decorator';
+import {ApiOkResponseAsArray} from '../responses/array-response.decorator';
 
 export const Get = (opt?: DocParameters) => {
 	return applyDecorators(

@@ -1,10 +1,17 @@
-import {Body, Req, Param, Redirect, Query} from '@nestjs/common';
+import {
+	Body,
+	Param,
+	Redirect,
+	Query,
+	BadRequestException,
+	UnauthorizedException,
+} from '@nestjs/common';
 import {AuthService} from './auth.service';
 
 import {environment} from 'src/app/environment';
 import {CurrentUser} from '@shared/decorators/current-user.decorator';
 import {Controller, Post, Get} from '@shared/decorators/rest';
-import {RequiredPipe} from '@shared/pipes/required.pipe';
+
 import {UserCreateDto, User, UserLoginDto} from '@feat/users/types';
 import {TokenJWT} from './types';
 
@@ -33,7 +40,8 @@ export class AuthController {
 		@Param('uuid') uuid: string,
 		@Query('token') token: string
 	) {
-		await this.authService.activateAccount(uuid, token);
+		if (!(uuid && token)) throw new UnauthorizedException('Token invalide.');
+		return await this.authService.activateAccount(uuid, token);
 	}
 
 	@Post({
@@ -54,9 +62,11 @@ export class AuthController {
 		restriction: 'refresh',
 		returnType: TokenJWT,
 	})
-	refreshTokens(@Req() req) {
-		const username = req.user['username'];
-		const refreshToken = req.user['refreshToken'];
+	refreshTokens(@CurrentUser() user) {
+		const username = user['username'];
+		const refreshToken = user['refreshToken'];
+		if (!(username && refreshToken))
+			throw new UnauthorizedException('Token invalide.');
 		return this.authService.refreshTokens(username, refreshToken);
 	}
 
@@ -65,8 +75,9 @@ export class AuthController {
 		description: "Déconnexion de l'utilisateur.",
 		restriction: 'user',
 	})
-	logout(@Req() req) {
-		return this.authService.logOut(req.user['sub']);
+	logout(@CurrentUser() user) {
+		const sub = user['sub'];
+		return this.authService.logOut(sub);
 	}
 
 	@Get({
@@ -84,6 +95,7 @@ export class AuthController {
 		description: "Demande de renvoi d'un email d'activation du compte.",
 	})
 	async reconfirmAccount(@Param('email') email: string) {
+		if (!email) throw new BadRequestException("Le champ 'email' est requis.");
 		return await this.authService.accountConfirmation(email);
 	}
 }

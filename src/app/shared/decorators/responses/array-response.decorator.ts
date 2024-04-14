@@ -1,7 +1,6 @@
 import {Type, applyDecorators} from '@nestjs/common';
 import {ApiExtraModels, ApiOkResponse, getSchemaPath} from '@nestjs/swagger';
 import {APISuccessResponse} from '@shared/types/api-response';
-import {PaginatedResource} from '@shared/types/paginated-resource';
 
 export const ApiOkResponseAsArray = <DataDto extends Type<unknown>>(
 	dataDto: DataDto

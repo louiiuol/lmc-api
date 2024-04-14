@@ -29,4 +29,4 @@ import {environment} from 'src/app/environment';
 	],
 	exports: [MailerModule],
 })
-export class MailModule {}
+export class MailConfigModule {}
