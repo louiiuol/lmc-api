@@ -2,8 +2,8 @@ import {IsNumber, IsOptional, IsString} from '@nestjs/class-validator';
 
 import {ApiProperty} from '@nestjs/swagger';
 
-export class CourseCreateDto {
-	uuid?: string;
+export class CourseEditDto {
+	uuid: string;
 
 	@ApiProperty({description: 'Index de la semaine'})
 	@IsNumber()
@@ -15,6 +15,7 @@ export class CourseCreateDto {
 		example: '#a45efd',
 	})
 	@IsString()
+	@IsOptional()
 	color: string;
 
 	@ApiProperty({description: 'Mots associé à la semaine'})
@@ -28,7 +29,7 @@ export class CourseCreateDto {
 	poster?: boolean;
 }
 
-export class CourseCreateFilesDto {
+export class CourseEditFilesDto {
 	@ApiProperty({description: 'Leçon de la semaine'})
 	lesson?: Express.Multer.File[];
 

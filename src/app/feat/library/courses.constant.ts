@@ -1,7 +1,9 @@
 import {CourseGenerator} from './types';
+import {v4 as uuid} from 'uuid';
 
 export const COURSES: CourseGenerator[] = [
 	{
+		uuid: uuid(),
 		script: true,
 		poster: true,
 		phonemes: [
@@ -18,12 +20,14 @@ export const COURSES: CourseGenerator[] = [
 		color: '#ed6b06',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		phonemes: [{name: 'L', poster: true}],
 		color: '#5d82b6',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		phonemes: [{name: 'R', poster: true}],
@@ -31,6 +35,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#e54611',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		phonemes: [{name: 'S', poster: true}],
@@ -38,6 +43,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#567178',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		phonemes: [{name: 'M', poster: true}],
@@ -45,6 +51,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#f59c00',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,
@@ -53,6 +60,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#b2ced8',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,
@@ -61,6 +69,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#9ebe38',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,
@@ -69,6 +78,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#235487',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,
@@ -81,6 +91,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#e8b319',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,
@@ -89,6 +100,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#9f1d4f',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,
@@ -101,6 +113,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#737441',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,
@@ -110,6 +123,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#9eccd2',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,
@@ -123,6 +137,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#c5b69a',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,
@@ -135,6 +150,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#f0ba83',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,
@@ -148,6 +164,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#438b5d',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,
@@ -156,6 +173,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#d9b640',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,
@@ -175,6 +193,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#498da2',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,
@@ -186,6 +205,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#943e1f',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,
@@ -201,6 +221,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#f9dc0a',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		poster: true,
 		lesson: true,
@@ -210,6 +231,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#bd6876',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,
@@ -229,6 +251,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#008995',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,
@@ -241,6 +264,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#bc5e22',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,
@@ -249,6 +273,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#6981b3',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,
@@ -262,6 +287,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#57a994',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,
@@ -279,6 +305,7 @@ export const COURSES: CourseGenerator[] = [
 		color: '#613a1b',
 	},
 	{
+		uuid: uuid(),
 		script: true,
 		lesson: true,
 		exercice: true,

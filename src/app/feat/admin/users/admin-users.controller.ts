@@ -14,15 +14,14 @@ import {User, UserViewDto, UserUpdateAdminDto} from '@feat/users/types';
 import {Controller, Get, PartialUpdate} from '@shared/decorators/rest';
 import {AdminUsersService} from './admin-users.service';
 
-@Controller({path: 'admin', name: 'Back Office'})
-export class AdminController {
+@Controller({path: 'admin', name: 'Back Office (Gestion des utilisateurs)'})
+export class AdminUsersController {
 	constructor(
 		@InjectMapper() private readonly classMapper: Mapper,
 		private readonly usersService: UsersService,
 		private readonly adminUserService: AdminUsersService
 	) {}
 
-	// TODO Add swagger for filters etc ..
 	@Get({
 		path: 'users',
 		description:
@@ -72,10 +71,14 @@ export class AdminController {
 		return await this.adminUserService.exportEmails();
 	}
 
-	// @Get('reset-subscription')
-	// async resetSubscription() {
-	// 	return await this.adminUsersService.resetSubscriptions();
-	// }
+	@Get({
+		path: 'reset-subscription',
+		description: "Réinitialise l'ensemble des abonnements.",
+		restriction: 'admin',
+	})
+	async resetSubscription() {
+		return await this.adminUserService.resetSubscriptions();
+	}
 
 	@PartialUpdate({
 		path: 'users/:uuid',
@@ -93,16 +96,6 @@ export class AdminController {
 			await this.adminUserService.sendSubscriptionMail(user.email);
 		}
 	}
-
-	// @Post('courses')
-	// async generateLibrary() {
-	// 	await this.libraryService.createLibrary();
-	// 	return {
-	// 		code: 201,
-	// 		data: null,
-	// 		message: '🎉 Library successfully generated!',
-	// 	};
-	// }
 
 	private mapReturn = async (promise: Promise<any>) =>
 		this.classMapper.map(await promise, User, UserViewDto);

@@ -25,8 +25,10 @@ export class LibraryService {
 		await this.usersService.update(uuid, {currentLessonIndex});
 
 	async getStreamableFile(email: any, p: {index: number; fileName: string}) {
+		const folder = (await this.courseRepository.findOneBy({order: p.index - 1}))
+			.uuid;
 		await this.checkSubscription(email, p.index);
-		const filePath = `library/${p.index}/${p.fileName}.pdf`;
+		const filePath = `uploads/courses/${folder}/${p.fileName}.pdf`;
 		return new StreamableFile(createReadStream(join(process.cwd(), filePath)));
 	}
 
@@ -35,8 +37,10 @@ export class LibraryService {
 		p: {index: number; fileName: string},
 		res: Response<any, Record<string, any>>
 	) {
+		const folder = (await this.courseRepository.findOneBy({order: p.index - 1}))
+			.uuid;
 		await this.checkSubscription(email, p.index);
-		const filePath = `library/${p.index}/${p.fileName}.pdf`;
+		const filePath = `uploads/courses/${folder}/${p.fileName}.pdf`;
 
 		// Check if the file exists
 		if (existsSync(filePath)) {
@@ -63,12 +67,14 @@ export class LibraryService {
 		p: {index: number},
 		res: Response<any, Record<string, any>>
 	) {
+		const folder = (await this.courseRepository.findOneBy({order: p.index - 1}))
+			.uuid;
 		await this.checkSubscription(email, p.index);
-		const lessonPath = `library/${p.index}/${p.index}.zip`;
+		const lessonPath = `uploads/courses/${folder}/${p.index}.zip`;
 		res.setHeader('Content-Type', 'application/zip');
 		res.setHeader(
 			'Content-Disposition',
-			`attachment; filename=${p.index + 1}.zip`
+			`attachment; filename=${p.index - 1}.zip`
 		);
 
 		// Pipe the zip file to the HTTP response
