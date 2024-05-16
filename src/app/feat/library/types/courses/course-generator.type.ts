@@ -6,7 +6,7 @@ export type CourseGenerator = {
 	sounds?: string[];
 	lesson?: boolean;
 	script?: boolean;
-	exercice?: boolean;
+	exercices?: boolean;
 	poster?: boolean;
 	words?: string[];
 	color: string;

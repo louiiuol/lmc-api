@@ -1,10 +1,4 @@
-import {
-	Body,
-	Logger,
-	Param,
-	UploadedFiles,
-	UseInterceptors,
-} from '@nestjs/common';
+import {Body, Param, UploadedFiles, UseInterceptors} from '@nestjs/common';
 
 import {
 	Controller,
@@ -29,24 +23,19 @@ const COURSE_FILES_UPLOAD = PdfUploader([
 	{name: 'lesson', maxCount: 1},
 	{name: 'script', maxCount: 1},
 	{name: 'poster', maxCount: 1},
-	{name: 'exercice', maxCount: 1},
+	{name: 'exercices', maxCount: 1},
 ]);
 
 @Controller({path: 'admin', name: 'Back Office (Gestion de la bibliothèque)'})
 export class AdminLibraryController {
 	constructor(private readonly libraryService: LibraryAdminService) {}
 
-	// @Post('courses')
-	// async generateLibrary() {
-	// 	await this.libraryService.createLibrary();
-	// 	return {
-	// 		code: 201,
-	// 		data: null,
-	// 		message: '🎉 Library successfully generated!',
-	// 	};
-	// }
-
-	@Get({path: 'refresh-library'})
+	@Get({
+		path: 'refresh-library',
+		description:
+			"Création de la bibliothèque à partir du dossier 'library' à la racine du repository",
+		restriction: 'admin',
+	})
 	async generateLibrary() {
 		await this.libraryService.createLibrary();
 	}
@@ -77,7 +66,6 @@ export class AdminLibraryController {
 		@Param('uuid') uuid: string,
 		@UploadedFiles() files: CourseEditFilesDto
 	) {
-		Logger.log(uuid);
 		return await this.libraryService.editCourse(uuid, dto, files);
 	}
 

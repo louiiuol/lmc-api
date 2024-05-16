@@ -28,7 +28,7 @@ export class CourseViewDto {
 
 	@ApiProperty({description: 'Définit si la leçon contient des exercices.'})
 	@AutoMap()
-	exercice?: boolean;
+	exercices?: boolean;
 
 	@ApiProperty({description: 'Définit si la leçon contient une affiche.'})
 	@AutoMap()

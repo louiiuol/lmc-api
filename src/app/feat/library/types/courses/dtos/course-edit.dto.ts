@@ -25,7 +25,7 @@ export class CourseEditDto {
 
 	lesson?: boolean;
 
-	exercice?: boolean;
+	exercices?: boolean;
 	poster?: boolean;
 }
 
@@ -37,7 +37,7 @@ export class CourseEditFilesDto {
 	script: Express.Multer.File[];
 
 	@ApiProperty({description: 'Exercices de la semaine'})
-	exercice?: Express.Multer.File[];
+	exercices?: Express.Multer.File[];
 
 	@ApiProperty({description: 'Affiche de la semaine'})
 	poster?: Express.Multer.File[];

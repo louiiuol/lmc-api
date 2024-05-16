@@ -6,7 +6,7 @@ import {
 	CourseCreateDto,
 	CourseGenerator,
 } from '@feat/library/types';
-import {Injectable, Logger} from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 
 import {Repository} from 'typeorm';
@@ -31,11 +31,11 @@ export class LibraryAdminService {
 		const courses = await this.publicLibraryService.getAllCourses();
 
 		await Promise.all([
-			phoneme.map(async p => {
-				await this.phonemeRepository.delete({uuid: p.uuid});
-			}),
 			courses.map(async c => {
 				await this.courseRepository.delete({uuid: c.uuid});
+			}),
+			phoneme.map(async p => {
+				await this.phonemeRepository.delete({uuid: p.uuid});
 			}),
 		]);
 
@@ -63,9 +63,11 @@ export class LibraryAdminService {
 		dto: CourseEditDto,
 		files: CourseCreateFilesDto
 	) {
+		const entity = await this.courseRepository.findOneBy({uuid});
 		dto.uuid = uuid;
+		dto.order = entity.order;
 		return this.courseRepository.save({
-			...(await this.courseRepository.findOneBy({uuid})),
+			...entity,
 			...this.castAsCourse(dto, files),
 		});
 	}
@@ -138,7 +140,6 @@ export class LibraryAdminService {
 		if (files)
 			Object.entries(files).forEach(([key, value]) => {
 				dto[key] = true;
-				Logger.log('updating');
 				this.storeFile(dto.uuid, key, value[0]);
 			});
 		dto.order ??= 0;

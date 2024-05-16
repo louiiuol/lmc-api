@@ -46,7 +46,7 @@ export class Course extends BaseEntity {
 
 	@AutoMap()
 	@Column({nullable: true})
-	exercice?: boolean;
+	exercices?: boolean;
 
 	@AutoMap()
 	@Column({nullable: true})
