@@ -6,7 +6,7 @@ import {
 	CourseCreateDto,
 	CourseGenerator,
 } from '@feat/library/types';
-import {Injectable} from '@nestjs/common';
+import {Injectable, Logger} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 
 import {Repository} from 'typeorm';
@@ -30,19 +30,24 @@ export class LibraryAdminService {
 		const phoneme = await this.phonemeRepository.find();
 		const courses = await this.publicLibraryService.getAllCourses();
 
-		await Promise.all([
-			courses.map(async c => {
-				await this.courseRepository.delete({uuid: c.uuid});
-			}),
-			phoneme.map(async p => {
-				await this.phonemeRepository.delete({uuid: p.uuid});
-			}),
-		]);
+		try {
+			await Promise.all([
+				phoneme.map(async p => {
+					await this.phonemeRepository.delete({uuid: p.uuid});
+				}),
+				courses.map(async c => {
+					await this.courseRepository.delete({uuid: c.uuid});
+				}),
+			]);
+		} catch (e) {
+			Logger.error('Failed to delete previous library (SQL error occurred)');
+		}
+		
 
 		return COURSES.map(async (current, i) => {
 			const entity = await this.courseRepository.save({...current, order: i});
 			fs.cpSync(
-				'library/' + (entity.order + 1),
+				'uploads/src/' + (entity.order + 1),
 				'uploads/courses/' + entity.uuid,
 				{recursive: true}
 			);

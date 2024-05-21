@@ -27,7 +27,6 @@ export class LibraryService {
 	async getStreamableFile(email: any, p: {index: number; fileName: string}) {
 		const folder = (await this.courseRepository.findOneBy({order: p.index - 1}))
 			.uuid;
-		await this.checkSubscription(email, p.index);
 		const filePath = `uploads/courses/${folder}/${p.fileName}.pdf`;
 		return new StreamableFile(createReadStream(join(process.cwd(), filePath)));
 	}
@@ -39,7 +38,6 @@ export class LibraryService {
 	) {
 		const folder = (await this.courseRepository.findOneBy({order: p.index - 1}))
 			.uuid;
-		await this.checkSubscription(email, p.index);
 		const filePath = `uploads/courses/${folder}/${p.fileName}.pdf`;
 
 		// Check if the file exists
@@ -69,7 +67,6 @@ export class LibraryService {
 	) {
 		const folder = (await this.courseRepository.findOneBy({order: p.index - 1}))
 			.uuid;
-		await this.checkSubscription(email, p.index);
 		const lessonPath = `uploads/courses/${folder}/${p.index}.zip`;
 		res.setHeader('Content-Type', 'application/zip');
 		res.setHeader(
@@ -81,13 +78,4 @@ export class LibraryService {
 		const fileStream = createReadStream(lessonPath);
 		fileStream.pipe(res);
 	}
-
-	private checkSubscription = async (email: string, index: number) => {
-		if (
-			!(
-				index <= 3 || (await this.usersService.findOneByEmail(email)).subscribed
-			)
-		)
-			throw new ForbiddenException('Ce contenu est réservé aux abonnés.');
-	};
 }
