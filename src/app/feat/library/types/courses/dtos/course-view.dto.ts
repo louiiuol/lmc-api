@@ -45,4 +45,10 @@ export class CourseViewDto {
 	})
 	@AutoMap()
 	sounds?: string[];
+
+	@ApiProperty({
+		description: 'Noms des affiches de la semaine.',
+	})
+	@AutoMap()
+	posterNames?: string[];
 }

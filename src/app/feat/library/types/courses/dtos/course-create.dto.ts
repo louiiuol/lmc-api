@@ -15,6 +15,7 @@ export class CourseCreateDto {
 		example: '#a45efd',
 	})
 	@IsString()
+	@IsOptional()
 	color: string;
 
 	@ApiProperty({description: 'Mots associé à la semaine'})

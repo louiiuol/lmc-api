@@ -31,7 +31,7 @@ export class AdminUsersService {
 				async user =>
 					await this.users.update(user.uuid, {subscribed: user.subscribed})
 			);
-		return {message: 'SUBSCRIPTION_RESEATED'};
+		return 'Abonnements réinitialisés';
 	};
 
 	exportEmails = async () => ({

@@ -25,7 +25,7 @@ export class Course extends BaseEntity {
 	order: number;
 
 	@AutoMap()
-	@Column()
+	@Column({nullable: true, default: 'black'})
 	color: string;
 
 	@AutoMap()
@@ -37,7 +37,7 @@ export class Course extends BaseEntity {
 	phonemes: Phoneme[];
 
 	@AutoMap()
-	@Column()
+	@Column({nullable: true})
 	script: boolean;
 
 	@AutoMap()
@@ -69,4 +69,11 @@ export class Course extends BaseEntity {
 		nullable: true,
 	})
 	sounds?: string[];
+
+	@AutoMap()
+	@Column({
+		type: 'simple-array',
+		nullable: true,
+	})
+	posterNames?: string[];
 }

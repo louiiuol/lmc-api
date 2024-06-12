@@ -25,12 +25,6 @@ export class PhonemeViewDto {
 	sounds?: string[];
 
 	@ApiProperty({
-		description: 'Noms des affiches associé à ce digramme.',
-	})
-	@AutoMap()
-	posterNames?: string[];
-
-	@ApiProperty({
 		description: 'Informations supplémentaire à propos de ce digramme',
 	})
 	@AutoMap()

@@ -85,16 +85,14 @@ export class AdminUsersController {
 		description:
 			"Mise à jour des informations d'un utilisateur. Permet notamment d'activer ou désactiver le compte ou l'abonnement de l'utilisateur.",
 		body: UserUpdateAdminDto,
+		returnType: UserViewDto,
 		restriction: 'admin',
 	})
 	async updateUserAsAdmin(
 		@Param('uuid') uuid: string,
 		@Body() dto: UserUpdateAdminDto
 	) {
-		const user = await this.mapReturn(this.usersService.update(uuid, dto));
-		if ('subscribed' in dto && dto.subscribed) {
-			await this.adminUserService.sendSubscriptionMail(user.email);
-		}
+		return await this.mapReturn(this.usersService.update(uuid, dto));
 	}
 
 	private mapReturn = async (promise: Promise<any>) =>

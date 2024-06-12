@@ -6,7 +6,7 @@ import {
 	CourseCreateDto,
 	CourseGenerator,
 } from '@feat/library/types';
-import {Injectable, Logger} from '@nestjs/common';
+import {BadRequestException, Injectable, Logger} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 
 import {Repository} from 'typeorm';
@@ -15,7 +15,7 @@ import * as fs from 'fs';
 import {CourseCreateFilesDto} from '@feat/library/types/courses/dtos/course-create.dto';
 
 import {CourseEditDto} from '@feat/library/types/courses/dtos/course-edit.dto';
-import {SoundAddDto} from '@feat/library/types/courses/dtos/sound-add-dto';
+import {PosterAddDto} from '@feat/library/types/courses/dtos/poster-create-dto';
 import {PhonemeCreateDto} from '@feat/library/types/phonemes/dtos/phoneme-create.dto';
 
 @Injectable()
@@ -42,7 +42,6 @@ export class LibraryAdminService {
 		} catch (e) {
 			Logger.error('Failed to delete previous library (SQL error occurred)');
 		}
-		
 
 		return COURSES.map(async (current, i) => {
 			const entity = await this.courseRepository.save({...current, order: i});
@@ -57,8 +56,7 @@ export class LibraryAdminService {
 
 	async createCourse(dto: CourseCreateDto, files: CourseCreateFilesDto) {
 		dto.uuid = uuidv4();
-		// TODO Handle orders
-		dto.order = (await this.courseRepository.count()) + 1;
+		dto.order = await this.courseRepository.count();
 		fs.mkdir(`uploads/courses/${dto.uuid}`, () => {});
 		return await this.courseRepository.save(this.castAsCourse(dto, files));
 	}
@@ -91,33 +89,72 @@ export class LibraryAdminService {
 
 	async addPhoneme(uuid: string, dto: PhonemeCreateDto) {
 		const entity = await this.courseRepository.findOneBy({uuid});
-		this.storeFile(
-			uuid,
-			`affiche-${dto.name.toLocaleUpperCase()}`,
-			dto.poster[0]
-		);
-		dto.poster = !!dto.poster;
+		const poster = dto.poster?.[0];
+		if (poster)
+			this.storeFile(uuid, `poster-${dto.name.toLocaleUpperCase()}`, poster);
+		dto.poster = !!poster;
 		entity.phonemes ??= [];
 		entity.phonemes.push(dto as any);
-		return await this.courseRepository.save(entity);
+		return (await this.courseRepository.save(entity)).phonemes.find(
+			p => p.name == dto.name
+		);
+	}
+
+	async editPhoneme(courseUuid: string, uuid: string, dto: PhonemeCreateDto) {
+		const entity = await this.phonemeRepository.findOneBy({uuid});
+		const poster = dto.poster?.[0];
+		if (poster)
+			this.storeFile(
+				courseUuid,
+				`poster-${dto.name.toLocaleUpperCase()}`,
+				poster
+			);
+		dto.poster = !!poster;
+		entity.sounds = dto.sounds;
+		dto.endOfWord = String(dto.endOfWord) == 'true';
+		return await this.phonemeRepository.save({...entity, ...(dto as any)});
 	}
 
 	async removePhoneme(uuid: string, name: string) {
-		this.removeFile(uuid, `affiche-${name.toLocaleUpperCase()}`);
+		this.removeFile(uuid, `poster-${name.toLocaleUpperCase()}`);
 		const entity = await this.courseRepository.findOneBy({uuid});
 		entity.phonemes = entity.phonemes.filter(p => p.name != name);
 		return await this.courseRepository.save(entity);
 	}
 
-	// Move course (insert between two courses)
+	async removePhonemePoster(uuid: string, name: string) {
+		this.removeFile(uuid, `poster-${name.toLocaleUpperCase()}`);
+		const entity = (
+			await this.courseRepository.findOneBy({uuid})
+		).phonemes.find(p => p.name == name);
+		entity.poster = null;
+		await this.phonemeRepository.save(entity);
+		return 'poster deleted';
+	}
 
-	async addSound(uuid: string, dto: SoundAddDto) {
+	async reorderItems(newOrder: string[]): Promise<Course[]> {
+		const items = await this.courseRepository.find();
+
+		if (items.length !== newOrder.length)
+			throw new BadRequestException(
+				"La longueur de la nouvelle séquence doit correspondre au nombre d'éléments."
+			);
+
+		newOrder.forEach(async (uuid, index) => {
+			items.find(i => i.uuid == uuid).order = index;
+		});
+		return (await this.courseRepository.save(items)).sort(
+			(a, b) => a.order - b.order
+		);
+	}
+
+	async addSound(uuid: string, dto: PosterAddDto) {
 		const entity = await this.courseRepository.findOneBy({uuid});
 		entity.sounds ??= [];
 		entity.sounds.push(dto.name);
 		this.storeFile(
 			uuid,
-			`affiche-son${dto.name.toLocaleUpperCase()}`,
+			`poster-sound-${dto.name.toLocaleUpperCase()}`,
 			dto.file[0]
 		);
 		return await this.courseRepository.save(entity);
@@ -126,16 +163,31 @@ export class LibraryAdminService {
 	async removeSound(uuid: string, name: string) {
 		const entity = await this.courseRepository.findOneBy({uuid});
 		entity.sounds = entity.sounds.filter(s => s != name);
-		this.removeFile(uuid, `affiche-son${name.toLocaleUpperCase()}`);
+		this.removeFile(uuid, `poster-sound-${name.toLocaleUpperCase()}`);
 		return await this.courseRepository.save(entity);
 	}
 
-	private async removeFile(uuid: string, fileName: string) {
-		fs.rm(`uploads/courses/${uuid}/${fileName}.pdf`, () => {});
+	async addPoster(uuid: string, dto: PosterAddDto) {
+		const entity = await this.courseRepository.findOneBy({uuid});
+		entity.posterNames ??= [];
+		entity.posterNames.push(dto.name);
+		this.storeFile(uuid, `poster-${dto.name.toLocaleUpperCase()}`, dto.file[0]);
+		return await this.courseRepository.save(entity);
 	}
 
-	private async removeFolder(uuid: string) {
-		fs.rm(`uploads/courses/${uuid}`, () => {});
+	async removePoster(uuid: string, poster: string) {
+		const entity = await this.courseRepository.findOneBy({uuid});
+		entity.posterNames = entity.posterNames.filter(s => s != poster);
+		this.removeFile(uuid, `poster-${poster.toLocaleUpperCase()}`);
+		return await this.courseRepository.save(entity);
+	}
+
+	private removeFile(uuid: string, fileName: string) {
+		fs.rmSync(`uploads/courses/${uuid}/${fileName}.pdf`, {force: true});
+	}
+
+	private removeFolder(uuid: string) {
+		fs.rmSync(`uploads/courses/${uuid}`, {recursive: true, force: true});
 	}
 
 	private castAsCourse(
