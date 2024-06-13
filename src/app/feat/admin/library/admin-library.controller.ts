@@ -31,9 +31,7 @@ const COURSE_FILES_UPLOAD = PdfUploader([
 const PHONEME_FILES_UPLOAD = FileFieldsInterceptor([
 	{name: 'poster', maxCount: 1},
 ]);
-const SOUND_FILES_UPLOAD = FileFieldsInterceptor([
-	{name: 'poster', maxCount: 1},
-]);
+const SOUND_FILES_UPLOAD = FileFieldsInterceptor([{name: 'file', maxCount: 1}]);
 
 @Controller({path: 'admin', name: 'Back Office (Gestion de la bibliothèque)'})
 export class AdminLibraryController {
