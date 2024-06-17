@@ -26,7 +26,7 @@ export class MailerService {
 		} catch (e) {
 			throw new BadRequestException(e, {
 				cause: e,
-				description: '',
+				description: "Impossible d'envoyer le message.",
 			});
 		}
 	}
