@@ -93,7 +93,7 @@ export class LibraryAdminService {
 		if (poster)
 			this.storeFile(uuid, `poster-${dto.name.toLocaleUpperCase()}`, poster);
 		dto.poster = !!poster;
-		entity.phonemes ??= [];
+		if (!entity.phonemes) entity.phonemes = [];
 		entity.phonemes.push(dto as any);
 		return (await this.courseRepository.save(entity)).phonemes.find(
 			p => p.name == dto.name
@@ -150,7 +150,7 @@ export class LibraryAdminService {
 
 	async addSound(uuid: string, dto: PosterAddDto) {
 		const entity = await this.courseRepository.findOneBy({uuid});
-		entity.sounds ??= [];
+		if (!entity.sounds) entity.sounds = [];
 		entity.sounds.push(dto.name);
 		this.storeFile(
 			uuid,
@@ -169,7 +169,7 @@ export class LibraryAdminService {
 
 	async addPoster(uuid: string, dto: PosterAddDto) {
 		const entity = await this.courseRepository.findOneBy({uuid});
-		entity.posterNames ??= [];
+		if (!entity.posterNames) entity.posterNames = [];
 		entity.posterNames.push(dto.name);
 		this.storeFile(uuid, `poster-${dto.name.toLocaleUpperCase()}`, dto.file[0]);
 		return await this.courseRepository.save(entity);
@@ -199,7 +199,6 @@ export class LibraryAdminService {
 				dto[key] = true;
 				this.storeFile(dto.uuid, key, value[0]);
 			});
-		dto.order ??= 0;
 		return {...dto};
 	}
 
