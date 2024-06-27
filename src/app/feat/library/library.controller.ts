@@ -51,12 +51,8 @@ export class LibraryController {
 			"Téléchargement de l'ensemble des fichiers d'une leçon compressé dans un fichier zip.",
 		restriction: 'user',
 	})
-	async downloadLesson(
-		@Param() p: {index: number},
-		@Res() res: Response,
-		@CurrentUser() user
-	) {
-		this.libraryService.downloadCourse(user.email, p, res);
+	async downloadLesson(@Param() p: {index: number}, @Res() res: Response) {
+		this.libraryService.downloadCourse(p.index, res);
 	}
 
 	@PartialUpdate({

@@ -5,10 +5,11 @@ import {UsersModule} from '@feat/users/users.module';
 import {LibraryService} from './library.service';
 import {LibraryController} from './library.controller';
 import {Course, Phoneme} from './types';
+import {ZipService} from './zip.service';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([Course, Phoneme]), UsersModule],
-	providers: [LibraryService],
+	providers: [LibraryService, ZipService],
 	controllers: [LibraryController],
 	exports: [LibraryService],
 })

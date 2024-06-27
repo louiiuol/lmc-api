@@ -1,19 +1,22 @@
-import {ForbiddenException, Injectable, StreamableFile} from '@nestjs/common';
+import {Injectable, StreamableFile} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 import {Course} from './types';
 
 import {UsersService} from '@feat/users/users.service';
 
-import {createReadStream, existsSync} from 'fs';
+import {createReadStream, existsSync, unlinkSync} from 'fs';
+
 import {join} from 'path';
 import {Response} from 'express';
+import {ZipService} from './zip.service';
 
 @Injectable()
 export class LibraryService {
 	constructor(
 		@InjectRepository(Course) private courseRepository: Repository<Course>,
-		private readonly usersService: UsersService
+		private readonly usersService: UsersService,
+		private readonly zipService: ZipService
 	) {}
 
 	getAllCourses = async () =>
@@ -60,22 +63,19 @@ export class LibraryService {
 		}
 	}
 
-	async downloadCourse(
-		email: any,
-		p: {index: number},
-		res: Response<any, Record<string, any>>
-	) {
-		const folder = (await this.courseRepository.findOneBy({order: p.index - 1}))
+	async downloadCourse(index: number, res: Response<any, Record<string, any>>) {
+		const folder = (await this.courseRepository.findOneBy({order: index - 1}))
 			.uuid;
-		const lessonPath = `uploads/courses/${folder}/${p.index}.zip`;
-		res.setHeader('Content-Type', 'application/zip');
-		res.setHeader(
-			'Content-Disposition',
-			`attachment; filename=${p.index - 1}.zip`
-		);
+		const lessonPath = `uploads/courses/${folder}`;
+		const outputZip = `uploads/courses/${folder}/${index}.zip`;
 
-		// Pipe the zip file to the HTTP response
-		const fileStream = createReadStream(lessonPath);
-		fileStream.pipe(res);
+		await this.zipService.zipDirectory(lessonPath, outputZip);
+
+		res.download(outputZip, err => {
+			if (err) {
+				res.status(500).send('Could not download the file');
+			}
+			unlinkSync(outputZip);
+		});
 	}
 }
