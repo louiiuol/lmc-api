@@ -96,6 +96,7 @@ export class AuthService {
 		pass: string
 	): Promise<Partial<User>> => {
 		const user = await this.usersService.findOneByEmail(email);
+		if (!user) throw new UnauthorizedException("Cet utilisateur n'existe pas.");
 		if (!(await this.checkHash(pass, user.password))) return null;
 		if (!user.isActive) throw new ForbiddenException('Inactive account');
 		delete user.password;
