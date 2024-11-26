@@ -4,19 +4,18 @@ import {
 	UnauthorizedException,
 } from '@nestjs/common';
 import {JwtService} from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
 
 import {environment} from 'src/app/environment';
 
+import {User, UserCreateDto} from '@feat/users/types';
 import {UsersService} from '@feat/users/users.service';
-import {UserCreateDto, User} from '@feat/users/types';
 
-import {TokenJWT} from './types';
 import {MailerService} from '@shared/modules/mail/mail.service';
+import * as argon2 from 'argon2';
+import {TokenJWT} from './types';
 
 @Injectable()
 export class AuthService {
-	private readonly salt = Number(environment.SALT);
 	constructor(
 		private readonly usersService: UsersService,
 		private readonly jwtService: JwtService,
@@ -26,12 +25,14 @@ export class AuthService {
 	signUp = async (dto: UserCreateDto): Promise<any> => {
 		if (await this.usersService.findOneByEmail(dto.email))
 			return 'Cette adresse email est déjà utilisé.';
+
 		const user = await this.usersService.save({
 			...dto,
 			password: await this.hashData(dto.password),
 		});
 		if (!user) return "L'inscription à échoué. Réessayer plus tard.";
-		this.sendEmailConfirmation(user);
+
+		await this.sendEmailConfirmation(user);
 		const tokens = await this.getTokens(user.uuid, user.email);
 		await this.updateRefreshToken(user.uuid, tokens.refreshToken);
 		return "Utilisateur inscrit avec succès. En attente de confirmation de l'email";
@@ -46,7 +47,7 @@ export class AuthService {
 	logIn = async (user: {email: string; uuid?: string}): Promise<TokenJWT> => {
 		const entity = await this.usersService.findOneByEmail(user.email);
 		if (!entity) throw new UnauthorizedException("Ce compte n'existe pas.");
-		if (entity?.closed) {
+		if (entity.closed) {
 			entity.closed = false;
 			entity.closedAt = null;
 		}
@@ -65,7 +66,7 @@ export class AuthService {
 			throw new ForbiddenException(
 				'Access Denied: No refresh token available !'
 			);
-		if (!(await bcrypt.compare(refreshToken, user.refreshToken)))
+		if (!(await this.checkHash(refreshToken, user.refreshToken)))
 			throw new ForbiddenException('Access Denied: Invalid token!');
 
 		const tokens = await this.getTokens(user.uuid, user.email);
@@ -95,7 +96,8 @@ export class AuthService {
 		pass: string
 	): Promise<Partial<User>> => {
 		const user = await this.usersService.findOneByEmail(email);
-		if (!(await bcrypt.compare(pass, user.password))) return null;
+		if (!user) throw new UnauthorizedException("Cet utilisateur n'existe pas.");
+		if (!(await this.checkHash(pass, user.password))) return null;
 		if (!user.isActive) throw new ForbiddenException('Inactive account');
 		delete user.password;
 		return user;
@@ -128,16 +130,30 @@ export class AuthService {
 
 	accountConfirmation = async (email: string) => {
 		const user = await this.usersService.findOneByEmail(email);
-		this.sendEmailConfirmation(user);
+		await this.sendEmailConfirmation(user);
 		return 'Email envoyé';
 	};
 
 	private updateRefreshToken = async (userId: string, refreshToken: string) =>
 		await this.usersService.update(userId, {
-			refreshToken: this.hashData(refreshToken),
+			refreshToken: await this.hashData(refreshToken),
 		});
 
-	private hashData = (data: string): string => bcrypt.hash(data, this.salt);
+	hashData = async (plainText: string) => {
+		try {
+			return await argon2.hash(plainText);
+		} catch (err) {
+			throw new Error('Error hashing password');
+		}
+	};
+
+	checkHash = async (plainText: string, hash: string) => {
+		try {
+			return await argon2.verify(hash, plainText);
+		} catch (err) {
+			throw new Error('Error checking password');
+		}
+	};
 
 	private getTokens = async (userId: string, username: string) => {
 		const [accessToken, refreshToken] = await Promise.all([
@@ -196,7 +212,7 @@ export class AuthService {
 			{secret: process.env.JWT_SECRET_KEY + user.password, expiresIn: '1d'}
 		);
 
-		await this.mailerService.sendMail({
+		this.mailerService.sendMail({
 			recipient: user.email,
 			title: 'Bienvenue sur la méthode claire !',
 			template: 'activate-account',
