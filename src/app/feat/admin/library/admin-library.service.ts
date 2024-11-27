@@ -2,28 +2,30 @@ import {COURSES} from '@feat/library/courses.constant';
 import {LibraryService} from '@feat/library/library.service';
 import {
 	Course,
-	Phoneme,
 	CourseCreateDto,
 	CourseGenerator,
+	Phoneme,
 } from '@feat/library/types';
 import {BadRequestException, Injectable, Logger} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 
+import {CourseCreateFilesDto} from '@feat/library/types/courses/dtos/course-create.dto';
+import * as fs from 'fs';
 import {Repository} from 'typeorm';
 import {v4 as uuidv4} from 'uuid';
-import * as fs from 'fs';
-import {CourseCreateFilesDto} from '@feat/library/types/courses/dtos/course-create.dto';
 
 import {CourseEditDto} from '@feat/library/types/courses/dtos/course-edit.dto';
 import {PosterAddDto} from '@feat/library/types/courses/dtos/poster-create-dto';
 import {PhonemeCreateDto} from '@feat/library/types/phonemes/dtos/phoneme-create.dto';
+import {StorageService} from './storage.service';
 
 @Injectable()
 export class LibraryAdminService {
 	constructor(
 		@InjectRepository(Course) private courseRepository: Repository<Course>,
 		@InjectRepository(Phoneme) private phonemeRepository: Repository<Phoneme>,
-		private readonly publicLibraryService: LibraryService
+		private readonly publicLibraryService: LibraryService,
+		private readonly storageService: StorageService
 	) {}
 
 	createLibrary = async () => {
@@ -200,6 +202,19 @@ export class LibraryAdminService {
 				this.storeFile(dto.uuid, key, value[0]);
 			});
 		return {...dto};
+	}
+
+	private async uploadFile(file: Express.Multer.File): Promise<any> {
+		const bucketName = 'votre-nom-de-bucket'; // Remplacez par le nom de votre bucket
+
+		const fileUrl = await this.storageService.uploadFile(file, bucketName);
+
+		// Public url
+		// const fileUrl = `https://f005.backblazeb2.com/file/${bucketName}/${encodeURIComponent(file.originalname)}`;
+		return {
+			message: 'Fichier uploadé avec succès',
+			url: fileUrl,
+		};
 	}
 
 	private storeFile(key: string, filename: string, data: Express.Multer.File) {
