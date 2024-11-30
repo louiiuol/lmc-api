@@ -1,19 +1,20 @@
 import {
+	BadRequestException,
 	Body,
 	Param,
-	Redirect,
 	Query,
-	BadRequestException,
+	Redirect,
 	UnauthorizedException,
 } from '@nestjs/common';
 import {AuthService} from './auth.service';
 
-import {environment} from 'src/app/environment';
 import {CurrentUser} from '@shared/decorators/current-user.decorator';
-import {Controller, Post, Get} from '@shared/decorators/rest';
+import {Controller, Get, Post} from '@shared/decorators/rest';
+import {environment} from 'src/app/environment';
 
-import {UserCreateDto, User, UserLoginDto} from '@feat/users/types';
+import {UserCreateDto, UserLoginDto} from '@feat/users/types';
 import {TokenJWT} from './types';
+import {TokenRefreshDto} from './types/refresh-token.dto';
 
 /**
  * Provides controller to handle user authentication
@@ -53,31 +54,17 @@ export class AuthController {
 		restriction: 'local',
 	})
 	async login(@Body() dto: UserLoginDto) {
-		return await this.authService.logIn(dto as User);
+		return await this.authService.logIn(dto);
 	}
 
-	@Get({
+	@Post({
 		path: 'refresh',
 		description: "Rafraîchissement des tokens d'identification.",
-		restriction: 'refresh',
+		body: TokenRefreshDto,
 		returnType: TokenJWT,
 	})
-	refreshTokens(@CurrentUser() user) {
-		const username = user['username'];
-		const refreshToken = user['refreshToken'];
-		if (!(username && refreshToken))
-			throw new UnauthorizedException('Token invalide.');
-		return this.authService.refreshTokens(username, refreshToken);
-	}
-
-	@Get({
-		path: 'logout',
-		description: "Déconnexion de l'utilisateur.",
-		restriction: 'user',
-	})
-	logout(@CurrentUser() user) {
-		const sub = user['sub'];
-		return this.authService.logOut(sub);
+	refreshTokens(@Body() dto: TokenRefreshDto) {
+		return this.authService.refreshTokens(dto.refreshToken);
 	}
 
 	@Get({
@@ -86,7 +73,6 @@ export class AuthController {
 		restriction: 'user',
 	})
 	async closeAccount(@CurrentUser() user) {
-		this.authService.logOut(user['sub']);
 		return await this.authService.closeAccount(user.uuid);
 	}
 

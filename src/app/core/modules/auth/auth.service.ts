@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	ForbiddenException,
 	Injectable,
 	UnauthorizedException,
@@ -11,11 +12,17 @@ import {User, UserCreateDto} from '@feat/users/types';
 import {UsersService} from '@feat/users/users.service';
 
 import {MailerService} from '@shared/modules/mail/mail.service';
-import * as argon2 from 'argon2';
 import {TokenJWT} from './types';
+
+import {createClient} from '@supabase/supabase-js';
 
 @Injectable()
 export class AuthService {
+	private readonly supabase = createClient(
+		process.env.SUPABASE_URL,
+		process.env.SUPABASE_KEY
+	);
+
 	constructor(
 		private readonly usersService: UsersService,
 		private readonly jwtService: JwtService,
@@ -24,17 +31,28 @@ export class AuthService {
 
 	signUp = async (dto: UserCreateDto): Promise<any> => {
 		if (await this.usersService.findOneByEmail(dto.email))
-			return 'Cette adresse email est déjà utilisé.';
+			return 'Cette adresse email est déjà utilisée.';
+
+		const {data, error} = await this.supabase.auth.signUp({
+			email: dto.email,
+			password: dto.password,
+		});
+
+		if (error) throw new BadRequestException(error.message);
+
+		const {password, ...userInfo} = dto;
 
 		const user = await this.usersService.save({
-			...dto,
-			password: await this.hashData(dto.password),
+			...userInfo,
+			supabaseUserId: data.user.id,
 		});
-		if (!user) return "L'inscription à échoué. Réessayer plus tard.";
+
+		if (!user)
+			throw new BadRequestException(
+				"L'inscription à échoué. Réessayer plus tard."
+			);
 
 		await this.sendEmailConfirmation(user);
-		const tokens = await this.getTokens(user.uuid, user.email);
-		await this.updateRefreshToken(user.uuid, tokens.refreshToken);
 		return "Utilisateur inscrit avec succès. En attente de confirmation de l'email";
 	};
 
@@ -44,7 +62,10 @@ export class AuthService {
 	 * @param user payload to log user in
 	 * @returns JWT access token
 	 */
-	logIn = async (user: {email: string; uuid?: string}): Promise<TokenJWT> => {
+	logIn = async (user: {
+		email: string;
+		password: string;
+	}): Promise<TokenJWT> => {
 		const entity = await this.usersService.findOneByEmail(user.email);
 		if (!entity) throw new UnauthorizedException("Ce compte n'existe pas.");
 		if (entity.closed) {
@@ -52,36 +73,36 @@ export class AuthService {
 			entity.closedAt = null;
 		}
 		entity.lastConnection = new Date();
-		await this.usersService.update(user.uuid, entity);
+		await this.usersService.update(entity.uuid, entity);
 
-		const tokens = await this.getTokens(user.uuid, user.email);
-		await this.updateRefreshToken(entity.uuid, tokens.refreshToken);
-		return tokens;
+		const {error, data} = await this.supabase.auth.signInWithPassword({
+			email: user.email,
+			password: user.password,
+		});
+
+		if (error) throw new UnauthorizedException(error.message);
+
+		return {
+			accessToken: data.session.access_token,
+			refreshToken: data.session.refresh_token,
+		};
 	};
 
-	refreshTokens = async (email: string, refreshToken: string) => {
-		const user = await this.usersService.findOneByEmail(email);
+	refreshTokens = async (refreshToken: string) => {
+		const {data, error} = await this.supabase.auth.refreshSession({
+			refresh_token: refreshToken,
+		});
 
-		if (!user?.refreshToken)
-			throw new ForbiddenException(
-				'Access Denied: No refresh token available !'
-			);
-		if (!(await this.checkHash(refreshToken, user.refreshToken)))
-			throw new ForbiddenException('Access Denied: Invalid token!');
+		if (error) throw new UnauthorizedException(error.message);
 
-		const tokens = await this.getTokens(user.uuid, user.email);
-		const updated = await this.updateRefreshToken(
-			user.uuid,
-			tokens.refreshToken
-		);
-		updated.lastConnection = new Date();
-		this.usersService.update(user.uuid, updated);
-		return tokens;
-	};
+		const user = await this.usersService.findOneBySupabaseId(data.user.id);
 
-	logOut = (userId: string) => {
-		this.usersService.update(userId, {refreshToken: null});
-		return 'Déconnexion effectuée avec succès';
+		await this.usersService.update(user.uuid, {updatedAt: new Date()});
+
+		return {
+			refreshToken: data.session.refresh_token,
+			accessToken: data.session.access_token,
+		};
 	};
 
 	/**
@@ -93,13 +114,16 @@ export class AuthService {
 	 */
 	validateUser = async (
 		email: string,
-		pass: string
+		password: string
 	): Promise<Partial<User>> => {
 		const user = await this.usersService.findOneByEmail(email);
 		if (!user) throw new UnauthorizedException("Cet utilisateur n'existe pas.");
-		if (!(await this.checkHash(pass, user.password))) return null;
 		if (!user.isActive) throw new ForbiddenException('Inactive account');
-		delete user.password;
+		const {error} = await this.supabase.auth.signInWithPassword({
+			email,
+			password,
+		});
+		if (error) throw new UnauthorizedException(error.message);
 		return user;
 	};
 
@@ -134,63 +158,12 @@ export class AuthService {
 		return 'Email envoyé';
 	};
 
-	private updateRefreshToken = async (userId: string, refreshToken: string) =>
-		await this.usersService.update(userId, {
-			refreshToken: await this.hashData(refreshToken),
-		});
-
-	hashData = async (plainText: string) => {
-		try {
-			return await argon2.hash(plainText);
-		} catch (err) {
-			throw new Error('Error hashing password');
-		}
-	};
-
-	checkHash = async (plainText: string, hash: string) => {
-		try {
-			return await argon2.verify(hash, plainText);
-		} catch (err) {
-			throw new Error('Error checking password');
-		}
-	};
-
-	private getTokens = async (userId: string, username: string) => {
-		const [accessToken, refreshToken] = await Promise.all([
-			this.jwtService.signAsync(
-				{
-					sub: userId,
-					username,
-				},
-				{
-					secret: environment.JWT_ACCESS_SECRET,
-					expiresIn: '1d',
-				}
-			),
-			this.jwtService.signAsync(
-				{
-					sub: userId,
-					username,
-				},
-				{
-					secret: environment.JWT_REFRESH_SECRET,
-					expiresIn: '15d',
-				}
-			),
-		]);
-
-		return {
-			accessToken,
-			refreshToken,
-		};
-	};
-
 	private checkToken = async (userId: string, token: any): Promise<boolean> => {
 		try {
 			return !!this.jwtService.verify(token, {
 				secret:
 					process.env.JWT_SECRET_KEY +
-					(await this.usersService.findOneByUuid(userId)).password,
+					(await this.usersService.findOneByUuid(userId)).uuid,
 			});
 		} catch (e) {
 			throw new UnauthorizedException(e.message);
@@ -209,7 +182,7 @@ export class AuthService {
 				username: user.email,
 				sub: user.uuid,
 			},
-			{secret: process.env.JWT_SECRET_KEY + user.password, expiresIn: '1d'}
+			{secret: process.env.JWT_SECRET_KEY + user.uuid, expiresIn: '1d'}
 		);
 
 		this.mailerService.sendMail({

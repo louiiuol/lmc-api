@@ -1,5 +1,5 @@
 import {AutoMap} from '@automapper/classes';
-import {Entity, Column, PrimaryGeneratedColumn, BaseEntity} from 'typeorm';
+import {BaseEntity, Column, Entity, PrimaryGeneratedColumn} from 'typeorm';
 import {UserRole} from './user.role';
 
 /**
@@ -11,7 +11,7 @@ import {UserRole} from './user.role';
 export class User extends BaseEntity {
 	@AutoMap()
 	@PrimaryGeneratedColumn('uuid')
-	uuid!: string;
+	uuid: string;
 
 	@AutoMap()
 	@Column({
@@ -31,8 +31,8 @@ export class User extends BaseEntity {
 	})
 	email: string;
 
-	@Column()
-	password: string;
+	@Column({unique: true})
+	supabaseUserId: string;
 
 	@AutoMap()
 	@Column({default: false})
@@ -77,7 +77,4 @@ export class User extends BaseEntity {
 	@AutoMap()
 	@Column({nullable: true})
 	closedAt: Date;
-
-	@Column({nullable: true})
-	refreshToken: string;
 }

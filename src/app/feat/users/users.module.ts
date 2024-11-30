@@ -1,14 +1,12 @@
 import {Module, forwardRef} from '@nestjs/common';
+import {JwtModule} from '@nestjs/jwt';
 import {TypeOrmModule} from '@nestjs/typeorm';
-import {UsersService} from './users.service';
-import {UsersController} from './users.controller';
+import {MailModule} from '@shared/modules/mail/mail.module';
 import {User} from './types/user.entity';
 import {UserProfile} from './user.profile';
+import {UsersController} from './users.controller';
+import {UsersService} from './users.service';
 import {IsUserAlreadyExistConstraint} from './validators/unique-email.validator';
-import {JwtModule} from '@nestjs/jwt';
-import {UsersPasswordService} from './users-password-service';
-import {UsersPasswordController} from './users-password.controller';
-import {MailModule} from '@shared/modules/mail/mail.module';
 
 @Module({
 	imports: [
@@ -16,13 +14,8 @@ import {MailModule} from '@shared/modules/mail/mail.module';
 		JwtModule,
 		MailModule,
 	],
-	providers: [
-		UsersService,
-		UserProfile,
-		IsUserAlreadyExistConstraint,
-		UsersPasswordService,
-	],
-	controllers: [UsersController, UsersPasswordController],
+	providers: [UsersService, UserProfile, IsUserAlreadyExistConstraint],
+	controllers: [UsersController],
 	exports: [UsersService],
 })
 export class UsersModule {}
