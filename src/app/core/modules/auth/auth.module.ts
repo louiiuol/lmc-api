@@ -1,15 +1,15 @@
-import {Module} from '@nestjs/common';
-import {PassportModule} from '@nestjs/passport';
-import {JwtModule} from '@nestjs/jwt';
-import {AuthService} from './auth.service';
 import {UsersModule} from '@feat/users/users.module';
-import {LocalStrategy} from './guards/local/local.strategy';
-import {JwtStrategy} from './guards/jwt/jwt.strategy';
-import {AuthController} from './auth.controller';
-import {environment} from 'src/app/environment';
-import {AdminGuard} from './guards/admin.guard';
-import {RefreshTokenStrategy} from './guards/jwt/jwt-refresh.strategy';
+import {Module} from '@nestjs/common';
+import {JwtModule} from '@nestjs/jwt';
+import {PassportModule} from '@nestjs/passport';
 import {MailModule} from '@shared/modules/mail/mail.module';
+import {environment} from 'src/app/environment';
+import {AuthController} from './auth.controller';
+import {AuthService} from './auth.service';
+import {LocalStrategy} from './strategies/local.strategy';
+import {SupabaseStrategy} from './strategies/supabase.strategy';
+
+const AuthStrategies = [LocalStrategy, SupabaseStrategy];
 
 @Module({
 	imports: [
@@ -21,12 +21,6 @@ import {MailModule} from '@shared/modules/mail/mail.module';
 		MailModule,
 	],
 	controllers: [AuthController],
-	providers: [
-		AuthService,
-		LocalStrategy,
-		JwtStrategy,
-		RefreshTokenStrategy,
-		AdminGuard,
-	],
+	providers: [AuthService, ...AuthStrategies],
 })
 export class AuthModule {}

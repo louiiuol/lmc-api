@@ -1,28 +1,24 @@
+import {AdminGuard, JwtAuthGuard} from '@core/modules/auth/guards';
+import {UseGuards} from '@nestjs/common';
 import {
-	ApiNoContentResponse,
 	ApiBearerAuth,
 	ApiForbiddenResponse,
-	ApiUnauthorizedResponse,
+	ApiNoContentResponse,
 	ApiOperation,
+	ApiUnauthorizedResponse,
 	ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import {UseGuards} from '@nestjs/common';
+import {LocalAuthGuard} from '@shared/guards/local.guard';
+import {APIFormErrorDetails} from '@shared/types/api-response';
 import {DocParameters} from '@shared/types/swagger-decorator-opt';
 import {ResponseMessage} from '../responses/response-message.decorator';
-import {APIFormErrorDetails} from '@shared/types/api-response';
-import {LocalAuthGuard} from '@core/modules/auth/guards/local/local.guard';
-import {
-	AdminGuard,
-	JwtAuthGuard,
-	RefreshTokenGuard,
-} from '@core/modules/auth/guards';
 
 const appGuards = {
-	refresh: [RefreshTokenGuard],
 	user: [JwtAuthGuard],
 	admin: [JwtAuthGuard, AdminGuard],
 	local: [LocalAuthGuard],
 };
+export type AppGuardsLevels = keyof typeof appGuards;
 
 const createSchema = (
 	path: string,
