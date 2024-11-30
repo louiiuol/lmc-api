@@ -1,18 +1,18 @@
 import {
-	IsNull,
-	Not,
-	LessThan,
-	LessThanOrEqual,
-	MoreThan,
-	MoreThanOrEqual,
-	ILike,
-	In,
-} from 'typeorm';
-import {
 	Filtering,
 	FilterRule,
 } from '@shared/decorators/params/filtering-params';
 import {Sorting} from '@shared/decorators/params/sorting-params';
+import {
+	ILike,
+	In,
+	IsNull,
+	LessThan,
+	LessThanOrEqual,
+	MoreThan,
+	MoreThanOrEqual,
+	Not,
+} from 'typeorm';
 
 export const getOrder = (sort: Sorting) =>
 	sort ? {[sort.property]: sort.direction} : {};

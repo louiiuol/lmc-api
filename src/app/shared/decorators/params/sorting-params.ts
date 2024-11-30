@@ -4,8 +4,8 @@ import {
 	ExecutionContext,
 } from '@nestjs/common';
 import {ApiProperty} from '@nestjs/swagger';
-import {Request} from 'express';
 import {DECORATORS} from '@nestjs/swagger/dist/constants';
+import {Request} from 'express';
 export class Sorting {
 	@ApiProperty({description: 'Propriété du tri actif.'})
 	property: string;
