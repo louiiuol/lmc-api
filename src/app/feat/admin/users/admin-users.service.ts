@@ -1,16 +1,16 @@
-import {Injectable} from '@nestjs/common';
-import {Cron} from '@nestjs/schedule';
-import {getOrder, getWhere, isXMonthEarlier} from 'src/app/shared/helpers';
-import {UsersService} from '@feat/users/users.service';
-import {MailerService} from '@shared/modules/mail/mail.service';
-import {UserViewDto, UserRole, User} from '@feat/users/types';
-import {Pagination, Filtering} from '@shared/decorators';
-import {Sorting} from '@shared/decorators/params';
-import {PaginatedResource} from '@shared/types/paginated-resource';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Repository} from 'typeorm';
 import {Mapper} from '@automapper/core';
 import {InjectMapper} from '@automapper/nestjs';
+import {User, UserRole, UserViewDto} from '@feat/users/types';
+import {UsersService} from '@feat/users/users.service';
+import {Injectable} from '@nestjs/common';
+import {Cron} from '@nestjs/schedule';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Filtering, Pagination} from '@shared/decorators';
+import {Sorting} from '@shared/decorators/params';
+import {MailerService} from '@shared/modules/mail/mail.service';
+import {PaginatedResource} from '@shared/types/paginated-resource';
+import {getOrder, getWhere, isXMonthEarlier} from 'src/app/shared/helpers';
+import {Repository} from 'typeorm';
 
 @Injectable()
 export class AdminUsersService {

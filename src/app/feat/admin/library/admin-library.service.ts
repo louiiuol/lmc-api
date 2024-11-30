@@ -2,17 +2,17 @@ import {COURSES} from '@feat/library/courses.constant';
 import {LibraryService} from '@feat/library/library.service';
 import {
 	Course,
-	Phoneme,
 	CourseCreateDto,
 	CourseGenerator,
+	Phoneme,
 } from '@feat/library/types';
 import {BadRequestException, Injectable, Logger} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 
+import {CourseCreateFilesDto} from '@feat/library/types/courses/dtos/course-create.dto';
+import * as fs from 'fs';
 import {Repository} from 'typeorm';
 import {v4 as uuidv4} from 'uuid';
-import * as fs from 'fs';
-import {CourseCreateFilesDto} from '@feat/library/types/courses/dtos/course-create.dto';
 
 import {CourseEditDto} from '@feat/library/types/courses/dtos/course-edit.dto';
 import {PosterAddDto} from '@feat/library/types/courses/dtos/poster-create-dto';

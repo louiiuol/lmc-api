@@ -1,6 +1,6 @@
 import {AutoMap} from '@automapper/classes';
-import {PhonemeViewDto} from '../../phonemes/dtos/phoneme-view.dto';
 import {ApiProperty} from '@nestjs/swagger';
+import {PhonemeViewDto} from '../../phonemes/dtos/phoneme-view.dto';
 
 export class CourseViewDto {
 	@ApiProperty({description: "Index de la semaine dans l'année scolaire."})

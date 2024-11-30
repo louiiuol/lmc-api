@@ -1,11 +1,10 @@
-import {NestFactory} from '@nestjs/core';
-import {AppModule} from './app/app.module';
-import {ValidationPipe, Logger} from '@nestjs/common';
-import {environment} from 'src/app/environment';
-import {GlobalExceptionFilter} from './app/core/exceptions/global-exceptions.filter';
 import {useContainer} from '@nestjs/class-validator';
-import {SwaggerModule, DocumentBuilder} from '@nestjs/swagger';
-import {TransformInterceptor} from '@core/interceptors/response.interceptor';
+import {Logger, ValidationPipe} from '@nestjs/common';
+import {NestFactory} from '@nestjs/core';
+import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
+import {environment} from 'src/app/environment';
+import {AppModule} from './app/app.module';
+import {GlobalExceptionFilter} from './app/core/exceptions/global-exceptions.filter';
 
 const globalPrefix = 'api';
 const port = environment.PORT || 3333;

@@ -1,18 +1,18 @@
 import {
 	applyDecorators,
+	HttpCode,
+	Delete as NestDelete,
 	Get as NestGet,
 	Post as NestPost,
-	Delete as NestDelete,
-	Put,
 	Patch,
-	HttpCode,
+	Put,
 } from '@nestjs/common';
 
 import {DocParameters} from '../../types/swagger-decorator-opt';
-import {Resource} from './resource.decorator';
-import {ApiOkResponsePaginated} from '../responses/paginated-response.decorator';
 import {ApiOkResponseFormatted} from '../responses/api-response.decorator';
 import {ApiOkResponseAsArray} from '../responses/array-response.decorator';
+import {ApiOkResponsePaginated} from '../responses/paginated-response.decorator';
+import {Resource} from './resource.decorator';
 
 export const Get = (opt?: DocParameters) => {
 	return applyDecorators(
