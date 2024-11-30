@@ -4,6 +4,8 @@ import {TypeOrmModule} from '@nestjs/typeorm';
 import {MailModule} from '@shared/modules/mail/mail.module';
 import {User} from './types/user.entity';
 import {UserProfile} from './user.profile';
+import {UsersPasswordService} from './users-password-service';
+import {UsersPasswordController} from './users-password.controller';
 import {UsersController} from './users.controller';
 import {UsersService} from './users.service';
 import {IsUserAlreadyExistConstraint} from './validators/unique-email.validator';
@@ -14,8 +16,13 @@ import {IsUserAlreadyExistConstraint} from './validators/unique-email.validator'
 		JwtModule,
 		MailModule,
 	],
-	providers: [UsersService, UserProfile, IsUserAlreadyExistConstraint],
-	controllers: [UsersController],
+	providers: [
+		UsersService,
+		UserProfile,
+		IsUserAlreadyExistConstraint,
+		UsersPasswordService,
+	],
+	controllers: [UsersController, UsersPasswordController],
 	exports: [UsersService],
 })
 export class UsersModule {}
