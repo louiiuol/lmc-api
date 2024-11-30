@@ -1,9 +1,9 @@
+import {UsersService} from '@feat/users/users.service';
 import {Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
-import {Repository} from 'typeorm';
-import {UsersService} from '@feat/users/users.service';
-import {Newsletter, NewsletterSendDto} from './types';
 import {MailerService} from '@shared/modules/mail/mail.service';
+import {Repository} from 'typeorm';
+import {Newsletter, NewsletterSendDto} from './types';
 
 @Injectable()
 export class NewsletterService {
