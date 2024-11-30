@@ -1,4 +1,3 @@
-import {AdminGuard, JwtAuthGuard} from '@core/modules/auth/guards';
 import {UseGuards} from '@nestjs/common';
 import {
 	ApiBearerAuth,
@@ -8,6 +7,8 @@ import {
 	ApiUnauthorizedResponse,
 	ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
+import {AdminGuard} from '@shared/guards/admin.guard';
+import {JwtAuthGuard} from '@shared/guards/jwt-auth.guard';
 import {LocalAuthGuard} from '@shared/guards/local.guard';
 import {APIFormErrorDetails} from '@shared/types/api-response';
 import {DocParameters} from '@shared/types/swagger-decorator-opt';
