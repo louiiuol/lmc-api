@@ -36,7 +36,7 @@ async function bootstrap() {
 		customSiteTitle: 'La méthode claire - API doc',
 	});
 
-	await app.listen(port, environment.API_HOST);
+	await app.listen(port);
 }
 const successMessage = `🚀 Application is running on: ${environment.API_HOST}:${port}/${globalPrefix}`;
 
