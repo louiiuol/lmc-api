@@ -1,10 +1,11 @@
-import {useContainer} from '@nestjs/class-validator';
-import {Logger, ValidationPipe} from '@nestjs/common';
 import {NestFactory} from '@nestjs/core';
-import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
-import {environment} from 'src/app/environment';
 import {AppModule} from './app/app.module';
+import {ValidationPipe, Logger} from '@nestjs/common';
+import {environment} from 'src/app/environment';
 import {GlobalExceptionFilter} from './app/core/exceptions/global-exceptions.filter';
+import {useContainer} from '@nestjs/class-validator';
+import {SwaggerModule, DocumentBuilder} from '@nestjs/swagger';
+import {TransformInterceptor} from '@core/interceptors/response.interceptor';
 
 const globalPrefix = 'api';
 const port = environment.PORT || 3333;
@@ -36,7 +37,7 @@ async function bootstrap() {
 		customSiteTitle: 'La méthode claire - API doc',
 	});
 
-	await app.listen(port);
+	await app.listen(port, environment.API_HOST);
 }
 const successMessage = `🚀 Application is running on: ${environment.API_HOST}:${port}/${globalPrefix}`;
 

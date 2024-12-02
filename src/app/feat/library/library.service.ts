@@ -7,8 +7,8 @@ import {UsersService} from '@feat/users/users.service';
 
 import {createReadStream, existsSync, unlinkSync} from 'fs';
 
-import {Response} from 'express';
 import {join} from 'path';
+import {Response} from 'express';
 import {ZipService} from './zip.service';
 
 @Injectable()

@@ -1,5 +1,4 @@
 import {Type} from '@nestjs/common';
-import {AppGuardsLevels} from '@shared/decorators/rest/resource.decorator';
 
 export type DocParameters = {
 	path?: string;
@@ -8,7 +7,7 @@ export type DocParameters = {
 	success?: string;
 	error?: string;
 	returnType?: Type<unknown>;
-	restriction?: AppGuardsLevels;
+	restriction?: 'user' | 'admin' | 'refresh' | 'local';
 	body?: Type<unknown>;
 	array?: true;
 	noContent?: true;

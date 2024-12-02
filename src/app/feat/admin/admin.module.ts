@@ -1,14 +1,14 @@
-import {LibraryModule} from '@feat/library/library.module';
-import {Course, Phoneme} from '@feat/library/types';
-import {User} from '@feat/users/types';
-import {UsersModule} from '@feat/users/users.module';
 import {Module} from '@nestjs/common';
-import {TypeOrmModule} from '@nestjs/typeorm';
-import {MailModule} from '@shared/modules/mail/mail.module';
-import {AdminLibraryController} from './library/admin-library.controller';
-import {LibraryAdminService} from './library/admin-library.service';
+import {UsersModule} from '@feat/users/users.module';
+import {LibraryModule} from '@feat/library/library.module';
 import {AdminUsersController} from './users/admin-users.controller';
 import {AdminUsersService} from './users/admin-users.service';
+import {MailModule} from '@shared/modules/mail/mail.module';
+import {User} from '@feat/users/types';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {LibraryAdminService} from './library/admin-library.service';
+import {Course, Phoneme} from '@feat/library/types';
+import {AdminLibraryController} from './library/admin-library.controller';
 
 @Module({
 	imports: [

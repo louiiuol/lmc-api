@@ -1,9 +1,9 @@
-import {Mapper} from '@automapper/core';
-import {InjectMapper} from '@automapper/nestjs';
 import {Body} from '@nestjs/common';
+import {InjectMapper} from '@automapper/nestjs';
+import {Mapper} from '@automapper/core';
 import {CurrentUser} from '@shared/decorators/current-user.decorator';
-import {Controller, Get, PartialUpdate} from '@shared/decorators/rest';
-import {User, UserUpdateDto, UserViewDto} from './types';
+import {Get, PartialUpdate, Controller} from '@shared/decorators/rest';
+import {User, UserViewDto, UserUpdateDto} from './types';
 import {UsersService} from './users.service';
 
 @Controller({name: 'Utilisateur connecté', path: 'me'})

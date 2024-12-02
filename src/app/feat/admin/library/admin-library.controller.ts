@@ -1,16 +1,5 @@
 import {Body, Param, UploadedFiles, UseInterceptors} from '@nestjs/common';
 
-import {PdfUploader} from '@feat/library/pdf-upload';
-import {CourseCreateDto, CourseViewDto} from '@feat/library/types';
-import {CourseCreateFilesDto} from '@feat/library/types/courses/dtos/course-create.dto';
-import {
-	CourseEditDto,
-	CourseEditFilesDto,
-} from '@feat/library/types/courses/dtos/course-edit.dto';
-import {PosterAddDto} from '@feat/library/types/courses/dtos/poster-create-dto';
-import {PhonemeCreateDto} from '@feat/library/types/phonemes/dtos/phoneme-create.dto';
-import {ReorderItemsDto} from '@feat/library/types/reorder-items.dto';
-import {FileFieldsInterceptor} from '@nestjs/platform-express';
 import {
 	Controller,
 	Delete,
@@ -19,7 +8,18 @@ import {
 	Post,
 	Update,
 } from '@shared/decorators/rest';
+import {CourseCreateDto, CourseViewDto} from '@feat/library/types';
 import {LibraryAdminService} from './admin-library.service';
+import {PdfUploader} from '@feat/library/pdf-upload';
+import {CourseCreateFilesDto} from '@feat/library/types/courses/dtos/course-create.dto';
+import {
+	CourseEditDto,
+	CourseEditFilesDto,
+} from '@feat/library/types/courses/dtos/course-edit.dto';
+import {PhonemeCreateDto} from '@feat/library/types/phonemes/dtos/phoneme-create.dto';
+import {FileFieldsInterceptor} from '@nestjs/platform-express';
+import {PosterAddDto} from '@feat/library/types/courses/dtos/poster-create-dto';
+import {ReorderItemsDto} from '@feat/library/types/reorder-items.dto';
 
 const COURSE_FILES_UPLOAD = PdfUploader([
 	{name: 'lesson', maxCount: 1},

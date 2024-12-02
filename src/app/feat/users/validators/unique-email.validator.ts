@@ -1,12 +1,12 @@
-import {UsersService} from '@feat/users/users.service';
 import {
-	ValidationOptions,
 	ValidatorConstraint,
 	ValidatorConstraintInterface,
+	ValidationOptions,
 	registerDecorator,
 } from '@nestjs/class-validator';
 import {Injectable} from '@nestjs/common';
 import {ModuleRef} from '@nestjs/core';
+import {UsersService} from '@feat/users/users.service';
 
 /**
  * Checks if user registering has unique email

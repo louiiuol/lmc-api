@@ -1,8 +1,8 @@
 import {Header, Param, Query, Res, StreamableFile} from '@nestjs/common';
 
-import {Controller, Get, PartialUpdate} from '@shared/decorators';
-import {CurrentUser} from '@shared/decorators/current-user.decorator';
 import {Response} from 'express';
+import {CurrentUser} from '@shared/decorators/current-user.decorator';
+import {Controller, Get, PartialUpdate} from '@shared/decorators';
 import {LibraryService} from './library.service';
 import {CourseViewDto} from './types';
 
