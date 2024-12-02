@@ -1,16 +1,16 @@
+import {Body, Param} from '@nestjs/common';
 import {Mapper} from '@automapper/core';
 import {InjectMapper} from '@automapper/nestjs';
-import {User, UserUpdateAdminDto, UserViewDto} from '@feat/users/types';
-import {UsersService} from '@feat/users/users.service';
-import {Body, Param} from '@nestjs/common';
 import {
-	Filtering,
-	FilteringParams,
-	Pagination,
 	PaginationParams,
-	Sorting,
+	Pagination,
+	FilteringParams,
+	Filtering,
 	SortingParams,
+	Sorting,
 } from '@shared/decorators/params';
+import {UsersService} from '@feat/users/users.service';
+import {User, UserViewDto, UserUpdateAdminDto} from '@feat/users/types';
 import {Controller, Get, PartialUpdate} from '@shared/decorators/rest';
 import {AdminUsersService} from './admin-users.service';
 

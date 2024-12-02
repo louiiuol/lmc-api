@@ -1,22 +1,33 @@
-import {ForbiddenException, Injectable, Logger} from '@nestjs/common';
+import {ForbiddenException, Injectable} from '@nestjs/common';
 import {JwtService} from '@nestjs/jwt';
-import {MailerService} from '@shared/modules/mail/mail.service';
-import {createClient} from '@supabase/supabase-js';
+import * as bcrypt from 'bcrypt';
 import {environment} from 'src/app/environment';
-import {PasswordResetDto} from './types';
 import {UsersService} from './users.service';
+import {PasswordResetDto} from './types';
+import {MailerService} from '@shared/modules/mail/mail.service';
 
 @Injectable()
 export class UsersPasswordService {
-	private readonly supabase = createClient(
-		process.env.SUPABASE_URL,
-		process.env.SUPABASE_KEY
-	);
+	private readonly salt = Number(environment.SALT);
 	constructor(
 		private readonly users: UsersService,
 		private readonly jwtService: JwtService,
 		private readonly mailerService: MailerService
 	) {}
+
+	/**
+	 * Checks if the given password matches the encrypte password of the user associated (by the given uuid)
+	 * @param uuid identifier of the user to be checked
+	 * @param password encrypted password to compare
+	 * @returns True if passwords match, false otherwise
+	 */
+	checkPassword = async (uuid: string, password: string): Promise<boolean> =>
+		await bcrypt.compare(
+			password,
+			(
+				await this.users.findOneByUuid(uuid)
+			).password
+		);
 
 	/**
 	 * Reset given user's password, if found. Will also checks for token validity.
@@ -25,15 +36,15 @@ export class UsersPasswordService {
 	 * @returns confirmation string if operation was successful
 	 * @throws ForbiddenException('token invalide')
 	 */
-	updatePasswordFromToken = async (uuid: string, dto: PasswordResetDto) => {
+	resetPassword = async (uuid: string, dto: PasswordResetDto) => {
 		const user = await this.users.findOneByUuid(uuid);
 		if (user) {
 			try {
 				this.jwtService.verify(dto.token, {
-					secret: process.env.JWT_SECRET_KEY + user.uuid,
+					secret: process.env.JWT_SECRET_KEY + user.password,
 				});
-				await this.updateUserPassword(user.supabaseUserId, dto.password);
-
+				user.password = await this.hashPassword(dto.password);
+				await this.users.update(uuid, user);
 				return 'utilisateur mis à jour.';
 			} catch (e) {
 				throw new ForbiddenException(e, 'Token invalide');
@@ -41,12 +52,12 @@ export class UsersPasswordService {
 		}
 	};
 
-	updatePasswordFromLoggedUser = async (uuid: string, password: string) => {
-		const user = await this.users.findOneByUuid(uuid);
-		await this.updateUserPassword(user.supabaseUserId, password);
-	};
+	updatePassword = async (uuid: string, password: string) =>
+		await this.users.update(uuid, {
+			password: await this.hashPassword(password),
+		});
 
-	sendResetpasswordEmail = async (email: string) => {
+	forgotPassword = async (email: string) => {
 		const user = await this.users.findOneByEmail(email);
 		if (!user) return 'utilisateur inconnu';
 		const token = this.jwtService.sign(
@@ -54,7 +65,7 @@ export class UsersPasswordService {
 				email,
 				uuid: user.uuid,
 			},
-			{secret: process.env.JWT_SECRET_KEY + user.uuid, expiresIn: '2d'}
+			{secret: process.env.JWT_SECRET_KEY + user.password, expiresIn: '15m'}
 		);
 
 		await this.mailerService.sendMail({
@@ -63,17 +74,13 @@ export class UsersPasswordService {
 			template: 'forgot-password',
 			data: {
 				summary:
-					'Vous pouvez réinitialiser votre mot de passe en cliquant sur le lien ci-dessous.',
-				link: `${environment.WEB_UI_URL}/reset-password?user=${user.uuid}&token=${token}`,
+					'Vous pouvez réinitialiser votre mot de pass en cliquant sur le lien ci-dessous.',
+				link: `${environment.WEB_UI_URL}reset-password?user=${user.uuid}&token=${token}`,
 			},
 		});
 		return 'email envoyé';
 	};
 
-	private updateUserPassword = async (id: string, password: string) => {
-		const {error} = await this.supabase.auth.admin.updateUserById(id, {
-			password,
-		});
-		if (error) Logger.error(error);
-	};
+	private hashPassword = async (password: string): Promise<string> =>
+		await bcrypt.hash(password, this.salt);
 }

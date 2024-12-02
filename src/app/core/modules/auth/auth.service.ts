@@ -1,28 +1,22 @@
 import {
-	BadRequestException,
 	ForbiddenException,
 	Injectable,
 	UnauthorizedException,
 } from '@nestjs/common';
 import {JwtService} from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 import {environment} from 'src/app/environment';
 
-import {User, UserCreateDto} from '@feat/users/types';
 import {UsersService} from '@feat/users/users.service';
+import {UserCreateDto, User} from '@feat/users/types';
 
-import {MailerService} from '@shared/modules/mail/mail.service';
 import {TokenJWT} from './types';
-
-import {createClient} from '@supabase/supabase-js';
+import {MailerService} from '@shared/modules/mail/mail.service';
 
 @Injectable()
 export class AuthService {
-	private readonly supabase = createClient(
-		process.env.SUPABASE_URL,
-		process.env.SUPABASE_KEY
-	);
-
+	private readonly salt = Number(environment.SALT);
 	constructor(
 		private readonly usersService: UsersService,
 		private readonly jwtService: JwtService,
@@ -31,28 +25,15 @@ export class AuthService {
 
 	signUp = async (dto: UserCreateDto): Promise<any> => {
 		if (await this.usersService.findOneByEmail(dto.email))
-			return 'Cette adresse email est déjà utilisée.';
-
-		const {data, error} = await this.supabase.auth.signUp({
-			email: dto.email,
-			password: dto.password,
-		});
-
-		if (error) throw new BadRequestException(error.message);
-
-		const {password, ...userInfo} = dto;
-
+			return 'Cette adresse email est déjà utilisé.';
 		const user = await this.usersService.save({
-			...userInfo,
-			supabaseUserId: data.user.id,
+			...dto,
+			password: await this.hashData(dto.password),
 		});
-
-		if (!user)
-			throw new BadRequestException(
-				"L'inscription à échoué. Réessayer plus tard."
-			);
-
-		await this.sendEmailConfirmation(user);
+		if (!user) return "L'inscription à échoué. Réessayer plus tard.";
+		this.sendEmailConfirmation(user);
+		const tokens = await this.getTokens(user.uuid, user.email);
+		await this.updateRefreshToken(user.uuid, tokens.refreshToken);
 		return "Utilisateur inscrit avec succès. En attente de confirmation de l'email";
 	};
 
@@ -62,47 +43,44 @@ export class AuthService {
 	 * @param user payload to log user in
 	 * @returns JWT access token
 	 */
-	logIn = async (user: {
-		email: string;
-		password: string;
-	}): Promise<TokenJWT> => {
+	logIn = async (user: {email: string; uuid?: string}): Promise<TokenJWT> => {
 		const entity = await this.usersService.findOneByEmail(user.email);
 		if (!entity) throw new UnauthorizedException("Ce compte n'existe pas.");
-		if (entity.closed) {
+		if (entity?.closed) {
 			entity.closed = false;
 			entity.closedAt = null;
 		}
 		entity.lastConnection = new Date();
-		await this.usersService.update(entity.uuid, entity);
+		await this.usersService.update(user.uuid, entity);
 
-		const {error, data} = await this.supabase.auth.signInWithPassword({
-			email: user.email,
-			password: user.password,
-		});
-
-		if (error) throw new UnauthorizedException(error.message);
-
-		return {
-			accessToken: data.session.access_token,
-			refreshToken: data.session.refresh_token,
-		};
+		const tokens = await this.getTokens(user.uuid, user.email);
+		await this.updateRefreshToken(entity.uuid, tokens.refreshToken);
+		return tokens;
 	};
 
-	refreshTokens = async (refreshToken: string) => {
-		const {data, error} = await this.supabase.auth.refreshSession({
-			refresh_token: refreshToken,
-		});
+	refreshTokens = async (email: string, refreshToken: string) => {
+		const user = await this.usersService.findOneByEmail(email);
 
-		if (error) throw new UnauthorizedException(error.message);
+		if (!user?.refreshToken)
+			throw new ForbiddenException(
+				'Access Denied: No refresh token available !'
+			);
+		if (!(await bcrypt.compare(refreshToken, user.refreshToken)))
+			throw new ForbiddenException('Access Denied: Invalid token!');
 
-		const user = await this.usersService.findOneBySupabaseId(data.user.id);
+		const tokens = await this.getTokens(user.uuid, user.email);
+		const updated = await this.updateRefreshToken(
+			user.uuid,
+			tokens.refreshToken
+		);
+		updated.lastConnection = new Date();
+		this.usersService.update(user.uuid, updated);
+		return tokens;
+	};
 
-		await this.usersService.update(user.uuid, {updatedAt: new Date()});
-
-		return {
-			refreshToken: data.session.refresh_token,
-			accessToken: data.session.access_token,
-		};
+	logOut = (userId: string) => {
+		this.usersService.update(userId, {refreshToken: null});
+		return 'Déconnexion effectuée avec succès';
 	};
 
 	/**
@@ -114,16 +92,12 @@ export class AuthService {
 	 */
 	validateUser = async (
 		email: string,
-		password: string
+		pass: string
 	): Promise<Partial<User>> => {
 		const user = await this.usersService.findOneByEmail(email);
-		if (!user) throw new UnauthorizedException("Cet utilisateur n'existe pas.");
+		if (!(await bcrypt.compare(pass, user.password))) return null;
 		if (!user.isActive) throw new ForbiddenException('Inactive account');
-		const {error} = await this.supabase.auth.signInWithPassword({
-			email,
-			password,
-		});
-		if (error) throw new UnauthorizedException(error.message);
+		delete user.password;
 		return user;
 	};
 
@@ -154,8 +128,45 @@ export class AuthService {
 
 	accountConfirmation = async (email: string) => {
 		const user = await this.usersService.findOneByEmail(email);
-		await this.sendEmailConfirmation(user);
+		this.sendEmailConfirmation(user);
 		return 'Email envoyé';
+	};
+
+	private updateRefreshToken = async (userId: string, refreshToken: string) =>
+		await this.usersService.update(userId, {
+			refreshToken: this.hashData(refreshToken),
+		});
+
+	private hashData = (data: string): string => bcrypt.hash(data, this.salt);
+
+	private getTokens = async (userId: string, username: string) => {
+		const [accessToken, refreshToken] = await Promise.all([
+			this.jwtService.signAsync(
+				{
+					sub: userId,
+					username,
+				},
+				{
+					secret: environment.JWT_ACCESS_SECRET,
+					expiresIn: '1d',
+				}
+			),
+			this.jwtService.signAsync(
+				{
+					sub: userId,
+					username,
+				},
+				{
+					secret: environment.JWT_REFRESH_SECRET,
+					expiresIn: '15d',
+				}
+			),
+		]);
+
+		return {
+			accessToken,
+			refreshToken,
+		};
 	};
 
 	private checkToken = async (userId: string, token: any): Promise<boolean> => {
@@ -163,7 +174,7 @@ export class AuthService {
 			return !!this.jwtService.verify(token, {
 				secret:
 					process.env.JWT_SECRET_KEY +
-					(await this.usersService.findOneByUuid(userId)).uuid,
+					(await this.usersService.findOneByUuid(userId)).password,
 			});
 		} catch (e) {
 			throw new UnauthorizedException(e.message);
@@ -182,10 +193,10 @@ export class AuthService {
 				username: user.email,
 				sub: user.uuid,
 			},
-			{secret: process.env.JWT_SECRET_KEY + user.uuid, expiresIn: '1d'}
+			{secret: process.env.JWT_SECRET_KEY + user.password, expiresIn: '1d'}
 		);
 
-		this.mailerService.sendMail({
+		await this.mailerService.sendMail({
 			recipient: user.email,
 			title: 'Bienvenue sur la méthode claire !',
 			template: 'activate-account',

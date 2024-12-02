@@ -1,7 +1,7 @@
-import {createMap, Mapper} from '@automapper/core';
 import {AutomapperProfile, InjectMapper} from '@automapper/nestjs';
+import {createMap, Mapper} from '@automapper/core';
 import {Injectable} from '@nestjs/common';
-import {User, UserViewDto} from './types';
+import {UserViewDto, User} from './types';
 
 @Injectable()
 export class UserProfile extends AutomapperProfile {

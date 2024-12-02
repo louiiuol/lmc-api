@@ -1,8 +1,8 @@
+import {Strategy} from 'passport-local';
+import {PassportStrategy} from '@nestjs/passport';
+import {Injectable, UnauthorizedException} from '@nestjs/common';
 import {AuthService} from '@core/modules/auth/auth.service';
 import {User} from '@feat/users/types/user.entity';
-import {Injectable, UnauthorizedException} from '@nestjs/common';
-import {PassportStrategy} from '@nestjs/passport';
-import {Strategy} from 'passport-local';
 
 /**
  * Customized strategy to valide user when he request authenticated ressource

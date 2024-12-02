@@ -1,9 +1,9 @@
-import {UserAuth} from '@feat/users/types';
 import {
 	createParamDecorator,
 	ExecutionContext,
 	UnauthorizedException,
 } from '@nestjs/common';
+import {UserAuth} from '@feat/users/types';
 
 export const CurrentUser = createParamDecorator(
 	(data: string, ctx: ExecutionContext) => {

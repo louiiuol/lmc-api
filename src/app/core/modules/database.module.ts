@@ -1,16 +1,16 @@
 import {classes} from '@automapper/classes';
 import {AutomapperModule} from '@automapper/nestjs';
-import {Course, Phoneme} from '@feat/library/types';
-import {Newsletter} from '@feat/newsletter/types/newsletter.entity';
-import {User} from '@feat/users/types/user.entity';
 import {Module} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {environment} from 'src/app/environment';
+import {Phoneme, Course} from '@feat/library/types';
+import {Newsletter} from '@feat/newsletter/types/newsletter.entity';
+import {User} from '@feat/users/types/user.entity';
 
 @Module({
 	imports: [
 		TypeOrmModule.forRoot({
-			type: 'postgres',
+			type: 'mysql',
 			host: environment.DATABASE_HOST,
 			port: parseInt(environment.DATABASE_PORT, 10),
 			username: environment.DATABASE_USER,

@@ -1,20 +1,19 @@
 import {
-	BadRequestException,
 	Body,
 	Param,
-	Query,
 	Redirect,
+	Query,
+	BadRequestException,
 	UnauthorizedException,
 } from '@nestjs/common';
 import {AuthService} from './auth.service';
 
-import {CurrentUser} from '@shared/decorators/current-user.decorator';
-import {Controller, Get, Post} from '@shared/decorators/rest';
 import {environment} from 'src/app/environment';
+import {CurrentUser} from '@shared/decorators/current-user.decorator';
+import {Controller, Post, Get} from '@shared/decorators/rest';
 
-import {UserCreateDto, UserLoginDto} from '@feat/users/types';
+import {UserCreateDto, User, UserLoginDto} from '@feat/users/types';
 import {TokenJWT} from './types';
-import {TokenRefreshDto} from './types/refresh-token.dto';
 
 /**
  * Provides controller to handle user authentication
@@ -54,17 +53,31 @@ export class AuthController {
 		restriction: 'local',
 	})
 	async login(@Body() dto: UserLoginDto) {
-		return await this.authService.logIn(dto);
+		return await this.authService.logIn(dto as User);
 	}
 
-	@Post({
+	@Get({
 		path: 'refresh',
 		description: "Rafraîchissement des tokens d'identification.",
-		body: TokenRefreshDto,
+		restriction: 'refresh',
 		returnType: TokenJWT,
 	})
-	refreshTokens(@Body() dto: TokenRefreshDto) {
-		return this.authService.refreshTokens(dto.refreshToken);
+	refreshTokens(@CurrentUser() user) {
+		const username = user['username'];
+		const refreshToken = user['refreshToken'];
+		if (!(username && refreshToken))
+			throw new UnauthorizedException('Token invalide.');
+		return this.authService.refreshTokens(username, refreshToken);
+	}
+
+	@Get({
+		path: 'logout',
+		description: "Déconnexion de l'utilisateur.",
+		restriction: 'user',
+	})
+	logout(@CurrentUser() user) {
+		const sub = user['sub'];
+		return this.authService.logOut(sub);
 	}
 
 	@Get({
@@ -73,6 +86,7 @@ export class AuthController {
 		restriction: 'user',
 	})
 	async closeAccount(@CurrentUser() user) {
+		this.authService.logOut(user['sub']);
 		return await this.authService.closeAccount(user.uuid);
 	}
 

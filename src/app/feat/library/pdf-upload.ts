@@ -1,5 +1,6 @@
 import {FileFieldsInterceptor} from '@nestjs/platform-express';
 import {MulterField} from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
+import {diskStorage} from 'multer';
 
 export const PdfUploader = (files: MulterField[]) =>
 	FileFieldsInterceptor(files, {

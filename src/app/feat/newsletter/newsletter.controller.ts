@@ -1,7 +1,7 @@
 import {Body} from '@nestjs/common';
-import {Controller, Post} from '@shared/decorators/rest';
 import {NewsletterService} from './newsletter.service';
 import {NewsletterSendDto} from './types/dtos/newsletter-send.dto';
+import {Controller, Post} from '@shared/decorators/rest';
 
 @Controller({path: 'newsletter'})
 export class NewsletterController {
