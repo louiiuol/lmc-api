@@ -18,6 +18,9 @@ jobs:
           npm install
           npm run build
 
+      - name: Echo FTP_HOST
+        run: echo ${{ secrets.FTP_HOST }}
+
       - name: Deploy to server via FTP
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
