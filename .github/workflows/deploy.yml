@@ -1,4 +1,4 @@
-name: Deploy to Shared Hosting
+name: Deploy to hosting server
 
 on:
   push:
@@ -13,13 +13,14 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v3
 
-      - name: Build project
-        run: |
-          npm install
-          npm run build
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
 
-      - name: Echo FTP_HOST
-        run: echo ${{ secrets.FTP_HOST }}
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
 
       - name: Deploy to server via FTP
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
@@ -29,6 +30,8 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
           server-dir: /test/
+          protocol: ftps
+          port: 21
           dangerous-clean-slate: true
           exclude: |
             .env
