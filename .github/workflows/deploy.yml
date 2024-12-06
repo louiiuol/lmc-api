@@ -47,7 +47,10 @@ jobs:
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.FTP_HOST }}
+          port: ${{ secrets.FTP_PORT }}
           username: ${{ secrets.FTP_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: ./dist/
           target: /test
+          timeout: 120s
+          debug: true
