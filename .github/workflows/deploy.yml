@@ -3,38 +3,49 @@ name: Deploy to hosting server
 on:
   push:
     branches:
-      - deploy
+      - deploy # Déploiement sur push dans la branche 'deploy'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # Étape 1 : Vérifier le code source
       - name: Checkout source code
         uses: actions/checkout@v3
 
-      - name: Setup Node.js modules
+      # Étape 2 : Configurer le cache des modules Node.js
+      - name: Cache Node.js dependencies
         uses: actions/cache@v3
         with:
           path: |
             ~/.npm
             node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-modules-
+            ${{ runner.os }}-node-
 
+      # Étape 3 : Installer les dépendances
       - name: Install dependencies
-        run: npm install
+        run: npm ci # Utilise npm ci pour garantir un environnement propre
 
+      # Étape 4 : Construire le projet
       - name: Build project
         run: npm run build
 
-      - name: Deploy to server via FTP
+      # Étape 5 : Configurer les algorithmes SSH (si nécessaires)
+      - name: Configure SSH
+        run: |
+          echo "Host *" >> ~/.ssh/config
+          echo "    KexAlgorithms +diffie-hellman-group-exchange-sha256" >> ~/.ssh/config
+          echo "    StrictHostKeyChecking no" >> ~/.ssh/config
+
+      # Étape 6 : Déployer via SFTP
+      - name: Deploy via SFTP
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: ./dist/
-          target: /test/
-          port: ${{ secrets.FTP_PORT }}
+          target: /test
