@@ -44,16 +44,16 @@ jobs:
           echo "    PubkeyAcceptedAlgorithms +ssh-rsa" >> ~/.ssh/config
           echo "    StrictHostKeyChecking no" >> ~/.ssh/config
           chmod 600 ~/.ssh/config
+          less ~/.ssh/config
 
       # Étape 6 : Déployer via SFTP
       - name: Deploy via SFTP
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.FTP_HOST }}
-          port: 22
+          port: ${{ secrets.FTP_PORT }}
           username: ${{ secrets.FTP_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: ./dist/
           target: /test
-          timeout: 120s
-          debug: true
+          timeout: 20s
