@@ -1,0 +1,49 @@
+name: Deploy to hosting server
+
+on:
+  push:
+    branches:
+      - deploy # Déploiement sur push dans la branche 'deploy'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Étape 1 : Vérifier le code source
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      # Étape 2 : Configurer le cache des modules Node.js
+      - name: Cache Node.js dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # Étape 3 : Installer les dépendances
+      - name: Install dependencies
+        run: npm ci # Utilise npm ci pour garantir un environnement propre
+
+      # Étape 4 : Construire le projet
+      - name: Build project
+        run: npm run build
+
+      - name: Configure custom SSH port
+        run: |
+          echo "Host ${OVH_HOSTING_DOMAIN}" >> ~/.ssh/config
+          echo "    Port 42710" >> ~/.ssh/config # Changez '42710' par le port fourni par OVH
+          echo "    StrictHostKeyChecking no" >> ~/.ssh/config
+
+      - name: Deploy to OVH hosting
+        uses: pitscher/ovh-deploy-hosting-action@v1
+        env:
+          OVH_HOSTING_USER: ${{ secrets.OVH_HOSTING_USER }}
+          OVH_HOSTING_PASSWORD: ${{ secrets.OVH_HOSTING_PASSWORD }}
+          OVH_HOSTING_DOMAIN: ${{ secrets.OVH_HOSTING_CLUSTER }}
+          REPOSITORY_NAME: lmc-api
+          REPOSITORY_URL: https://github.com/louiiuol/lmc-api.git

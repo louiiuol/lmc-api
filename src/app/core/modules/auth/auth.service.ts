@@ -8,11 +8,11 @@ import * as bcrypt from 'bcrypt';
 
 import {environment} from 'src/app/environment';
 
+import {User, UserCreateDto} from '@feat/users/types';
 import {UsersService} from '@feat/users/users.service';
-import {UserCreateDto, User} from '@feat/users/types';
 
-import {TokenJWT} from './types';
 import {MailerService} from '@shared/modules/mail/mail.service';
+import {TokenJWT} from './types';
 
 @Injectable()
 export class AuthService {
@@ -147,7 +147,7 @@ export class AuthService {
 					username,
 				},
 				{
-					secret: environment.JWT_ACCESS_SECRET,
+					secret: environment.JWT_SECRET_KEY,
 					expiresIn: '1d',
 				}
 			),
