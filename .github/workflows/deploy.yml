@@ -34,14 +34,17 @@ jobs:
         run: npm run build
 
       # Étape 5 : Configurer les algorithmes SSH (si nécessaires)
-      - name: Configure SSH
+      - name: Configure SSH algorithms
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           echo "Host *" >> ~/.ssh/config
           echo "    KexAlgorithms +diffie-hellman-group-exchange-sha256" >> ~/.ssh/config
+          echo "    HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
+          echo "    PubkeyAcceptedAlgorithms +ssh-rsa" >> ~/.ssh/config
           echo "    StrictHostKeyChecking no" >> ~/.ssh/config
           chmod 600 ~/.ssh/config
+
       # Étape 6 : Déployer via SFTP
       - name: Deploy via SFTP
         uses: appleboy/scp-action@v0.1.7
