@@ -38,6 +38,6 @@ jobs:
         env:
           OVH_HOSTING_USER: ${{ secrets.OVH_HOSTING_USER }}
           OVH_HOSTING_PASSWORD: ${{ secrets.OVH_HOSTING_PASSWORD }}
-          OVH_HOSTING_DOMAIN: ${{ secrets.OVH_HOSTING_CLUSTER }} ssh.clusterXXX.hosting.ovh.net
+          OVH_HOSTING_DOMAIN: ${{ secrets.OVH_HOSTING_CLUSTER }}
           REPOSITORY_NAME: lmc-api
           REPOSITORY_URL: https://github.com/louiiuol/lmc-api.git
