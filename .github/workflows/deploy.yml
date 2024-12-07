@@ -33,6 +33,12 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Configure custom SSH port
+        run: |
+          echo "Host ${OVH_HOSTING_DOMAIN}" >> ~/.ssh/config
+          echo "    Port 42710" >> ~/.ssh/config # Changez '42710' par le port fourni par OVH
+          echo "    StrictHostKeyChecking no" >> ~/.ssh/config
+
       - name: Deploy to OVH hosting
         uses: pitscher/ovh-deploy-hosting-action@v1
         env:
