@@ -35,16 +35,16 @@ jobs:
 
       # Étape 5 : Configurer les algorithmes SSH (si nécessaires)
       - name: Configure SSH algorithms
-        run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          echo "Host *" >> ~/.ssh/config
-          echo "    KexAlgorithms +diffie-hellman-group-exchange-sha256" >> ~/.ssh/config
-          echo "    HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
-          echo "    PubkeyAcceptedAlgorithms +ssh-rsa" >> ~/.ssh/config
-          echo "    StrictHostKeyChecking no" >> ~/.ssh/config
-          chmod 600 ~/.ssh/config
-          less ~/.ssh/config
+      run: |
+        mkdir -p ~/.ssh # Crée le répertoire .ssh s'il n'existe pas
+        chmod 700 ~/.ssh # Définit des permissions sécurisées sur le répertoire
+        touch ~/.ssh/config # Crée le fichier config s'il n'existe pas
+        echo "Host *" > ~/.ssh/config
+        echo "    KexAlgorithms +diffie-hellman-group-exchange-sha256" >> ~/.ssh/config
+        echo "    HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
+        echo "    PubkeyAcceptedAlgorithms +ssh-rsa" >> ~/.ssh/config
+        echo "    StrictHostKeyChecking no" >> ~/.ssh/config
+        chmod 600 ~/.ssh/config # Définit des permissions sécurisées sur le fichier
 
       # Étape 6 : Déployer via SFTP
       - name: Deploy via SFTP
