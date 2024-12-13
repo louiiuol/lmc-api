@@ -24,6 +24,7 @@ export class MailerService {
 				},
 			});
 		} catch (e) {
+			console.error('Error sending email:', e.message);
 			throw new BadRequestException(e, {
 				cause: e,
 				description: "Impossible d'envoyer le message.",

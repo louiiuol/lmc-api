@@ -26,14 +26,18 @@ export class NewsletterService {
 		const content = subscribed
 			? dto.content.replaceAll('\n', '<br />')
 			: 'Pour lire la suite de cette newsletter, abonnez-vous !';
-		await this.mailer.sendMail({
-			recipient: email,
-			title: dto.subject,
-			template: 'newsletter',
-			data: {
-				intro: dto.intro,
-				content,
-			},
-		});
+		try {
+			await this.mailer.sendMail({
+				recipient: email,
+				title: dto.subject,
+				template: 'newsletter',
+				data: {
+					intro: dto.intro,
+					content,
+				},
+			});
+		} catch (error) {
+			console.error('Error sending email:', error.message);
+		}
 	}
 }
