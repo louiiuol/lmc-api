@@ -37,12 +37,26 @@ jobs:
       - name: Install sshpass
         run: sudo apt-get update && sudo apt-get install -y sshpass
 
-      # Étape 6 : Transférer le build vers le serveur OVH via SCP avec login/mot de passe
+        # Étape 5 : Tester la connexion SSH
+      - name: Test SSH connection
+        env:
+          SCP_PASSWORD: ${{ secrets.OVH_HOSTING_PASSWORD }}
+        run: |
+          sshpass -p "${SCP_PASSWORD}" ssh -o StrictHostKeyChecking=no louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net "echo 'SSH connection successful'"
+
+      # Étape 6 : Transférer le build vers le serveur OVH
       - name: Upload build to OVH server
         env:
           SCP_PASSWORD: ${{ secrets.OVH_HOSTING_PASSWORD }}
         run: |
-          sshpass -p "${SCP_PASSWORD}" scp -r ./dist/ louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net
+          sshpass -p "${SCP_PASSWORD}" scp -v -r ./dist/ louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net:/home/louiiuj/test
+
+      # # Étape 6 : Transférer le build vers le serveur OVH via SCP avec login/mot de passe
+      # - name: Upload build to OVH server
+      #   env:
+      #     SCP_PASSWORD: ${{ secrets.OVH_HOSTING_PASSWORD }}
+      #   run: |
+      #     sshpass -p "${SCP_PASSWORD}" scp -r ./dist/ louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net
 
       # - name: Configure custom SSH port
       #   run: |
