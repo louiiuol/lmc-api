@@ -42,14 +42,14 @@ jobs:
         env:
           SCP_PASSWORD: ${{ secrets.OVH_HOSTING_PASSWORD }}
         run: |
-          sshpass -p "${SCP_PASSWORD}" ssh -o StrictHostKeyChecking=no louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net "echo 'SSH connection successful'"
+          sshpass -p "${SCP_PASSWORD}" ssh -P 42710 -o StrictHostKeyChecking=no louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net "echo 'SSH connection successful'"
 
       # Étape 6 : Transférer le build vers le serveur OVH
       - name: Upload build to OVH server
         env:
           SCP_PASSWORD: ${{ secrets.OVH_HOSTING_PASSWORD }}
         run: |
-          sshpass -p "${SCP_PASSWORD}" scp -v -r ./dist/ louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net:/home/louiiuj/test
+          sshpass -p "${SCP_PASSWORD}" scp -P 42710 -v -r ./dist/ louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net:/home/louiiuj/test
 
       # # Étape 6 : Transférer le build vers le serveur OVH via SCP avec login/mot de passe
       # - name: Upload build to OVH server
