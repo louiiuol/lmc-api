@@ -42,7 +42,6 @@ jobs:
           JWT_SECRET=coming
           EOF
 
-
       - name: Copy files to VPS
         env:
           SSH_PRIVATE_KEY: ${{ secrets.OVH_SSH_KEY }}
@@ -51,7 +50,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H sshcloud.cluster024.hosting.ovh.net >> ~/.ssh/known_hosts
-          rsync -avz ./ louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net:/home/louiiuj/test
+          rsync -avz ./ louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net:/var/www/html/
 
       # Étape 5: Installer ssh pass
       # - name: Install sshpass
@@ -72,11 +71,11 @@ jobs:
       #     sshpass -p "${SCP_PASSWORD}" scp -P 42710 -v -r ./dist/ louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net:/home/louiiuj/test
 
       # # Étape 6 : Transférer le build vers le serveur OVH via SCP avec login/mot de passe
-      # - name: Upload build to OVH server
-      #   env:
-      #     SCP_PASSWORD: ${{ secrets.OVH_HOSTING_PASSWORD }}
-      #   run: |
-      #     sshpass -p "${SCP_PASSWORD}" scp -r ./dist/ louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net
+      - name: Upload build to OVH server
+        env:
+          SCP_PASSWORD: ${{ secrets.OVH_HOSTING_PASSWORD }}
+        run: |
+          sshpass -p "${SCP_PASSWORD}" scp -r ./dist/ louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net
 
       # - name: Configure custom SSH port
       #   run: |
