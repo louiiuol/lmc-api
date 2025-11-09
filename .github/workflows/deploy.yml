@@ -53,12 +53,13 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y sshpass
 
-          # Test de connexion (pas de prompt, échoue direct si mauvais mdp)
+          # (Optionnel) vérifier où on atterrit
           sshpass -p "$OVH_PASSWORD" \
-          ssh -p "$OVH_PORT" -o StrictHostKeyChecking=no "$OVH_USER@$OVH_HOST" "echo OK"
+            ssh -p "$OVH_PORT" -o StrictHostKeyChecking=no "$OVH_USER@$OVH_HOST" "pwd && ls"
 
-          # Si on arrive ici, la connexion par clé fonctionne
-          rsync -avz ./ "$OVH_USER@$OVH_HOST":/home/louiiuj/test
+          # Copier uniquement le fichier .env dans le répertoire par défaut (test)
+          sshpass -p "$OVH_PASSWORD" \
+            scp -P "$OVH_PORT" -o StrictHostKeyChecking=no .env "$OVH_USER@$OVH_HOST":.env
 
       # Étape 5: Installer ssh pass
       # - name: Install sshpass
