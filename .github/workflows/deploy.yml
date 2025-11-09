@@ -67,7 +67,7 @@ jobs:
           mkdir -p deploy
 
           # 1) contenu du build (dist/app) à la racine du deploy
-          cp -r dist/app/* deploy/
+          cp -r dist/* deploy/
 
           # 2) node_modules complet
           cp -r node_modules deploy/
