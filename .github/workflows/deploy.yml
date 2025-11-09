@@ -42,21 +42,26 @@ jobs:
           JWT_SECRET=coming
           EOF
 
-      - name: Copy files to VPS
+      - name: Copy files to OVH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.OVH_SSH_KEY }}
+          OVH_HOST: ssh.cluster024.hosting.ovh.net
+          OVH_USER: louiiuj-lmc
         run: |
+          set -euxo pipefail
+
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          # Ajout de l'hôte OVH dans known_hosts
-          ssh-keyscan -H sshcloud.cluster024.hosting.ovh.net >> ~/.ssh/known_hosts || true
 
-          # Vérifier que la connexion SSH fonctionne
-          ssh -o StrictHostKeyChecking=yes louiiuj@sshcloud.cluster024.hosting.ovh.net "pwd"
+          # Ajouter l'hôte dans known_hosts
+          ssh-keyscan -H "$OVH_HOST" >> ~/.ssh/known_hosts
 
-        # Déployer (ici j'envoie le contenu du repo vers ~/www)
-        #rsync -avz --delete ./ louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net:~/www/
+          # Test SSH : BatchMode=yes => échoue direct si la clé ne marche pas (pas de prompt password)
+          ssh -vvv -o StrictHostKeyChecking=yes -o BatchMode=yes "$OVH_USER@$OVH_HOST" "echo OK"
+
+        # Si on arrive ici, la connexion par clé fonctionne
+        #rsync -avz --delete ./ "$OVH_USER@$OVH_HOST":~/www/
 
       # Étape 5: Installer ssh pass
       # - name: Install sshpass
