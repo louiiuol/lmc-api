@@ -41,24 +41,21 @@ jobs:
           PORT=3000
           JWT_SECRET=coming
           EOF
-
-      - name: Copy files to OVH
+      - name: Copy files to OVH (password)
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.OVH_SSH_KEY }}
-          OVH_HOST: ssh.cluster024.hosting.ovh.net
-          OVH_USER: louiiuj-lmc
+          OVH_HOST: sshcloud.cluster024.hosting.ovh.net
+          OVH_PORT: 42710
+          OVH_USER: louiiuj-lmc # ou louiiuj selon celui que tu utilises
+          OVH_PASSWORD: ${{ secrets.OVH_PASSWORD }}
         run: |
           set -euxo pipefail
 
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          sudo apt-get update -y
+          sudo apt-get install -y sshpass
 
-          # Ajouter l'hôte dans known_hosts
-          ssh-keyscan -H "$OVH_HOST" >> ~/.ssh/known_hosts
-
-          # Test SSH : BatchMode=yes => échoue direct si la clé ne marche pas (pas de prompt password)
-          ssh -vvv -o StrictHostKeyChecking=yes -o BatchMode=yes "$OVH_USER@$OVH_HOST" "echo OK"
+          # Test de connexion (pas de prompt, échoue direct si mauvais mdp)
+          sshpass -p "$OVH_PASSWORD" \
+          ssh -p "$OVH_PORT" -o StrictHostKeyChecking=no "$OVH_USER@$OVH_HOST" "echo OK"
 
         # Si on arrive ici, la connexion par clé fonctionne
         #rsync -avz --delete ./ "$OVH_USER@$OVH_HOST":~/www/
