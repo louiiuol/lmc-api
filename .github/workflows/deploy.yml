@@ -38,11 +38,25 @@ jobs:
           JWT_SECRET=hello_jwt_secret
           EOF
 
-      - name: Export built files to OVH server
+      - name: Prepare deploy folder
+        run: |
+          rm -rf deploy
+          mkdir -p deploy
+
+          # 1) contenu du build (dist/app) à la racine du deploy
+          cp -r dist/app/* deploy/
+
+          # 2) node_modules complet
+          cp -r node_modules deploy/
+
+          # 3) fichiers racine nécessaires
+          cp package.json package-lock.json .env deploy/
+
+      - name: Rsync to OVH (one command, keep uploads)
         env:
           OVH_HOST: sshcloud.cluster024.hosting.ovh.net
           OVH_PORT: 42710
-          OVH_USER: louiiuj-lmc # ou louiiuj selon celui que tu utilises
+          OVH_USER: louiiuj
           OVH_PASSWORD: ${{ secrets.OVH_PASSWORD }}
         run: |
           set -euxo pipefail
@@ -50,11 +64,9 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y sshpass
 
-          # Sync de tous les fichiers, sauf le dossier uploads
+          # Une seule commande rsync vers la racine, sans toucher uploads/
           sshpass -p "$OVH_PASSWORD" \
             rsync -avz --delete \
               --exclude 'uploads/' \
-              --exclude '.git/' \
-              --exclude '.github/' \
               -e "ssh -p $OVH_PORT -o StrictHostKeyChecking=no" \
-              ./ "$OVH_USER@$OVH_HOST":.
+              deploy/ "$OVH_USER@$OVH_HOST":.
