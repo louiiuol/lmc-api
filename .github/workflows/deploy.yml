@@ -59,7 +59,7 @@ jobs:
 
           # Copier uniquement le fichier .env dans le répertoire par défaut (test)
           sshpass -p "$OVH_PASSWORD" \
-            scp -P "$OVH_PORT" -o StrictHostKeyChecking=no .env "$OVH_USER@$OVH_HOST":.env
+            scp -P "$OVH_PORT" -o StrictHostKeyChecking=no ./ "$OVH_USER@$OVH_HOST":/
 
       # Étape 5: Installer ssh pass
       # - name: Install sshpass
