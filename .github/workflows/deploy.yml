@@ -39,7 +39,7 @@ jobs:
           NODE_ENV=production
           DATABASE_URL=localhost
           PORT=3000
-          JWT_SECRET=coming
+          JWT_SECRET=hello_jwt_secret
           EOF
       - name: Copy files to OVH (password)
         env:
@@ -59,7 +59,7 @@ jobs:
 
           # Copier uniquement le fichier .env dans le répertoire par défaut (test)
           sshpass -p "$OVH_PASSWORD" \
-            scp -P "$OVH_PORT" -o StrictHostKeyChecking=no ./ "$OVH_USER@$OVH_HOST":/
+            scp -P "$OVH_PORT" -o StrictHostKeyChecking=no .env "$OVH_USER@$OVH_HOST":.env
 
       # Étape 5: Installer ssh pass
       # - name: Install sshpass
