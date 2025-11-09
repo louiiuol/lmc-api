@@ -32,10 +32,33 @@ jobs:
       - name: Create .env file
         run: |
           cat > .env << 'EOF'
-          NODE_ENV=production
-          DATABASE_URL=localhost
-          PORT=3000
-          JWT_SECRET=hello_jwt_secret
+          PRODUCTION=true
+          API_HOST=lmc.louiiuol.dev
+          API_HOST_FULL=https://lmc.louiiuol.dev
+          PORT=
+          API_PREFIX=api
+
+          # JWT
+          JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+          JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}
+          SALT=${{ secrets.SALT }}
+
+          # DATABASE
+          DATABASE_HOST=${{ secrets.DATABASE_HOST }}
+          DATABASE_PORT=${{ secrets.DATABASE_PORT }}
+          DATABASE_USER=${{ secrets.DATABASE_USER }}
+          DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
+          DATABASE_NAME=${{ secrets.DATABASE_USER }}
+          DATABASE_SYNC=true
+
+          # SMTP
+          SMTP_HOST=${{ secrets.SMTP_HOST }}
+          SMTP_PORT=${{ secrets.SMTP_PORT }}
+          SMTP_EMAIL=${{ secrets.SMTP_EMAIL }}
+          SMTP_PASS=${{ secrets.SMTP_PASSWORD }}
+
+          # WEB UI
+          WEB_UI_URL="https://www.methode-claire.fr/#/"
           EOF
 
       - name: Prepare deploy folder
@@ -56,7 +79,7 @@ jobs:
         env:
           OVH_HOST: sshcloud.cluster024.hosting.ovh.net
           OVH_PORT: 42710
-          OVH_USER: louiiuj
+          OVH_USER: louiiuj-lmc
           OVH_PASSWORD: ${{ secrets.OVH_PASSWORD }}
         run: |
           set -euxo pipefail
