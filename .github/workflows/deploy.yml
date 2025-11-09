@@ -57,8 +57,8 @@ jobs:
           sshpass -p "$OVH_PASSWORD" \
           ssh -p "$OVH_PORT" -o StrictHostKeyChecking=no "$OVH_USER@$OVH_HOST" "echo OK"
 
-        # Si on arrive ici, la connexion par clé fonctionne
-        #rsync -avz --delete ./ "$OVH_USER@$OVH_HOST":~/www/
+          # Si on arrive ici, la connexion par clé fonctionne
+          rsync -avz ./ "$OVH_USER@$OVH_HOST":/home/louiiuj/test
 
       # Étape 5: Installer ssh pass
       # - name: Install sshpass
@@ -79,11 +79,11 @@ jobs:
       #     sshpass -p "${SCP_PASSWORD}" scp -P 42710 -v -r ./dist/ louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net:/home/louiiuj/test
 
       # # Étape 6 : Transférer le build vers le serveur OVH via SCP avec login/mot de passe
-      - name: Upload build to OVH server
-        env:
-          SCP_PASSWORD: ${{ secrets.OVH_HOSTING_PASSWORD }}
-        run: |
-          sshpass -p "${SCP_PASSWORD}" scp -r ./dist/ louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net
+      # - name: Upload build to OVH server
+      #   env:
+      #     SCP_PASSWORD: ${{ secrets.OVH_HOSTING_PASSWORD }}
+      #   run: |
+      #     sshpass -p "${SCP_PASSWORD}" scp -r ./dist/ louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net
 
       # - name: Configure custom SSH port
       #   run: |
