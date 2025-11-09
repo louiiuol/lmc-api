@@ -51,7 +51,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H sshcloud.cluster024.hosting.ovh.net >> ~/.ssh/known_hosts
-          rsync -avz ./dist/ louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net:/home/louiiuj/test
+          rsync -avz ./ louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net:/home/louiiuj/test
 
       # Étape 5: Installer ssh pass
       # - name: Install sshpass
