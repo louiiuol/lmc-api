@@ -49,7 +49,7 @@ jobs:
           DATABASE_USER=${{ secrets.DATABASE_USER }}
           DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
           DATABASE_NAME=${{ secrets.DATABASE_USER }}
-          DATABASE_SYNC=true
+          DATABASE_SYNC=false
 
           # SMTP
           SMTP_HOST=${{ secrets.SMTP_HOST }}

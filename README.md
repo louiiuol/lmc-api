@@ -9,7 +9,20 @@ npm i # Install workspace dependency
 npm run start # Launch API (with watcher for file changes)
 npm run build # Build distributable folder
 npm run test # Launch jest testing suite
+npm run seed # Génère 3 comptes de démo (optionnel)
 ```
+
+## Seed utilisateurs 🧪
+
+```bash
+npm run seed
+```
+
+- Admin: `admin@lamethodeclaire.dev` / `Admin123!`
+- Utilisateur 1: `camille@lamethodeclaire.dev` / `User123!`
+- Utilisateur 2: `louis@lamethodeclaire.dev` / `User456!`
+
+Le script est idempotent : relancez-le pour remettre les mots de passe à l’état connu.
 
 ## Fonctionnalités 🎉
 
