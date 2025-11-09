@@ -3,7 +3,7 @@ name: Deploy to hosting server
 on:
   push:
     branches:
-      - deploy # Déploiement sur push dans la branche 'deploy'
+      - main
 
 jobs:
   deploy:
