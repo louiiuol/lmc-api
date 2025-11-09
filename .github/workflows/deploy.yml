@@ -10,11 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Étape 1 : Vérifier le code source
       - name: Checkout source code
         uses: actions/checkout@v3
 
-      # Étape 2 : Configurer le cache des modules Node.js
       - name: Cache Node.js dependencies
         uses: actions/cache@v3
         with:
@@ -25,13 +23,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      # Étape 3 : Installer les dépendances
-      # - name: Install dependencies
-      #   run: npm ci # Utilise npm ci pour garantir un environnement propre
+      - name: Install dependencies
+        run: npm ci
 
-      # # Étape 4 : Construire le projet
-      # - name: Build project
-      #   run: npm run build
+      - name: Build project
+        run: npm run build
 
       - name: Create .env file
         run: |
@@ -41,7 +37,8 @@ jobs:
           PORT=3000
           JWT_SECRET=hello_jwt_secret
           EOF
-      - name: Copy files to OVH (password)
+
+      - name: Export built files to OVH server
         env:
           OVH_HOST: sshcloud.cluster024.hosting.ovh.net
           OVH_PORT: 42710
@@ -53,50 +50,11 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y sshpass
 
-          # (Optionnel) vérifier où on atterrit
+          # Sync de tous les fichiers, sauf le dossier uploads
           sshpass -p "$OVH_PASSWORD" \
-            ssh -p "$OVH_PORT" -o StrictHostKeyChecking=no "$OVH_USER@$OVH_HOST" "pwd && ls"
-
-          # Copier uniquement le fichier .env dans le répertoire par défaut (test)
-          sshpass -p "$OVH_PASSWORD" \
-            scp -P "$OVH_PORT" -o StrictHostKeyChecking=no .env "$OVH_USER@$OVH_HOST":.env
-
-      # Étape 5: Installer ssh pass
-      # - name: Install sshpass
-      #   run: sudo apt-get update && sudo apt-get install -y sshpass
-
-      #   # Étape 5 : Tester la connexion SSH
-      # - name: Test SSH connection
-      #   env:
-      #     SCP_PASSWORD: ${{ secrets.OVH_HOSTING_PASSWORD }}
-      #   run: |
-      #     sshpass -p "${SCP_PASSWORD}" ssh -P 42710 -o StrictHostKeyChecking=no louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net "echo 'SSH connection successful'"
-
-      # Étape 6 : Transférer le build vers le serveur OVH
-      # - name: Upload build to OVH server
-      #   env:
-      #     SCP_PASSWORD: ${{ secrets.OVH_HOSTING_PASSWORD }}
-      #   run: |
-      #     sshpass -p "${SCP_PASSWORD}" scp -P 42710 -v -r ./dist/ louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net:/home/louiiuj/test
-
-      # # Étape 6 : Transférer le build vers le serveur OVH via SCP avec login/mot de passe
-      # - name: Upload build to OVH server
-      #   env:
-      #     SCP_PASSWORD: ${{ secrets.OVH_HOSTING_PASSWORD }}
-      #   run: |
-      #     sshpass -p "${SCP_PASSWORD}" scp -r ./dist/ louiiuj-lmc@sshcloud.cluster024.hosting.ovh.net
-
-      # - name: Configure custom SSH port
-      #   run: |
-      #     echo "Host ${OVH_HOSTING_DOMAIN}" >> ~/.ssh/config
-      #     echo "    Port 42710" >> ~/.ssh/config # Changez '42710' par le port fourni par OVH
-      #     echo "    StrictHostKeyChecking no" >> ~/.ssh/config
-
-      # - name: Deploy to OVH hosting
-      #   uses: pitscher/ovh-deploy-hosting-action@v1
-      #   env:
-      #     OVH_HOSTING_USER: ${{ secrets.OVH_HOSTING_USER }}
-      #     OVH_HOSTING_PASSWORD: ${{ secrets.OVH_HOSTING_PASSWORD }}
-      #     OVH_HOSTING_DOMAIN: ${{ secrets.OVH_HOSTING_CLUSTER }}
-      #     REPOSITORY_NAME: lmc-api
-      #     REPOSITORY_URL: https://github.com/louiiuol/lmc-api.git
+            rsync -avz --delete \
+              --exclude 'uploads/' \
+              --exclude '.git/' \
+              --exclude '.github/' \
+              -e "ssh -p $OVH_PORT -o StrictHostKeyChecking=no" \
+              ./ "$OVH_USER@$OVH_HOST":.
