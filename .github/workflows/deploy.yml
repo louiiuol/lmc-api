@@ -26,12 +26,12 @@ jobs:
             ${{ runner.os }}-node-
 
       # Étape 3 : Installer les dépendances
-      - name: Install dependencies
-        run: npm ci # Utilise npm ci pour garantir un environnement propre
+      # - name: Install dependencies
+      #   run: npm ci # Utilise npm ci pour garantir un environnement propre
 
-      # Étape 4 : Construire le projet
-      - name: Build project
-        run: npm run build
+      # # Étape 4 : Construire le projet
+      # - name: Build project
+      #   run: npm run build
 
       - name: Create .env file
         run: |
