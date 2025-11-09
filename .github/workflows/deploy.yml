@@ -1,0 +1,95 @@
+name: Deploy to hosting server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Cache Node.js dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Create .env file
+        run: |
+          cat > .env << 'EOF'
+          PRODUCTION=true
+          API_HOST=lmc.louiiuol.dev
+          API_HOST_FULL=https://lmc.louiiuol.dev
+          PORT=
+          API_PREFIX=api
+
+          # JWT
+          JWT_SECRET_KEY=${{ secrets.JWT_SECRET }}
+          JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}
+          SALT=${{ secrets.SALT }}
+
+          # DATABASE
+          DATABASE_HOST=${{ secrets.DATABASE_HOST }}
+          DATABASE_PORT=${{ secrets.DATABASE_PORT }}
+          DATABASE_USER=${{ secrets.DATABASE_USER }}
+          DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
+          DATABASE_NAME=${{ secrets.DATABASE_USER }}
+          DATABASE_SYNC=true
+
+          # SMTP
+          SMTP_HOST=${{ secrets.SMTP_HOST }}
+          SMTP_PORT=${{ secrets.SMTP_PORT }}
+          SMTP_EMAIL=${{ secrets.SMTP_EMAIL }}
+          SMTP_PASS=${{ secrets.SMTP_PASSWORD }}
+
+          # WEB UI
+          WEB_UI_URL="https://www.methode-claire.fr/#/"
+          EOF
+
+      - name: Prepare deploy folder
+        run: |
+          rm -rf deploy
+          mkdir -p deploy
+
+          # 1) contenu du build (dist/app) à la racine du deploy
+          cp -r dist/* deploy/
+
+          # 2) node_modules complet
+          cp -r node_modules deploy/
+
+          # 3) fichiers racine nécessaires
+          cp package.json package-lock.json .env deploy/
+
+      - name: Rsync to OVH (one command, keep uploads)
+        env:
+          OVH_HOST: sshcloud.cluster024.hosting.ovh.net
+          OVH_PORT: 42710
+          OVH_USER: louiiuj-lmc
+          OVH_PASSWORD: ${{ secrets.OVH_PASSWORD }}
+        run: |
+          set -euxo pipefail
+
+          sudo apt-get update -y
+          sudo apt-get install -y sshpass
+
+          # Une seule commande rsync vers la racine, sans toucher uploads/
+          sshpass -p "$OVH_PASSWORD" \
+            rsync -avz --delete \
+              --exclude 'uploads/' \
+              -e "ssh -p $OVH_PORT -o StrictHostKeyChecking=no" \
+              deploy/ "$OVH_USER@$OVH_HOST":.
