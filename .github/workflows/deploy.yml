@@ -39,7 +39,7 @@ jobs:
           API_PREFIX=api
 
           # JWT
-          JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+          JWT_SECRET_KEY=${{ secrets.JWT_SECRET }}
           JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}
           SALT=${{ secrets.SALT }}
 
