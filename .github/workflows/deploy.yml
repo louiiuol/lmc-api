@@ -53,7 +53,7 @@ jobs:
           ssh-keyscan -H ssh.cluster024.hosting.ovh.net >> ~/.ssh/known_hosts || true
 
           # Vérifier que la connexion SSH fonctionne
-          ssh -o StrictHostKeyChecking=yes louiiuj-lmc@ssh.cluster024.hosting.ovh.net "pwd"
+          ssh -o StrictHostKeyChecking=yes louiiuj@ssh.cluster024.hosting.ovh.net "pwd"
 
         # Déployer (ici j'envoie le contenu du repo vers ~/www)
         #rsync -avz --delete ./ louiiuj-lmc@ssh.cluster024.hosting.ovh.net:~/www/
