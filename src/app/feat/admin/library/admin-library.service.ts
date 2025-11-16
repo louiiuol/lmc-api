@@ -1,22 +1,23 @@
-import {COURSES} from '@feat/library/courses.constant';
-import {LibraryService} from '@feat/library/library.service';
+import { COURSES } from '@feat/library/courses.constant';
+import { LibraryService } from '@feat/library/library.service';
 import {
 	Course,
-	Phoneme,
 	CourseCreateDto,
 	CourseGenerator,
+	Phoneme,
 } from '@feat/library/types';
-import {BadRequestException, Injectable, Logger} from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import {Repository} from 'typeorm';
-import {v4 as uuidv4} from 'uuid';
+import { CourseCreateFilesDto } from '@feat/library/types/courses/dtos/course-create.dto';
 import * as fs from 'fs';
-import {CourseCreateFilesDto} from '@feat/library/types/courses/dtos/course-create.dto';
+import { promises as fsp } from 'fs';
+import { Repository } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 
-import {CourseEditDto} from '@feat/library/types/courses/dtos/course-edit.dto';
-import {PosterAddDto} from '@feat/library/types/courses/dtos/poster-create-dto';
-import {PhonemeCreateDto} from '@feat/library/types/phonemes/dtos/phoneme-create.dto';
+import { CourseEditDto } from '@feat/library/types/courses/dtos/course-edit.dto';
+import { PosterAddDto } from '@feat/library/types/courses/dtos/poster-create-dto';
+import { PhonemeCreateDto } from '@feat/library/types/phonemes/dtos/phoneme-create.dto';
 
 @Injectable()
 export class LibraryAdminService {
@@ -27,6 +28,15 @@ export class LibraryAdminService {
 	) {}
 
 	createLibrary = async () => {
+		if (
+			!fs.existsSync('uploads/src') ||
+			fs.readdirSync('uploads/src').length === 0 ||
+			!fs.existsSync('uploads/courses')
+		) {
+			throw new Error(
+				"Le dossier 'uploads/src' est introuvable ou vide. Veuillez ajouter les fichiers de la bibliothèque avant de générer la bibliothèque."
+			);
+		}
 		const phoneme = await this.phonemeRepository.find();
 		const courses = await this.publicLibraryService.getAllCourses();
 
@@ -57,8 +67,9 @@ export class LibraryAdminService {
 	async createCourse(dto: CourseCreateDto, files: CourseCreateFilesDto) {
 		dto.uuid = uuidv4();
 		dto.order = await this.courseRepository.count();
-		fs.mkdir(`uploads/courses/${dto.uuid}`, () => {});
-		return await this.courseRepository.save(this.castAsCourse(dto, files));
+		await fsp.mkdir(`uploads/courses/${dto.uuid}`, {recursive: true});
+		const payload = await this.castAsCourse(dto, files);
+		return this.courseRepository.save(payload);
 	}
 
 	async editCourse(
@@ -69,9 +80,10 @@ export class LibraryAdminService {
 		const entity = await this.courseRepository.findOneBy({uuid});
 		dto.uuid = uuid;
 		dto.order = entity.order;
+		const payload = await this.castAsCourse(dto, files);
 		return this.courseRepository.save({
 			...entity,
-			...this.castAsCourse(dto, files),
+			...payload,
 		});
 	}
 
@@ -79,7 +91,7 @@ export class LibraryAdminService {
 		const entity = await this.courseRepository.findOneBy({uuid});
 		entity[filename] = false;
 		this.removeFile(uuid, filename);
-		return await this.courseRepository.save(entity);
+		return this.courseRepository.save(entity);
 	}
 
 	async deleteCourse(uuid: string) {
@@ -91,7 +103,11 @@ export class LibraryAdminService {
 		const entity = await this.courseRepository.findOneBy({uuid});
 		const poster = dto.poster?.[0];
 		if (poster)
-			this.storeFile(uuid, `poster-${dto.name.toLocaleUpperCase()}`, poster);
+			await this.storeFile(
+				uuid,
+				`poster-${dto.name.toLocaleUpperCase()}`,
+				poster
+			);
 		dto.poster = !!poster;
 		if (!entity.phonemes) entity.phonemes = [];
 		entity.phonemes.push(dto as any);
@@ -104,7 +120,7 @@ export class LibraryAdminService {
 		const entity = await this.phonemeRepository.findOneBy({uuid});
 		const poster = dto.poster?.[0];
 		if (poster)
-			this.storeFile(
+			await this.storeFile(
 				courseUuid,
 				`poster-${dto.name.toLocaleUpperCase()}`,
 				poster
@@ -152,7 +168,7 @@ export class LibraryAdminService {
 		const entity = await this.courseRepository.findOneBy({uuid});
 		if (!entity.sounds) entity.sounds = [];
 		entity.sounds.push(dto.name);
-		this.storeFile(
+		await this.storeFile(
 			uuid,
 			`poster-sound-${dto.name.toLocaleUpperCase()}`,
 			dto.file[0]
@@ -171,7 +187,11 @@ export class LibraryAdminService {
 		const entity = await this.courseRepository.findOneBy({uuid});
 		if (!entity.posterNames) entity.posterNames = [];
 		entity.posterNames.push(dto.name);
-		this.storeFile(uuid, `poster-${dto.name.toLocaleUpperCase()}`, dto.file[0]);
+		await this.storeFile(
+			uuid,
+			`poster-${dto.name.toLocaleUpperCase()}`,
+			dto.file[0]
+		);
 		return await this.courseRepository.save(entity);
 	}
 
@@ -190,29 +210,33 @@ export class LibraryAdminService {
 		fs.rmSync(`uploads/courses/${uuid}`, {recursive: true, force: true});
 	}
 
-	private castAsCourse(
+	private async castAsCourse(
 		dto: CourseCreateDto,
 		files: CourseCreateFilesDto
-	): CourseGenerator {
-		if (files)
-			Object.entries(files).forEach(([key, value]) => {
-				dto[key] = true;
-				this.storeFile(dto.uuid, key, value[0]);
-			});
+	): Promise<CourseGenerator> {
+		if (files) {
+			await Promise.all(
+				Object.entries(files).map(async ([key, value]) => {
+					dto[key] = true;
+					await this.storeFile(dto.uuid, key, value[0]);
+				})
+			);
+		}
 		return {...dto};
 	}
 
-	private storeFile(key: string, filename: string, data: Express.Multer.File) {
-		const stream = fs.createWriteStream(
-			`uploads/courses/${key}/${filename}.pdf`
-		);
-		stream.once('open', fd => {
-			stream.write(data.buffer);
-			stream.end();
-		});
+	private async storeFile(
+		key: string,
+		filename: string,
+		data: Express.Multer.File
+	) {
+		const folderPath = `uploads/courses/${key}`;
+		const filePath = `${folderPath}/${filename}.pdf`;
+		await fsp.mkdir(folderPath, {recursive: true});
+		await fsp.writeFile(filePath, data.buffer);
 	}
 
-	private isFile(prop: any): prop is Express.Multer.File {
-		return prop.originalname !== undefined;
-	}
+	// private isFile(prop: any): prop is Express.Multer.File {
+	// 	return prop.originalname !== undefined;
+	// }
 }

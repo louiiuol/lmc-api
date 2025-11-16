@@ -1,10 +1,11 @@
-import {Header, Param, Query, Res, StreamableFile} from '@nestjs/common';
+import type { StreamableFile } from '@nestjs/common';
+import { Header, Param, Query, Res } from '@nestjs/common';
 
-import {Response} from 'express';
-import {CurrentUser} from '@shared/decorators/current-user.decorator';
-import {Controller, Get, PartialUpdate} from '@shared/decorators';
-import {LibraryService} from './library.service';
-import {CourseViewDto} from './types';
+import { Controller, Get, PartialUpdate } from '@shared/decorators';
+import { CurrentUser } from '@shared/decorators/current-user.decorator';
+import type { Response } from 'express';
+import { LibraryService } from './library.service';
+import { CourseViewDto } from './types';
 
 @Controller({path: 'courses', name: 'Librairie'})
 export class LibraryController {
@@ -39,10 +40,13 @@ export class LibraryController {
 	})
 	downloadPdf(
 		@Param() p: {index: number; fileName: string},
-		@Res() res: Response,
-		@CurrentUser() user
+		@Res() res: Response
 	) {
-		this.libraryService.downloadPdf(user.email, p, res);
+		try {
+			this.libraryService.downloadPdf(p, res);
+		} catch (error) {
+			res.status(404).send('File not found');
+		}
 	}
 
 	@Get({

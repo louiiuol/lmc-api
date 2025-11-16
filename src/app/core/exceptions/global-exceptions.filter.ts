@@ -1,18 +1,18 @@
 import {
-	ExceptionFilter,
-	Catch,
 	ArgumentsHost,
-	Injectable,
 	BadRequestException,
-	Logger,
-	HttpException,
-	UnauthorizedException,
+	Catch,
+	ExceptionFilter,
 	ForbiddenException,
+	HttpException,
+	Injectable,
+	Logger,
+	UnauthorizedException
 } from '@nestjs/common';
-import {Response} from 'express';
-import {IncomingMessage} from 'http';
-import {EntityNotFoundError, QueryFailedError} from 'typeorm';
-import {APIErrorResponse} from '@shared/types/api-response';
+import { APIErrorResponse } from '@shared/types/api-response';
+import { Response } from 'express';
+import { IncomingMessage } from 'http';
+import { EntityNotFoundError, QueryFailedError } from 'typeorm';
 
 type CaughtExceptions =
 	| QueryFailedError
@@ -39,12 +39,6 @@ const HttpCodes: {[key: string]: number} = {
  */
 @Injectable()
 @Catch(
-	QueryFailedError,
-	EntityNotFoundError,
-	BadRequestException,
-	UnauthorizedException,
-	ForbiddenException,
-	HttpException
 )
 export class GlobalExceptionFilter implements ExceptionFilter {
 	catch(exception: CaughtExceptions, host: ArgumentsHost) {
@@ -52,6 +46,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 		const code = this.getStatusCode(exception);
 
 		Logger.error(`[${code}] - ${exception.message}`, 'NestApplication');
+
 		const output: APIErrorResponse = {
 			code,
 			data: null,

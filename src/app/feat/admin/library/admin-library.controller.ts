@@ -1,5 +1,15 @@
-import {Body, Param, UploadedFiles, UseInterceptors} from '@nestjs/common';
-
+import { PdfUploader } from '@feat/library/pdf-upload';
+import { CourseCreateDto, CourseViewDto } from '@feat/library/types';
+import { CourseCreateFilesDto } from '@feat/library/types/courses/dtos/course-create.dto';
+import {
+	CourseEditDto,
+	CourseEditFilesDto,
+} from '@feat/library/types/courses/dtos/course-edit.dto';
+import { PosterAddDto } from '@feat/library/types/courses/dtos/poster-create-dto';
+import { PhonemeCreateDto } from '@feat/library/types/phonemes/dtos/phoneme-create.dto';
+import { ReorderItemsDto } from '@feat/library/types/reorder-items.dto';
+import { Body, Param, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import {
 	Controller,
 	Delete,
@@ -8,18 +18,7 @@ import {
 	Post,
 	Update,
 } from '@shared/decorators/rest';
-import {CourseCreateDto, CourseViewDto} from '@feat/library/types';
-import {LibraryAdminService} from './admin-library.service';
-import {PdfUploader} from '@feat/library/pdf-upload';
-import {CourseCreateFilesDto} from '@feat/library/types/courses/dtos/course-create.dto';
-import {
-	CourseEditDto,
-	CourseEditFilesDto,
-} from '@feat/library/types/courses/dtos/course-edit.dto';
-import {PhonemeCreateDto} from '@feat/library/types/phonemes/dtos/phoneme-create.dto';
-import {FileFieldsInterceptor} from '@nestjs/platform-express';
-import {PosterAddDto} from '@feat/library/types/courses/dtos/poster-create-dto';
-import {ReorderItemsDto} from '@feat/library/types/reorder-items.dto';
+import { LibraryAdminService } from './admin-library.service';
 
 const COURSE_FILES_UPLOAD = PdfUploader([
 	{name: 'lesson', maxCount: 1},
@@ -44,7 +43,14 @@ export class AdminLibraryController {
 		restriction: 'admin',
 	})
 	async generateLibrary() {
-		await this.libraryService.createLibrary();
+		try {
+			await this.libraryService.createLibrary();
+		} catch (error) {
+			return {
+				success: false,
+				message: `Erreur lors de la création de la bibliothèque : ${error.message}`,
+			};
+		}
 	}
 
 	@Post({
@@ -59,12 +65,12 @@ export class AdminLibraryController {
 		@Body() dto: CourseCreateDto,
 		@UploadedFiles() files: CourseCreateFilesDto
 	) {
-		return await this.libraryService.createCourse(dto, files);
+		return this.libraryService.createCourse(dto, files);
 	}
 
 	@PartialUpdate({
 		path: 'courses/:uuid',
-		description: "Edition d'une leçon",
+		description: "Édition d'une leçon",
 		restriction: 'admin',
 	})
 	@UseInterceptors(COURSE_FILES_UPLOAD)
@@ -73,7 +79,7 @@ export class AdminLibraryController {
 		@Param('uuid') uuid: string,
 		@UploadedFiles() files: CourseEditFilesDto
 	) {
-		return await this.libraryService.editCourse(uuid, dto, files);
+		return this.libraryService.editCourse(uuid, dto, files);
 	}
 
 	@Delete({

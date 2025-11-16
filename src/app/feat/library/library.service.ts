@@ -1,15 +1,15 @@
-import {Injectable, StreamableFile} from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Repository} from 'typeorm';
-import {Course} from './types';
+import { Injectable, StreamableFile } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Course } from './types';
 
-import {UsersService} from '@feat/users/users.service';
+import { UsersService } from '@feat/users/users.service';
 
-import {createReadStream, existsSync, unlinkSync} from 'fs';
+import { createReadStream, existsSync, unlinkSync } from 'fs';
 
-import {join} from 'path';
-import {Response} from 'express';
-import {ZipService} from './zip.service';
+import { Response } from 'express';
+import { join } from 'path';
+import { ZipService } from './zip.service';
 
 @Injectable()
 export class LibraryService {
@@ -31,11 +31,13 @@ export class LibraryService {
 		const folder = (await this.courseRepository.findOneBy({order: p.index - 1}))
 			.uuid;
 		const filePath = `uploads/courses/${folder}/${p.fileName}.pdf`;
+		if (!existsSync(filePath)) {
+			throw new Error(`File not found: ${filePath}`);
+		}
 		return new StreamableFile(createReadStream(join(process.cwd(), filePath)));
 	}
 
 	async downloadPdf(
-		email: string,
 		p: {index: number; fileName: string},
 		res: Response<any, Record<string, any>>
 	) {
@@ -44,23 +46,22 @@ export class LibraryService {
 		const filePath = `uploads/courses/${folder}/${p.fileName}.pdf`;
 
 		// Check if the file exists
-		if (existsSync(filePath)) {
-			// Set response headers for PDF download
-			res.setHeader('Content-Type', 'application/pdf');
-			res.setHeader(
-				'Content-Disposition',
-				`attachment; filename=${p.fileName}.pdf`
-			);
-
-			// Create a read stream from the file path
-			const fileStream = createReadStream(filePath);
-
-			// Pipe the file stream to the response
-			fileStream.pipe(res);
-		} else {
-			// If the file does not exist, send a 404 response
-			res.status(404).send('File not found');
+		if (!existsSync(filePath)) {
+			throw new Error(`File not found: ${filePath}`);
 		}
+
+		// Set response headers for PDF download
+		res.setHeader('Content-Type', 'application/pdf');
+		res.setHeader(
+			'Content-Disposition',
+			`attachment; filename=${p.fileName}.pdf`
+		);
+
+		// Create a read stream from the file path
+		const fileStream = createReadStream(filePath);
+
+		// Pipe the file stream to the response
+		fileStream.pipe(res);
 	}
 
 	async downloadCourse(index: number, res: Response<any, Record<string, any>>) {
@@ -69,7 +70,12 @@ export class LibraryService {
 		const lessonPath = `uploads/courses/${folder}`;
 		const outputZip = `uploads/courses/${folder}/${index}.zip`;
 
-		await this.zipService.zipDirectory(lessonPath, outputZip);
+		try {
+			await this.zipService.zipDirectory(lessonPath, outputZip);
+		} catch (error) {
+			res.status(500).send('Could not create zip file');
+			return;
+		}
 
 		res.download(outputZip, err => {
 			if (err) {

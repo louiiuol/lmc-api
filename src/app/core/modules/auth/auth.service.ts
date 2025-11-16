@@ -3,16 +3,16 @@ import {
 	Injectable,
 	UnauthorizedException,
 } from '@nestjs/common';
-import {JwtService} from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
-import {environment} from 'src/app/environment';
+import { environment } from 'src/app/environment';
 
-import {User, UserCreateDto} from '@feat/users/types';
-import {UsersService} from '@feat/users/users.service';
+import { User, UserCreateDto } from '@feat/users/types';
+import { UsersService } from '@feat/users/users.service';
 
-import {MailerService} from '@shared/modules/mail/mail.service';
-import {TokenJWT} from './types';
+import { MailerService } from '@shared/modules/mail/mail.service';
+import { TokenJWT } from './types';
 
 @Injectable()
 export class AuthService {
@@ -95,6 +95,7 @@ export class AuthService {
 		pass: string
 	): Promise<Partial<User>> => {
 		const user = await this.usersService.findOneByEmail(email);
+		if (!user) throw new UnauthorizedException("Ce compte n'existe pas.");
 		if (!(await bcrypt.compare(pass, user.password))) return null;
 		if (!user.isActive) throw new ForbiddenException('Inactive account');
 		delete user.password;
