@@ -73,7 +73,7 @@ export class LibraryService {
 		try {
 			await this.zipService.zipDirectory(lessonPath, outputZip);
 		} catch (error) {
-			res.status(500).send('Could not create zip file');
+			res.status(500).send('Could not create zip file: ' + (error instanceof Error ? error.message : 'unknown error'));
 			return;
 		}
 

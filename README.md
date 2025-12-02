@@ -18,11 +18,7 @@ npm run seed # Génère 3 comptes de démo (optionnel)
 npm run seed
 ```
 
-- Admin: `admin@lamethodeclaire.dev` / `Admin123!`
-- Utilisateur 1: `camille@lamethodeclaire.dev` / `User123!`
-- Utilisateur 2: `louis@lamethodeclaire.dev` / `User456!`
-
-Le script est idempotent : relancez-le pour remettre les mots de passe à l’état connu.
+Cette commande générera différents utilisateurs. Leurs informations de connection seront affichées dans la console.
 
 ## Fonctionnalités 🎉
 

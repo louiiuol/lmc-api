@@ -38,14 +38,14 @@ export class LibraryController {
 		description: "Récupération d'un fichier d'une leçon, au format pdf.",
 		restriction: 'user',
 	})
-	downloadPdf(
+	async downloadPdf(
 		@Param() p: {index: number; fileName: string},
 		@Res() res: Response
 	) {
 		try {
-			this.libraryService.downloadPdf(p, res);
+			await this.libraryService.downloadPdf(p, res);
 		} catch (error) {
-			res.status(404).send('File not found');
+			res.status(404).send('File not found: ' + (error instanceof Error ? error.message : 'unknown error'));
 		}
 	}
 

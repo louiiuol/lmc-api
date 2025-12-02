@@ -10,8 +10,8 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { CourseCreateFilesDto } from '@feat/library/types/courses/dtos/course-create.dto';
-import * as fs from 'fs';
-import { promises as fsp } from 'fs';
+import * as fs from 'node:fs';
+import { promises as fsp } from 'node:fs';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -42,18 +42,18 @@ export class LibraryAdminService {
 
 		try {
 			await Promise.all([
-				phoneme.map(async p => {
-					await this.phonemeRepository.delete({uuid: p.uuid});
-				}),
-				courses.map(async c => {
-					await this.courseRepository.delete({uuid: c.uuid});
-				}),
+				...phoneme.map( p =>
+					this.phonemeRepository.delete({uuid: p.uuid})
+				),
+				...courses.map( c =>
+					this.courseRepository.delete({uuid: c.uuid})
+				),
 			]);
 		} catch (e) {
 			Logger.error('Failed to delete previous library (SQL error occurred)');
 		}
 
-		return COURSES.map(async (current, i) => {
+		return Promise.all(COURSES.map(async (current, i) => {
 			const entity = await this.courseRepository.save({...current, order: i});
 			fs.cpSync(
 				'uploads/src/' + (entity.order + 1),
@@ -61,7 +61,7 @@ export class LibraryAdminService {
 				{recursive: true}
 			);
 			return entity;
-		});
+		}))
 	};
 
 	async createCourse(dto: CourseCreateDto, files: CourseCreateFilesDto) {
@@ -216,10 +216,12 @@ export class LibraryAdminService {
 	): Promise<CourseGenerator> {
 		if (files) {
 			await Promise.all(
-				Object.entries(files).map(async ([key, value]) => {
-					dto[key] = true;
-					await this.storeFile(dto.uuid, key, value[0]);
-				})
+				Object.entries(files)
+					.filter(([, value]) => Array.isArray(value) && value.length > 0)
+					.map(async ([key, value]) => {
+						dto[key] = true;
+						await this.storeFile(dto.uuid, key, value[0]);
+					})
 			);
 		}
 		return {...dto};

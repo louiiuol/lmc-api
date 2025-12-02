@@ -51,6 +51,9 @@ const SEED_ACCOUNTS: SeedAccountDefinition[] = [
 ];
 
 const SALT_ROUNDS = Number(environment.SALT);
+if(isNaN(SALT_ROUNDS) || SALT_ROUNDS <= 0) {
+	throw new Error('Invalid SALT value in environment configuration');
+}
 
 export class UsersSeeder {
 	constructor(private readonly repository: Repository<User>) {}
