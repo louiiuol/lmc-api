@@ -1,6 +1,11 @@
-import {Matches, IsEmail, IsNotEmpty, IsString} from '@nestjs/class-validator';
-import {ApiProperty} from '@nestjs/swagger';
-import {IsBoolean} from 'class-validator';
+import {
+	IsEmail,
+	IsNotEmpty,
+	IsString,
+	Matches,
+} from '@nestjs/class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsBoolean } from 'class-validator';
 const passwordPattern =
 	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>]).{8,}$/;
 
@@ -19,7 +24,7 @@ export class UserCreateDto {
 	})
 	@IsString()
 	@IsNotEmpty()
-	@Matches(passwordPattern, {message: 'Mot de passe sécurisé requis.'})
+	@Matches(passwordPattern, { message: 'Mot de passe sécurisé requis.' })
 	password: string;
 
 	@ApiProperty({

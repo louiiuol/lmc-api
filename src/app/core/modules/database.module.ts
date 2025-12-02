@@ -1,11 +1,11 @@
-import {classes} from '@automapper/classes';
-import {AutomapperModule} from '@automapper/nestjs';
-import {Module} from '@nestjs/common';
-import {TypeOrmModule} from '@nestjs/typeorm';
-import {environment} from 'src/app/environment';
-import {Phoneme, Course} from '@feat/library/types';
-import {Newsletter} from '@feat/newsletter/types/newsletter.entity';
-import {User} from '@feat/users/types/user.entity';
+import { classes } from '@automapper/classes';
+import { AutomapperModule } from '@automapper/nestjs';
+import { Course, Phoneme } from '@feat/library/types';
+import { Newsletter } from '@feat/newsletter/types/newsletter.entity';
+import { User } from '@feat/users/types/user.entity';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { environment } from 'src/app/environment';
 
 @Module({
 	imports: [

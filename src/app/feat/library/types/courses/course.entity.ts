@@ -1,4 +1,4 @@
-import {AutoMap} from '@automapper/classes';
+import { AutoMap } from '@automapper/classes';
 import {
 	BaseEntity,
 	Column,
@@ -7,7 +7,7 @@ import {
 	OneToMany,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
-import {Phoneme} from '../phonemes';
+import { Phoneme } from '../phonemes';
 
 /**
  ** Collection of phonemes, posters and exercises meant to be discover in a week.
@@ -25,7 +25,7 @@ export class Course extends BaseEntity {
 	order: number;
 
 	@AutoMap()
-	@Column({nullable: true, default: 'black'})
+	@Column({ nullable: true, default: 'black' })
 	color: string;
 
 	@AutoMap()
@@ -37,23 +37,23 @@ export class Course extends BaseEntity {
 	phonemes: Phoneme[];
 
 	@AutoMap()
-	@Column({nullable: true})
+	@Column({ nullable: true })
 	script: boolean;
 
 	@AutoMap()
-	@Column({nullable: true})
+	@Column({ nullable: true })
 	lesson?: boolean;
 
 	@AutoMap()
-	@Column({nullable: true})
+	@Column({ nullable: true })
 	exercices?: boolean;
 
 	@AutoMap()
-	@Column({nullable: true})
+	@Column({ nullable: true })
 	text?: boolean;
 
 	@AutoMap()
-	@Column({nullable: true})
+	@Column({ nullable: true })
 	poster?: boolean;
 
 	@AutoMap()

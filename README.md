@@ -9,7 +9,16 @@ npm i # Install workspace dependency
 npm run start # Launch API (with watcher for file changes)
 npm run build # Build distributable folder
 npm run test # Launch jest testing suite
+npm run seed # Génère 3 comptes de démo (optionnel)
 ```
+
+## Seed utilisateurs 🧪
+
+```bash
+npm run seed
+```
+
+Cette commande générera différents utilisateurs. Leurs informations de connection seront affichées dans la console.
 
 ## Fonctionnalités 🎉
 

@@ -1,24 +1,24 @@
 import {
+	BadRequestException,
 	Body,
 	Param,
-	Redirect,
 	Query,
-	BadRequestException,
+	Redirect,
 	UnauthorizedException,
 } from '@nestjs/common';
-import {AuthService} from './auth.service';
+import { AuthService } from './auth.service';
 
-import {environment} from 'src/app/environment';
-import {CurrentUser} from '@shared/decorators/current-user.decorator';
-import {Controller, Post, Get} from '@shared/decorators/rest';
+import { CurrentUser } from '@shared/decorators/current-user.decorator';
+import { Controller, Get, Post } from '@shared/decorators/rest';
+import { environment } from 'src/app/environment';
 
-import {UserCreateDto, User, UserLoginDto} from '@feat/users/types';
-import {TokenJWT} from './types';
+import { User, UserCreateDto, UserLoginDto } from '@feat/users/types';
+import { TokenJWT } from './types';
 
 /**
  * Provides controller to handle user authentication
  */
-@Controller({path: 'auth', name: 'Authentification'})
+@Controller({ path: 'auth', name: 'Authentification' })
 export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 
@@ -40,7 +40,9 @@ export class AuthController {
 		@Param('uuid') uuid: string,
 		@Query('token') token: string
 	) {
-		if (!(uuid && token)) throw new UnauthorizedException('Token invalide.');
+		if (!(uuid && token)) {
+			throw new UnauthorizedException('Token invalide.');
+		}
 		return await this.authService.activateAccount(uuid, token);
 	}
 
@@ -65,8 +67,9 @@ export class AuthController {
 	refreshTokens(@CurrentUser() user) {
 		const username = user['username'];
 		const refreshToken = user['refreshToken'];
-		if (!(username && refreshToken))
+		if (!(username && refreshToken)) {
 			throw new UnauthorizedException('Token invalide.');
+		}
 		return this.authService.refreshTokens(username, refreshToken);
 	}
 
@@ -95,7 +98,9 @@ export class AuthController {
 		description: "Demande de renvoi d'un email d'activation du compte.",
 	})
 	async reconfirmAccount(@Param('email') email: string) {
-		if (!email) throw new BadRequestException("Le champ 'email' est requis.");
+		if (!email) {
+			throw new BadRequestException("Le champ 'email' est requis.");
+		}
 		return await this.authService.accountConfirmation(email);
 	}
 }

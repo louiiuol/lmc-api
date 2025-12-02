@@ -1,9 +1,9 @@
-import {Body} from '@nestjs/common';
-import {NewsletterService} from './newsletter.service';
-import {NewsletterSendDto} from './types/dtos/newsletter-send.dto';
-import {Controller, Post} from '@shared/decorators/rest';
+import { Body } from '@nestjs/common';
+import { Controller, Post } from '@shared/decorators/rest';
+import { NewsletterService } from './newsletter.service';
+import { NewsletterSendDto } from './types/dtos/newsletter-send.dto';
 
-@Controller({path: 'newsletter'})
+@Controller({ path: 'newsletter' })
 export class NewsletterController {
 	constructor(private readonly news: NewsletterService) {}
 

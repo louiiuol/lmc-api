@@ -5,8 +5,8 @@ import {
 	MaxLength,
 	MinLength,
 } from '@nestjs/class-validator';
-import {ApiProperty} from '@nestjs/swagger';
-import {IsBoolean} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsBoolean } from 'class-validator';
 
 export class UserUpdateDto {
 	@ApiProperty({

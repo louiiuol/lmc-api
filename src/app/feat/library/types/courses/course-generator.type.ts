@@ -1,4 +1,4 @@
-import {PhonemeGenerateDto} from '../phonemes';
+import { PhonemeGenerateDto } from '../phonemes';
 
 export type CourseGenerator = {
 	uuid?: string;

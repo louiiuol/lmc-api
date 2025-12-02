@@ -1,21 +1,21 @@
 import {
-	ApiNoContentResponse,
-	ApiBearerAuth,
-	ApiForbiddenResponse,
-	ApiUnauthorizedResponse,
-	ApiOperation,
-	ApiUnprocessableEntityResponse,
-} from '@nestjs/swagger';
-import {UseGuards} from '@nestjs/common';
-import {DocParameters} from '@shared/types/swagger-decorator-opt';
-import {ResponseMessage} from '../responses/response-message.decorator';
-import {APIFormErrorDetails} from '@shared/types/api-response';
-import {LocalAuthGuard} from '@core/modules/auth/guards/local/local.guard';
-import {
 	AdminGuard,
 	JwtAuthGuard,
 	RefreshTokenGuard,
 } from '@core/modules/auth/guards';
+import { LocalAuthGuard } from '@core/modules/auth/guards/local/local.guard';
+import { UseGuards } from '@nestjs/common';
+import {
+	ApiBearerAuth,
+	ApiForbiddenResponse,
+	ApiNoContentResponse,
+	ApiOperation,
+	ApiUnauthorizedResponse,
+	ApiUnprocessableEntityResponse,
+} from '@nestjs/swagger';
+import { APIFormErrorDetails } from '@shared/types/api-response';
+import { DocParameters } from '@shared/types/swagger-decorator-opt';
+import { ResponseMessage } from '../responses/response-message.decorator';
 
 const appGuards = {
 	refresh: [RefreshTokenGuard],
@@ -107,29 +107,38 @@ export const Resource = (opt?: DocParameters) => {
 	const operations = {
 		summary: opt.description ?? 'Aucune description fournie',
 	};
-	if (opt?.body)
+	if (opt?.body) {
 		decorators.push(
 			ApiUnprocessableEntityResponse(SwaggerResponse.badRequestError(opt))
 		);
+	}
 
 	if (opt?.restriction) {
 		decorators.push(UseGuards(...appGuards[opt.restriction]));
-		if (['user', 'admin', 'refresh'].includes(opt.restriction))
+		if (['user', 'admin', 'refresh'].includes(opt.restriction)) {
 			decorators.push(ApiBearerAuth());
+		}
 		responses.push(
 			ApiForbiddenResponse(SwaggerResponse.forbiddenError(opt)),
 			ApiUnauthorizedResponse(SwaggerResponse.unauthorizedError(opt))
 		);
 	}
 
-	if (opt?.success) decorators.push(ResponseMessage(opt?.success));
+	if (opt?.success) {
+		decorators.push(ResponseMessage(opt?.success));
+	}
 
-	if (opt?.returnType) operations['type'] = opt.returnType;
+	if (opt?.returnType) {
+		operations['type'] = opt.returnType;
+	}
 
-	if (opt?.description) decorators.push(ApiOperation(operations));
+	if (opt?.description) {
+		decorators.push(ApiOperation(operations));
+	}
 
-	if (opt?.noContent)
+	if (opt?.noContent) {
 		decorators.push(ApiNoContentResponse(SwaggerResponse.noContent(opt)));
+	}
 
 	return [...decorators, ...responses];
 };

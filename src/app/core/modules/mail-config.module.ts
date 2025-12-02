@@ -1,8 +1,8 @@
-import {MailerModule} from '@nestjs-modules/mailer';
-import {HandlebarsAdapter} from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import {Module} from '@nestjs/common';
-import {join} from 'path';
-import {environment} from 'src/app/environment';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { Module } from '@nestjs/common';
+import { join } from 'path';
+import { environment } from 'src/app/environment';
 
 @Module({
 	imports: [

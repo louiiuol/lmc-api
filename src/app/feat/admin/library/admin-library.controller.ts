@@ -1,5 +1,15 @@
-import {Body, Param, UploadedFiles, UseInterceptors} from '@nestjs/common';
-
+import { PdfUploader } from '@feat/library/pdf-upload';
+import { CourseCreateDto, CourseViewDto } from '@feat/library/types';
+import { CourseCreateFilesDto } from '@feat/library/types/courses/dtos/course-create.dto';
+import {
+	CourseEditDto,
+	CourseEditFilesDto,
+} from '@feat/library/types/courses/dtos/course-edit.dto';
+import { PosterAddDto } from '@feat/library/types/courses/dtos/poster-create-dto';
+import { PhonemeCreateDto } from '@feat/library/types/phonemes/dtos/phoneme-create.dto';
+import { ReorderItemsDto } from '@feat/library/types/reorder-items.dto';
+import { Body, Param, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import {
 	Controller,
 	Delete,
@@ -8,32 +18,23 @@ import {
 	Post,
 	Update,
 } from '@shared/decorators/rest';
-import {CourseCreateDto, CourseViewDto} from '@feat/library/types';
-import {LibraryAdminService} from './admin-library.service';
-import {PdfUploader} from '@feat/library/pdf-upload';
-import {CourseCreateFilesDto} from '@feat/library/types/courses/dtos/course-create.dto';
-import {
-	CourseEditDto,
-	CourseEditFilesDto,
-} from '@feat/library/types/courses/dtos/course-edit.dto';
-import {PhonemeCreateDto} from '@feat/library/types/phonemes/dtos/phoneme-create.dto';
-import {FileFieldsInterceptor} from '@nestjs/platform-express';
-import {PosterAddDto} from '@feat/library/types/courses/dtos/poster-create-dto';
-import {ReorderItemsDto} from '@feat/library/types/reorder-items.dto';
+import { LibraryAdminService } from './admin-library.service';
 
 const COURSE_FILES_UPLOAD = PdfUploader([
-	{name: 'lesson', maxCount: 1},
-	{name: 'script', maxCount: 1},
-	{name: 'poster', maxCount: 1},
-	{name: 'exercices', maxCount: 1},
+	{ name: 'lesson', maxCount: 1 },
+	{ name: 'script', maxCount: 1 },
+	{ name: 'poster', maxCount: 1 },
+	{ name: 'exercices', maxCount: 1 },
 ]);
 
 const PHONEME_FILES_UPLOAD = FileFieldsInterceptor([
-	{name: 'poster', maxCount: 1},
+	{ name: 'poster', maxCount: 1 },
 ]);
-const SOUND_FILES_UPLOAD = FileFieldsInterceptor([{name: 'file', maxCount: 1}]);
+const SOUND_FILES_UPLOAD = FileFieldsInterceptor([
+	{ name: 'file', maxCount: 1 },
+]);
 
-@Controller({path: 'admin', name: 'Back Office (Gestion de la bibliothèque)'})
+@Controller({ path: 'admin', name: 'Back Office (Gestion de la bibliothèque)' })
 export class AdminLibraryController {
 	constructor(private readonly libraryService: LibraryAdminService) {}
 
@@ -44,7 +45,14 @@ export class AdminLibraryController {
 		restriction: 'admin',
 	})
 	async generateLibrary() {
-		await this.libraryService.createLibrary();
+		try {
+			await this.libraryService.createLibrary();
+		} catch (error) {
+			return {
+				success: false,
+				message: `Erreur lors de la création de la bibliothèque : ${error.message}`,
+			};
+		}
 	}
 
 	@Post({
@@ -59,12 +67,12 @@ export class AdminLibraryController {
 		@Body() dto: CourseCreateDto,
 		@UploadedFiles() files: CourseCreateFilesDto
 	) {
-		return await this.libraryService.createCourse(dto, files);
+		return this.libraryService.createCourse(dto, files);
 	}
 
 	@PartialUpdate({
 		path: 'courses/:uuid',
-		description: "Edition d'une leçon",
+		description: "Édition d'une leçon",
 		restriction: 'admin',
 	})
 	@UseInterceptors(COURSE_FILES_UPLOAD)
@@ -73,7 +81,7 @@ export class AdminLibraryController {
 		@Param('uuid') uuid: string,
 		@UploadedFiles() files: CourseEditFilesDto
 	) {
-		return await this.libraryService.editCourse(uuid, dto, files);
+		return this.libraryService.editCourse(uuid, dto, files);
 	}
 
 	@Delete({
@@ -108,7 +116,7 @@ export class AdminLibraryController {
 	async addPhoneme(
 		@Param('uuid') uuid: string,
 		@Body() dto: PhonemeCreateDto,
-		@UploadedFiles() files: {poster?: Express.Multer.File[]}
+		@UploadedFiles() files: { poster?: Express.Multer.File[] }
 	) {
 		dto.poster = files?.poster;
 		return this.libraryService.addPhoneme(uuid, dto);
@@ -124,7 +132,7 @@ export class AdminLibraryController {
 		@Body() dto: PhonemeCreateDto,
 		@Param('courseUuid') courseUuid: string,
 		@Param('uuid') uuid: string,
-		@UploadedFiles() files?: {poster?: Express.Multer.File[]}
+		@UploadedFiles() files?: { poster?: Express.Multer.File[] }
 	) {
 		dto.poster = files?.poster;
 		return await this.libraryService.editPhoneme(courseUuid, uuid, dto);
@@ -166,7 +174,7 @@ export class AdminLibraryController {
 	async addSound(
 		@Param('uuid') uuid: string,
 		@Body() dto: PosterAddDto,
-		@UploadedFiles() files: {file?: Express.Multer.File[]}
+		@UploadedFiles() files: { file?: Express.Multer.File[] }
 	) {
 		dto.file = files.file;
 		return await this.libraryService.addSound(uuid, dto);
@@ -195,7 +203,7 @@ export class AdminLibraryController {
 	async addPoster(
 		@Param('uuid') uuid: string,
 		@Body() dto: PosterAddDto,
-		@UploadedFiles() files: {file?: Express.Multer.File[]}
+		@UploadedFiles() files: { file?: Express.Multer.File[] }
 	) {
 		dto.file = files.file;
 		return await this.libraryService.addPoster(uuid, dto);

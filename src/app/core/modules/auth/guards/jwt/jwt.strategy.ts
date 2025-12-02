@@ -1,10 +1,10 @@
-import {Injectable} from '@nestjs/common';
-import {PassportStrategy} from '@nestjs/passport';
-import {ExtractJwt, Strategy} from 'passport-jwt';
-import {environment} from 'src/app/environment';
-import {UsersService} from '@feat/users/users.service';
+import { UsersService } from '@feat/users/users.service';
+import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { environment } from 'src/app/environment';
 
-export type payloadType = {sub: string; username: string};
+export type payloadType = { sub: string; username: string };
 
 /**
  * Custom strategy implementing JWT strategy to valid current user authenticated with token
@@ -21,7 +21,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
 	validate = async (payload: payloadType) => {
 		const user = await this.users.findOneByEmail(payload.username);
-		if (!user) return null;
+		if (!user) {
+			return null;
+		}
 		return {
 			uuid: user.uuid,
 			email: payload.username,

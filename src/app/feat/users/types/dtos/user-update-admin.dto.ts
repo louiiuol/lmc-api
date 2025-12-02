@@ -1,8 +1,8 @@
-import {IsOptional, IsBoolean} from '@nestjs/class-validator';
-import {ApiProperty} from '@nestjs/swagger';
+import { IsBoolean, IsOptional } from '@nestjs/class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UserUpdateAdminDto {
-	@ApiProperty({description: 'Définit la validité du token'})
+	@ApiProperty({ description: 'Définit la validité du token' })
 	@IsOptional()
 	@IsBoolean()
 	isActive?: boolean;

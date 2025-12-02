@@ -1,6 +1,6 @@
-import {AutoMap} from '@automapper/classes';
-import {UserRole} from '../user.role';
-import {ApiProperty} from '@nestjs/swagger';
+import { AutoMap } from '@automapper/classes';
+import { ApiProperty } from '@nestjs/swagger';
+import { UserRole } from '../user.role';
 
 export class UserViewDto {
 	@ApiProperty({
@@ -65,15 +65,17 @@ export class UserViewDto {
 	@AutoMap()
 	newsletter: boolean;
 
-	@ApiProperty({description: 'Date de création du compte.'})
+	@ApiProperty({ description: 'Date de création du compte.' })
 	@AutoMap()
 	createdAt: Date;
 
-	@ApiProperty({description: 'Date de la dernière mise à jour du compte.'})
+	@ApiProperty({ description: 'Date de la dernière mise à jour du compte.' })
 	@AutoMap()
 	updatedAt: Date;
 
-	@ApiProperty({description: "Date de la dernière connection de l'utilisateur"})
+	@ApiProperty({
+		description: "Date de la dernière connection de l'utilisateur",
+	})
 	@AutoMap()
 	lastConnection: Date;
 
@@ -83,7 +85,7 @@ export class UserViewDto {
 	@AutoMap()
 	closed: boolean;
 
-	@ApiProperty({description: 'Date de fermeture du compte.'})
+	@ApiProperty({ description: 'Date de fermeture du compte.' })
 	@AutoMap()
 	closedAt: Date;
 }

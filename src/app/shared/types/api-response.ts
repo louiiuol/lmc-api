@@ -1,26 +1,30 @@
-import {ApiProperty} from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class APISuccessResponse<T = unknown> {
-	@ApiProperty({description: 'Status de la requête', example: 200})
+	@ApiProperty({ description: 'Status de la requête', example: 200 })
 	code: number;
+
 	data?: T | T[] | null;
-	@ApiProperty({example: 'Requête effectuée avec succès'})
+	@ApiProperty({ example: 'Requête effectuée avec succès' })
 	message: string;
 }
 /**
  * Wrapper for every response from API
  */
 export class APIErrorResponse {
-	@ApiProperty({description: 'Status de la requête.'})
+	@ApiProperty({ description: 'Status de la requête.' })
 	code: number;
+
 	@ApiProperty({
 		description: "Explication sommaire de l'erreur.",
 		example: 'Requête effectuée avec succès',
 	})
 	message: string;
+
 	@ApiProperty()
 	data: null;
-	@ApiProperty({description: "Détails de l'erreur.", type: 'object'})
+
+	@ApiProperty({ description: "Détails de l'erreur.", type: 'object' })
 	error: {
 		timestamp: Date | string;
 		path: string;
@@ -31,8 +35,9 @@ export class APIErrorResponse {
 export class APIFormErrorDetails {
 	@ApiProperty()
 	field: string;
+
 	@ApiProperty()
-	errors: {error: ValidationFormError; reason: string}[];
+	errors: { error: ValidationFormError; reason: string }[];
 }
 
 type ValidationFormError =

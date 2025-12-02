@@ -1,4 +1,4 @@
-name: Deploy to hosting server
+name: Deploy to production server
 
 on:
   push:
@@ -49,7 +49,7 @@ jobs:
           DATABASE_USER=${{ secrets.DATABASE_USER }}
           DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
           DATABASE_NAME=${{ secrets.DATABASE_USER }}
-          DATABASE_SYNC=true
+          DATABASE_SYNC=false
 
           # SMTP
           SMTP_HOST=${{ secrets.SMTP_HOST }}
@@ -75,7 +75,7 @@ jobs:
           # 3) fichiers racine nécessaires
           cp package.json package-lock.json .env deploy/
 
-      - name: Rsync to OVH (one command, keep uploads)
+      - name: Deploy to OVH server
         env:
           OVH_HOST: sshcloud.cluster024.hosting.ovh.net
           OVH_PORT: 42710

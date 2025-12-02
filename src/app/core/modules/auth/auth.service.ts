@@ -3,16 +3,16 @@ import {
 	Injectable,
 	UnauthorizedException,
 } from '@nestjs/common';
-import {JwtService} from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
-import {environment} from 'src/app/environment';
+import { environment } from 'src/app/environment';
 
-import {User, UserCreateDto} from '@feat/users/types';
-import {UsersService} from '@feat/users/users.service';
+import { User, UserCreateDto } from '@feat/users/types';
+import { UsersService } from '@feat/users/users.service';
 
-import {MailerService} from '@shared/modules/mail/mail.service';
-import {TokenJWT} from './types';
+import { MailerService } from '@shared/modules/mail/mail.service';
+import { TokenJWT } from './types';
 
 @Injectable()
 export class AuthService {
@@ -24,13 +24,16 @@ export class AuthService {
 	) {}
 
 	signUp = async (dto: UserCreateDto): Promise<any> => {
-		if (await this.usersService.findOneByEmail(dto.email))
+		if (await this.usersService.findOneByEmail(dto.email)) {
 			return 'Cette adresse email est déjà utilisé.';
+		}
 		const user = await this.usersService.save({
 			...dto,
 			password: await this.hashData(dto.password),
 		});
-		if (!user) return "L'inscription à échoué. Réessayer plus tard.";
+		if (!user) {
+			return "L'inscription à échoué. Réessayer plus tard.";
+		}
 		this.sendEmailConfirmation(user);
 		const tokens = await this.getTokens(user.uuid, user.email);
 		await this.updateRefreshToken(user.uuid, tokens.refreshToken);
@@ -43,9 +46,11 @@ export class AuthService {
 	 * @param user payload to log user in
 	 * @returns JWT access token
 	 */
-	logIn = async (user: {email: string; uuid?: string}): Promise<TokenJWT> => {
+	logIn = async (user: { email: string; uuid?: string }): Promise<TokenJWT> => {
 		const entity = await this.usersService.findOneByEmail(user.email);
-		if (!entity) throw new UnauthorizedException("Ce compte n'existe pas.");
+		if (!entity) {
+			throw new UnauthorizedException("Ce compte n'existe pas.");
+		}
 		if (entity?.closed) {
 			entity.closed = false;
 			entity.closedAt = null;
@@ -61,12 +66,14 @@ export class AuthService {
 	refreshTokens = async (email: string, refreshToken: string) => {
 		const user = await this.usersService.findOneByEmail(email);
 
-		if (!user?.refreshToken)
+		if (!user?.refreshToken) {
 			throw new ForbiddenException(
 				'Access Denied: No refresh token available !'
 			);
-		if (!(await bcrypt.compare(refreshToken, user.refreshToken)))
+		}
+		if (!(await bcrypt.compare(refreshToken, user.refreshToken))) {
 			throw new ForbiddenException('Access Denied: Invalid token!');
+		}
 
 		const tokens = await this.getTokens(user.uuid, user.email);
 		const updated = await this.updateRefreshToken(
@@ -79,7 +86,7 @@ export class AuthService {
 	};
 
 	logOut = (userId: string) => {
-		this.usersService.update(userId, {refreshToken: null});
+		this.usersService.update(userId, { refreshToken: null });
 		return 'Déconnexion effectuée avec succès';
 	};
 
@@ -95,8 +102,15 @@ export class AuthService {
 		pass: string
 	): Promise<Partial<User>> => {
 		const user = await this.usersService.findOneByEmail(email);
-		if (!(await bcrypt.compare(pass, user.password))) return null;
-		if (!user.isActive) throw new ForbiddenException('Inactive account');
+		if (!user) {
+			throw new UnauthorizedException("Ce compte n'existe pas.");
+		}
+		if (!(await bcrypt.compare(pass, user.password))) {
+			return null;
+		}
+		if (!user.isActive) {
+			throw new ForbiddenException('Inactive account');
+		}
 		delete user.password;
 		return user;
 	};
@@ -106,7 +120,8 @@ export class AuthService {
 			const entity = await this.usersService.findOneByUuid(userId);
 			await this.setUserActive(entity, true);
 			return 'Utilisateur activé';
-		} else return 'Token invalide';
+		}
+		return 'Token invalide';
 	};
 
 	closeAccount = async (userId: string) => {
@@ -193,7 +208,7 @@ export class AuthService {
 				username: user.email,
 				sub: user.uuid,
 			},
-			{secret: process.env.JWT_SECRET_KEY + user.password, expiresIn: '1d'}
+			{ secret: process.env.JWT_SECRET_KEY + user.password, expiresIn: '1d' }
 		);
 
 		await this.mailerService.sendMail({

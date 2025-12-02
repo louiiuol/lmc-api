@@ -1,2 +1,3 @@
-export {Phoneme} from './phoneme.entity';
 export * from './dtos';
+export { Phoneme } from './phoneme.entity';
+

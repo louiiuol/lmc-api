@@ -1,4 +1,4 @@
-import {BaseEntity, Column, Entity, PrimaryGeneratedColumn} from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({
 	name: 'news',
@@ -16,6 +16,6 @@ export class Newsletter extends BaseEntity {
 	@Column()
 	content: string;
 
-	@Column({nullable: true, default: () => 'CURRENT_TIMESTAMP'})
+	@Column({ nullable: true, default: () => 'CURRENT_TIMESTAMP' })
 	date: Date;
 }

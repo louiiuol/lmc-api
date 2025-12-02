@@ -1,4 +1,4 @@
-import {resetTime} from './reset-time.fn';
+import { resetTime } from './reset-time.fn';
 
 /**
  * Checks if given Date is X months earlier from now.

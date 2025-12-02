@@ -3,13 +3,14 @@ import {
 	createParamDecorator,
 	ExecutionContext,
 } from '@nestjs/common';
-import {ApiProperty} from '@nestjs/swagger';
-import {Request} from 'express';
-import {DECORATORS} from '@nestjs/swagger/dist/constants';
+import { ApiProperty } from '@nestjs/swagger';
+import { DECORATORS } from '@nestjs/swagger/dist/constants';
+import { Request } from 'express';
 export class Sorting {
-	@ApiProperty({description: 'Propriété du tri actif.'})
+	@ApiProperty({ description: 'Propriété du tri actif.' })
 	property: string;
-	@ApiProperty({description: 'Direction du tri actif.'})
+
+	@ApiProperty({ description: 'Direction du tri actif.' })
 	direction: string;
 }
 
@@ -19,23 +20,28 @@ export const SortingParams = createParamDecorator(
 	(validParams, ctx: ExecutionContext): Sorting => {
 		const req: Request = ctx.switchToHttp().getRequest();
 		const sort = req.query.sort as string;
-		if (!sort) return null;
+		if (!sort) {
+			return null;
+		}
 
 		// check if the valid params sent is an array
-		if (typeof validParams != 'object')
+		if (typeof validParams != 'object') {
 			throw new BadRequestException('Invalid sort parameter');
+		}
 
 		// check the format of the sort query param
 
-		if (!RegExp(sortPattern).exec(sort))
+		if (!RegExp(sortPattern).exec(sort)) {
 			throw new BadRequestException('Invalid sort parameter');
+		}
 
 		// extract the property name and direction and check if they are valid
 		const [property, direction] = sort.split(':');
-		if (!validParams.includes(property))
+		if (!validParams.includes(property)) {
 			throw new BadRequestException(`Invalid sort property: ${property}`);
+		}
 
-		return {property, direction};
+		return { property, direction };
 	},
 	[
 		(target, key, index) => {
