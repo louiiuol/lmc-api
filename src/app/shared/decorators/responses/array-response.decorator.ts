@@ -1,6 +1,6 @@
-import {Type, applyDecorators} from '@nestjs/common';
-import {ApiExtraModels, ApiOkResponse, getSchemaPath} from '@nestjs/swagger';
-import {APISuccessResponse} from '@shared/types/api-response';
+import { Type, applyDecorators } from '@nestjs/common';
+import { ApiExtraModels, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
+import { APISuccessResponse } from '@shared/types/api-response';
 
 export const ApiOkResponseAsArray = <DataDto extends Type<unknown>>(
 	dataDto: DataDto
@@ -10,12 +10,12 @@ export const ApiOkResponseAsArray = <DataDto extends Type<unknown>>(
 		ApiOkResponse({
 			schema: {
 				allOf: [
-					{$ref: getSchemaPath(APISuccessResponse)},
+					{ $ref: getSchemaPath(APISuccessResponse) },
 					{
 						properties: {
 							data: {
 								type: 'array',
-								items: {$ref: getSchemaPath(dataDto)},
+								items: { $ref: getSchemaPath(dataDto) },
 							},
 						},
 					},

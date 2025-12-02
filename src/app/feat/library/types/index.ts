@@ -1,2 +1,3 @@
-export * from './phonemes';
 export * from './courses';
+export * from './phonemes';
+

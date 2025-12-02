@@ -1,13 +1,13 @@
-import {AutoMap} from '@automapper/classes';
-import {PhonemeViewDto} from '../../phonemes/dtos/phoneme-view.dto';
-import {ApiProperty} from '@nestjs/swagger';
+import { AutoMap } from '@automapper/classes';
+import { ApiProperty } from '@nestjs/swagger';
+import { PhonemeViewDto } from '../../phonemes/dtos/phoneme-view.dto';
 
 export class CourseViewDto {
-	@ApiProperty({description: "Index de la semaine dans l'année scolaire."})
+	@ApiProperty({ description: "Index de la semaine dans l'année scolaire." })
 	@AutoMap()
 	order: number;
 
-	@ApiProperty({description: 'Couleur de la semaine.', example: '#9eccd2'})
+	@ApiProperty({ description: 'Couleur de la semaine.', example: '#9eccd2' })
 	@AutoMap()
 	color: string;
 
@@ -18,19 +18,19 @@ export class CourseViewDto {
 	@AutoMap()
 	phonemes: PhonemeViewDto[];
 
-	@ApiProperty({description: 'Définit si la semaine contient un script.'})
+	@ApiProperty({ description: 'Définit si la semaine contient un script.' })
 	@AutoMap()
 	script?: boolean;
 
-	@ApiProperty({description: 'Définit si la semaine contient une leçon.'})
+	@ApiProperty({ description: 'Définit si la semaine contient une leçon.' })
 	@AutoMap()
 	lesson?: boolean;
 
-	@ApiProperty({description: 'Définit si la leçon contient des exercices.'})
+	@ApiProperty({ description: 'Définit si la leçon contient des exercices.' })
 	@AutoMap()
 	exercices?: boolean;
 
-	@ApiProperty({description: 'Définit si la leçon contient une affiche.'})
+	@ApiProperty({ description: 'Définit si la leçon contient une affiche.' })
 	@AutoMap()
 	poster?: boolean;
 

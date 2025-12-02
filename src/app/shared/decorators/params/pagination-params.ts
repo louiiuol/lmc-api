@@ -3,8 +3,8 @@ import {
 	createParamDecorator,
 	ExecutionContext,
 } from '@nestjs/common';
-import {DECORATORS} from '@nestjs/swagger/dist/constants';
-import {Request} from 'express';
+import { DECORATORS } from '@nestjs/swagger/dist/constants';
+import { Request } from 'express';
 
 export interface Pagination {
 	page: number;
@@ -33,7 +33,7 @@ export const PaginationParams = createParamDecorator(
 		// calculate pagination parameters
 		const limit = size;
 		const offset = page * limit;
-		return {page, limit, size, offset};
+		return { page, limit, size, offset };
 	},
 	[
 		(target, key, index) => {

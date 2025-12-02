@@ -1,5 +1,5 @@
-import {Injectable, Logger} from '@nestjs/common';
-import {capitalize} from '@shared/helpers';
+import { Injectable, Logger } from '@nestjs/common';
+import { capitalize } from '@shared/helpers';
 import * as archiver from 'archiver';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -8,7 +8,7 @@ import * as path from 'path';
 export class ZipService {
 	async zipDirectory(source: string, out: string): Promise<void> {
 		const archive = archiver('zip', {
-			zlib: {level: 9}, // Sets the compression level.
+			zlib: { level: 9 }, // Sets the compression level.
 		});
 		const stream = fs.createWriteStream(out);
 
@@ -28,7 +28,7 @@ export class ZipService {
 							const filePath = path.join(source, file);
 							const fileStats = fs.statSync(filePath);
 							if (fileStats.isFile()) {
-								archive.file(filePath, {name: this.translateFileName(file)});
+								archive.file(filePath, { name: this.translateFileName(file) });
 							} else if (fileStats.isDirectory()) {
 								archive.directory(filePath, file);
 							}

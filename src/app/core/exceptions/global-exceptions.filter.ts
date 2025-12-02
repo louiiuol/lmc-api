@@ -7,7 +7,7 @@ import {
 	HttpException,
 	Injectable,
 	Logger,
-	UnauthorizedException
+	UnauthorizedException,
 } from '@nestjs/common';
 import { APIErrorResponse } from '@shared/types/api-response';
 import { Response } from 'express';
@@ -22,7 +22,7 @@ type CaughtExceptions =
 	| UnauthorizedException
 	| BadRequestException;
 
-const HttpCodes: {[key: string]: number} = {
+const HttpCodes: { [key: string]: number } = {
 	UnauthorizedException: 401,
 	ForbiddenException: 403,
 	NotFoundException: 404,
@@ -38,8 +38,7 @@ const HttpCodes: {[key: string]: number} = {
  * @see also @https://docs.nestjs.com/exception-filters
  */
 @Injectable()
-@Catch(
-)
+@Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
 	catch(exception: CaughtExceptions, host: ArgumentsHost) {
 		const ctx = host.switchToHttp();

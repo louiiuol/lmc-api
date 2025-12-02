@@ -1,6 +1,6 @@
-import {AutoMap} from '@automapper/classes';
-import {Entity, Column, PrimaryGeneratedColumn, BaseEntity} from 'typeorm';
-import {UserRole} from './user.role';
+import { AutoMap } from '@automapper/classes';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { UserRole } from './user.role';
 
 /**
  ** Entity representing 'users' Table in database
@@ -35,23 +35,23 @@ export class User extends BaseEntity {
 	password: string;
 
 	@AutoMap()
-	@Column({default: false})
+	@Column({ default: false })
 	isActive: boolean;
 
 	@AutoMap()
-	@Column({default: false})
+	@Column({ default: false })
 	subscribed: boolean;
 
 	@AutoMap()
-	@Column({default: false})
+	@Column({ default: false })
 	closed: boolean;
 
 	@AutoMap()
-	@Column({default: false})
+	@Column({ default: false })
 	newsletter: boolean;
 
 	@AutoMap()
-	@Column({default: 0})
+	@Column({ default: 0 })
 	currentLessonIndex: number;
 
 	@AutoMap()
@@ -63,21 +63,21 @@ export class User extends BaseEntity {
 	role: UserRole;
 
 	@AutoMap()
-	@Column({default: () => 'NOW()'})
+	@Column({ default: () => 'NOW()' })
 	createdAt: Date;
 
 	@AutoMap()
-	@Column({default: () => 'NOW()'})
+	@Column({ default: () => 'NOW()' })
 	updatedAt: Date;
 
 	@AutoMap()
-	@Column({nullable: true})
+	@Column({ nullable: true })
 	lastConnection: Date;
 
 	@AutoMap()
-	@Column({nullable: true})
+	@Column({ nullable: true })
 	closedAt: Date;
 
-	@Column({nullable: true})
+	@Column({ nullable: true })
 	refreshToken: string;
 }

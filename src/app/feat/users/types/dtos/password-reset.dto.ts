@@ -1,5 +1,5 @@
-import {IsJWT, IsNotEmpty, IsString, Matches} from '@nestjs/class-validator';
-import {ApiProperty} from '@nestjs/swagger';
+import { IsJWT, IsNotEmpty, IsString, Matches } from '@nestjs/class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 const passwordPattern =
 	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>]).{8,}$/;
@@ -19,6 +19,6 @@ export class PasswordResetDto {
 	})
 	@IsString()
 	@IsNotEmpty()
-	@Matches(passwordPattern, {message: 'STRONG_PASSWORD_REQUIRED'})
+	@Matches(passwordPattern, { message: 'STRONG_PASSWORD_REQUIRED' })
 	password: string;
 }

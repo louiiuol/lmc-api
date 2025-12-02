@@ -1,11 +1,10 @@
 import {
-	applyDecorators,
 	BadRequestException,
 	createParamDecorator,
 	ExecutionContext,
 } from '@nestjs/common';
-import {DECORATORS} from '@nestjs/swagger/dist/constants';
-import {Request} from 'express';
+import { DECORATORS } from '@nestjs/swagger/dist/constants';
+import { Request } from 'express';
 
 export interface Filtering {
 	property: string;
@@ -34,11 +33,14 @@ export const FilteringParams = createParamDecorator(
 		const req: Request = ctx.switchToHttp().getRequest();
 		const filter = req.query.filter as string;
 
-		if (!filter) return null;
+		if (!filter) {
+			return null;
+		}
 
 		// check if the valid params sent is an array
-		if (typeof data != 'object')
+		if (typeof data != 'object') {
 			throw new BadRequestException('Invalid filter parameter');
+		}
 
 		return filter.split('&').map(f => {
 			// validate the format of the filter, if the rule is 'isnull' or 'isnotnull' it don't need to have a value
@@ -53,12 +55,14 @@ export const FilteringParams = createParamDecorator(
 
 			// extract the parameters and validate if the rule and the property are valid
 			const [property, rule, value] = f.split(':');
-			if (!data.includes(property))
+			if (!data.includes(property)) {
 				throw new BadRequestException(`Invalid filter property: ${property}`);
-			if (!Object.values(FilterRule).includes(rule as FilterRule))
+			}
+			if (!Object.values(FilterRule).includes(rule as FilterRule)) {
 				throw new BadRequestException(`Invalid filter rule: ${rule}`);
+			}
 
-			return {property, rule, value};
+			return { property, rule, value };
 		});
 	},
 	[

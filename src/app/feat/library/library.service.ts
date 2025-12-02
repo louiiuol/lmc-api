@@ -20,16 +20,17 @@ export class LibraryService {
 	) {}
 
 	getAllCourses = async () =>
-		(await this.courseRepository.find({loadEagerRelations: true})).sort(
+		(await this.courseRepository.find({ loadEagerRelations: true })).sort(
 			(a, b) => a.order - b.order
 		);
 
 	updateProgression = async (uuid: any, currentLessonIndex: number) =>
-		await this.usersService.update(uuid, {currentLessonIndex});
+		await this.usersService.update(uuid, { currentLessonIndex });
 
-	async getStreamableFile(email: any, p: {index: number; fileName: string}) {
-		const folder = (await this.courseRepository.findOneBy({order: p.index - 1}))
-			.uuid;
+	async getStreamableFile(email: any, p: { index: number; fileName: string }) {
+		const folder = (
+			await this.courseRepository.findOneBy({ order: p.index - 1 })
+		).uuid;
 		const filePath = `uploads/courses/${folder}/${p.fileName}.pdf`;
 		if (!existsSync(filePath)) {
 			throw new Error(`File not found: ${filePath}`);
@@ -38,11 +39,12 @@ export class LibraryService {
 	}
 
 	async downloadPdf(
-		p: {index: number; fileName: string},
+		p: { index: number; fileName: string },
 		res: Response<any, Record<string, any>>
 	) {
-		const folder = (await this.courseRepository.findOneBy({order: p.index - 1}))
-			.uuid;
+		const folder = (
+			await this.courseRepository.findOneBy({ order: p.index - 1 })
+		).uuid;
 		const filePath = `uploads/courses/${folder}/${p.fileName}.pdf`;
 
 		// Check if the file exists
@@ -65,7 +67,7 @@ export class LibraryService {
 	}
 
 	async downloadCourse(index: number, res: Response<any, Record<string, any>>) {
-		const folder = (await this.courseRepository.findOneBy({order: index - 1}))
+		const folder = (await this.courseRepository.findOneBy({ order: index - 1 }))
 			.uuid;
 		const lessonPath = `uploads/courses/${folder}`;
 		const outputZip = `uploads/courses/${folder}/${index}.zip`;
@@ -73,7 +75,12 @@ export class LibraryService {
 		try {
 			await this.zipService.zipDirectory(lessonPath, outputZip);
 		} catch (error) {
-			res.status(500).send('Could not create zip file: ' + (error instanceof Error ? error.message : 'unknown error'));
+			res
+				.status(500)
+				.send(
+					'Could not create zip file: ' +
+						(error instanceof Error ? error.message : 'unknown error')
+				);
 			return;
 		}
 

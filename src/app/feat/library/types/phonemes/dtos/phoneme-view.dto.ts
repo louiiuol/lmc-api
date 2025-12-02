@@ -1,8 +1,8 @@
-import {AutoMap} from '@automapper/classes';
-import {ApiProperty} from '@nestjs/swagger';
+import { AutoMap } from '@automapper/classes';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class PhonemeViewDto {
-	@ApiProperty({description: 'Nom du digramme.'})
+	@ApiProperty({ description: 'Nom du digramme.' })
 	@AutoMap()
 	name: string;
 

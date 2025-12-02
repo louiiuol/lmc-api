@@ -1,5 +1,5 @@
-import {MailerService as NestMailerService} from '@nestjs-modules/mailer';
-import {BadRequestException, Injectable} from '@nestjs/common';
+import { MailerService as NestMailerService } from '@nestjs-modules/mailer';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 export type MailConfig = {
 	recipient: string;

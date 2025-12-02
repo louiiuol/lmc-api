@@ -1,4 +1,4 @@
-import {AutoMap} from '@automapper/classes';
+import { AutoMap } from '@automapper/classes';
 import {
 	BaseEntity,
 	Column,
@@ -6,7 +6,7 @@ import {
 	ManyToOne,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
-import {Course} from '../courses/course.entity';
+import { Course } from '../courses/course.entity';
 
 @Entity({
 	name: 'phonemes',
@@ -25,11 +25,11 @@ export class Phoneme extends BaseEntity {
 	course: Course;
 
 	@AutoMap()
-	@Column({nullable: true})
+	@Column({ nullable: true })
 	poster?: boolean;
 
 	@AutoMap()
-	@Column({nullable: true})
+	@Column({ nullable: true })
 	endOfWord?: boolean;
 
 	@AutoMap()
@@ -40,6 +40,6 @@ export class Phoneme extends BaseEntity {
 	sounds?: string[];
 
 	@AutoMap()
-	@Column({nullable: true})
+	@Column({ nullable: true })
 	info?: string;
 }

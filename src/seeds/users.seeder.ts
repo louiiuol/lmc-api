@@ -51,7 +51,7 @@ const SEED_ACCOUNTS: SeedAccountDefinition[] = [
 ];
 
 const SALT_ROUNDS = Number(environment.SALT);
-if(isNaN(SALT_ROUNDS) || SALT_ROUNDS <= 0) {
+if (isNaN(SALT_ROUNDS) || SALT_ROUNDS <= 0) {
 	throw new Error('Invalid SALT value in environment configuration');
 }
 
@@ -64,7 +64,7 @@ export class UsersSeeder {
 		for (const account of SEED_ACCOUNTS) {
 			const hashedPassword = await bcrypt.hash(account.password, SALT_ROUNDS);
 			const existing = await this.repository.findOne({
-				where: {email: account.email},
+				where: { email: account.email },
 			});
 
 			const payload: Partial<User> = {
@@ -85,7 +85,7 @@ export class UsersSeeder {
 			};
 
 			if (existing) {
-				await this.repository.save({...existing, ...payload});
+				await this.repository.save({ ...existing, ...payload });
 				results.push({
 					email: account.email,
 					password: account.password,

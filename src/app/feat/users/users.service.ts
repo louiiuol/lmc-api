@@ -1,9 +1,9 @@
-import {Injectable} from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Repository} from 'typeorm';
-import {User, UserCreateDto, UserViewDto} from './types';
-import {Mapper} from '@automapper/core';
-import {InjectMapper} from '@automapper/nestjs';
+import { Mapper } from '@automapper/core';
+import { InjectMapper } from '@automapper/nestjs';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User, UserCreateDto, UserViewDto } from './types';
 
 @Injectable()
 export class UsersService {
@@ -35,7 +35,7 @@ export class UsersService {
 	 * @returns User matching given uuid, if they exists.
 	 */
 	findOneByUuid = async (uuid: string) =>
-		await this.usersRepository.findOne({where: {uuid}});
+		await this.usersRepository.findOne({ where: { uuid } });
 
 	/**
 	 * Retrieves a single user based on their email.
@@ -44,7 +44,7 @@ export class UsersService {
 	 */
 	findOneByEmail = async (email: string) =>
 		await this.usersRepository.findOne({
-			where: {email},
+			where: { email },
 		});
 
 	update = async (uuid: string, dto: Partial<User>) => {

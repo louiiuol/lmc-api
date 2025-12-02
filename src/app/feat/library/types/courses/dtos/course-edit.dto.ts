@@ -1,11 +1,11 @@
-import {IsNumber, IsOptional, IsString} from '@nestjs/class-validator';
+import { IsNumber, IsOptional, IsString } from '@nestjs/class-validator';
 
-import {ApiProperty} from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CourseEditDto {
 	uuid: string;
 
-	@ApiProperty({description: 'Index de la semaine'})
+	@ApiProperty({ description: 'Index de la semaine' })
 	@IsNumber()
 	@IsOptional()
 	order?: number;
@@ -18,7 +18,7 @@ export class CourseEditDto {
 	@IsOptional()
 	color: string;
 
-	@ApiProperty({description: 'Mots associé à la semaine'})
+	@ApiProperty({ description: 'Mots associé à la semaine' })
 	words?: string[];
 
 	script: boolean;
@@ -30,15 +30,15 @@ export class CourseEditDto {
 }
 
 export class CourseEditFilesDto {
-	@ApiProperty({description: 'Leçon de la semaine'})
+	@ApiProperty({ description: 'Leçon de la semaine' })
 	lesson?: Express.Multer.File[];
 
-	@ApiProperty({description: 'Script de la semaine'})
+	@ApiProperty({ description: 'Script de la semaine' })
 	script: Express.Multer.File[];
 
-	@ApiProperty({description: 'Exercices de la semaine'})
+	@ApiProperty({ description: 'Exercices de la semaine' })
 	exercices?: Express.Multer.File[];
 
-	@ApiProperty({description: 'Affiche de la semaine'})
+	@ApiProperty({ description: 'Affiche de la semaine' })
 	poster?: Express.Multer.File[];
 }

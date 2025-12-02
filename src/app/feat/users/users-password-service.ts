@@ -1,10 +1,10 @@
-import {ForbiddenException, Injectable} from '@nestjs/common';
-import {JwtService} from '@nestjs/jwt';
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { MailerService } from '@shared/modules/mail/mail.service';
 import * as bcrypt from 'bcrypt';
-import {environment} from 'src/app/environment';
-import {UsersService} from './users.service';
-import {PasswordResetDto} from './types';
-import {MailerService} from '@shared/modules/mail/mail.service';
+import { environment } from 'src/app/environment';
+import { PasswordResetDto } from './types';
+import { UsersService } from './users.service';
 
 @Injectable()
 export class UsersPasswordService {
@@ -59,13 +59,15 @@ export class UsersPasswordService {
 
 	forgotPassword = async (email: string) => {
 		const user = await this.users.findOneByEmail(email);
-		if (!user) return 'utilisateur inconnu';
+		if (!user) {
+			return 'utilisateur inconnu';
+		}
 		const token = this.jwtService.sign(
 			{
 				email,
 				uuid: user.uuid,
 			},
-			{secret: process.env.JWT_SECRET_KEY + user.password, expiresIn: '15m'}
+			{ secret: process.env.JWT_SECRET_KEY + user.password, expiresIn: '15m' }
 		);
 
 		await this.mailerService.sendMail({

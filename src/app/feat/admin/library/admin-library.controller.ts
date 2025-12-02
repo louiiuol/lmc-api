@@ -21,18 +21,20 @@ import {
 import { LibraryAdminService } from './admin-library.service';
 
 const COURSE_FILES_UPLOAD = PdfUploader([
-	{name: 'lesson', maxCount: 1},
-	{name: 'script', maxCount: 1},
-	{name: 'poster', maxCount: 1},
-	{name: 'exercices', maxCount: 1},
+	{ name: 'lesson', maxCount: 1 },
+	{ name: 'script', maxCount: 1 },
+	{ name: 'poster', maxCount: 1 },
+	{ name: 'exercices', maxCount: 1 },
 ]);
 
 const PHONEME_FILES_UPLOAD = FileFieldsInterceptor([
-	{name: 'poster', maxCount: 1},
+	{ name: 'poster', maxCount: 1 },
 ]);
-const SOUND_FILES_UPLOAD = FileFieldsInterceptor([{name: 'file', maxCount: 1}]);
+const SOUND_FILES_UPLOAD = FileFieldsInterceptor([
+	{ name: 'file', maxCount: 1 },
+]);
 
-@Controller({path: 'admin', name: 'Back Office (Gestion de la bibliothèque)'})
+@Controller({ path: 'admin', name: 'Back Office (Gestion de la bibliothèque)' })
 export class AdminLibraryController {
 	constructor(private readonly libraryService: LibraryAdminService) {}
 
@@ -114,7 +116,7 @@ export class AdminLibraryController {
 	async addPhoneme(
 		@Param('uuid') uuid: string,
 		@Body() dto: PhonemeCreateDto,
-		@UploadedFiles() files: {poster?: Express.Multer.File[]}
+		@UploadedFiles() files: { poster?: Express.Multer.File[] }
 	) {
 		dto.poster = files?.poster;
 		return this.libraryService.addPhoneme(uuid, dto);
@@ -130,7 +132,7 @@ export class AdminLibraryController {
 		@Body() dto: PhonemeCreateDto,
 		@Param('courseUuid') courseUuid: string,
 		@Param('uuid') uuid: string,
-		@UploadedFiles() files?: {poster?: Express.Multer.File[]}
+		@UploadedFiles() files?: { poster?: Express.Multer.File[] }
 	) {
 		dto.poster = files?.poster;
 		return await this.libraryService.editPhoneme(courseUuid, uuid, dto);
@@ -172,7 +174,7 @@ export class AdminLibraryController {
 	async addSound(
 		@Param('uuid') uuid: string,
 		@Body() dto: PosterAddDto,
-		@UploadedFiles() files: {file?: Express.Multer.File[]}
+		@UploadedFiles() files: { file?: Express.Multer.File[] }
 	) {
 		dto.file = files.file;
 		return await this.libraryService.addSound(uuid, dto);
@@ -201,7 +203,7 @@ export class AdminLibraryController {
 	async addPoster(
 		@Param('uuid') uuid: string,
 		@Body() dto: PosterAddDto,
-		@UploadedFiles() files: {file?: Express.Multer.File[]}
+		@UploadedFiles() files: { file?: Express.Multer.File[] }
 	) {
 		dto.file = files.file;
 		return await this.libraryService.addPoster(uuid, dto);

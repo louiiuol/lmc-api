@@ -1,16 +1,22 @@
-import {Body, Param} from '@nestjs/common';
+import { Body, Param } from '@nestjs/common';
 
-import {CurrentUser} from '@shared/decorators/current-user.decorator';
 import {
+	Controller,
+	Get,
+	PartialUpdate,
+	Post,
+	Update,
+} from '@shared/decorators';
+import { CurrentUser } from '@shared/decorators/current-user.decorator';
+import {
+	PasswordCheckDto,
 	PasswordForgotDto,
 	PasswordResetDto,
-	PasswordCheckDto,
 	PasswordUpdateDto,
 } from './types';
-import {UsersPasswordService} from './users-password-service';
-import {Controller, Get, PartialUpdate, Post, Update} from '@shared/decorators';
+import { UsersPasswordService } from './users-password-service';
 
-@Controller({name: 'Mot de passe'})
+@Controller({ name: 'Mot de passe' })
 export class UsersPasswordController {
 	constructor(private readonly passwordService: UsersPasswordService) {}
 
